@@ -4,7 +4,7 @@
 #include <cctype>
 #include <cstring>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 
 #if PLATFORM_WINDOWS
 #ifndef WIN32_LEAN_AND_MEAN

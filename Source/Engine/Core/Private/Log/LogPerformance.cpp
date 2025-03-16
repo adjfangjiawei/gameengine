@@ -1,5 +1,5 @@
 
-#include "Core/Log/LogPerformance.h"
+#include "Log/LogPerformance.h"
 
 #include <algorithm>
 #include <charconv>

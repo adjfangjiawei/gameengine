@@ -5,7 +5,7 @@
 
 #include "Error/ErrorCodes.h"
 #include "Error/ErrorSystem.h"
-#include "Core/Error/Result.h"
+#include "Error/Result.h"
 
 namespace Engine {
     namespace Test {

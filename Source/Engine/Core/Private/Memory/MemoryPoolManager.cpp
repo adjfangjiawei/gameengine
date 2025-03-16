@@ -1,10 +1,10 @@
 
-#include "Core/Memory/MemoryPoolManager.h"
+#include "Memory/MemoryPoolManager.h"
 
 #include <algorithm>
 #include <numeric>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "Log/LogSystem.h"
 
 namespace Engine {

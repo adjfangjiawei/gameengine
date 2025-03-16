@@ -1,5 +1,5 @@
 
-#include "Core/Memory/HeapAllocator.h"
+#include "Memory/HeapAllocator.h"
 
 #include <math.h>
 
@@ -7,7 +7,7 @@
 #include <chrono>
 #include <cstring>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "Log/LogSystem.h"
 #include "Platform.h"
 #if PLATFORM_WINDOWS

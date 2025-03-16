@@ -4,7 +4,7 @@
 #include <array>
 #include <vector>
 
-#include "Core/Memory/MemorySystem.h"
+#include "Memory/MemorySystem.h"
 
 namespace Engine {
 

@@ -1,9 +1,9 @@
 
-#include "Core/Events/EventSystem.h"
+#include "Events/EventSystem.h"
 
 #include <algorithm>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 
 namespace Engine {
 

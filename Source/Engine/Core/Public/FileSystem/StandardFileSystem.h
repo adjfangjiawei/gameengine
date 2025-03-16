@@ -2,9 +2,9 @@
 
 #include <mutex>
 
-#include "Core/FileSystem/FilePermissions.h"
+#include "FileSystem/FilePermissions.h"
 #include "FileSystem/FileSystem.h"
-// #include "Core/Threading/ThreadPool.h"
+// #include "Threading/ThreadPool.h"
 
 namespace Engine {
 

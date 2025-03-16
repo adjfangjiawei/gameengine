@@ -3,8 +3,8 @@
 
 #include <cmath>
 
-#include "Core/Math/Matrix.h"
-#include "Core/Math/Vector.h"
+#include "Math/Matrix.h"
+#include "Math/Vector.h"
 
 namespace Engine {
     namespace Math {

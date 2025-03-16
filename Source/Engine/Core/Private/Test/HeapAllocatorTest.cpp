@@ -6,7 +6,7 @@
 #include <thread>
 #include <vector>
 
-#include "Core/Memory/HeapAllocator.h"
+#include "Memory/HeapAllocator.h"
 
 using namespace Engine::Memory;
 

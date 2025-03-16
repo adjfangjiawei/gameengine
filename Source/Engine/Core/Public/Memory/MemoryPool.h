@@ -4,7 +4,7 @@
 #include <mutex>
 #include <vector>
 
-#include "Core/Memory/MemoryTypes.h"
+#include "Memory/MemoryTypes.h"
 #include "CoreTypes.h"
 
 namespace Engine {

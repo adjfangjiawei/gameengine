@@ -1,7 +1,7 @@
 
-#include "Core/Threading/ThreadPool.h"
+#include "Threading/ThreadPool.h"
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "Log/LogSystem.h"
 
 namespace Engine {

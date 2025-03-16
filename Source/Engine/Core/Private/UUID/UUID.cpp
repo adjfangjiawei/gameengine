@@ -1,5 +1,5 @@
 
-#include "Core/UUID/UUID.h"
+#include "UUID/UUID.h"
 
 #include <algorithm>
 #include <chrono>
@@ -8,7 +8,7 @@
 #include <random>
 #include <sstream>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 
 namespace Engine {
 

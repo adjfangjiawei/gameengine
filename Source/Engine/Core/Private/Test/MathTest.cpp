@@ -1,10 +1,10 @@
 #include <iomanip>
 #include <iostream>
 
-#include "Core/Assert.h"
-#include "Core/Math/Matrix.h"
-#include "Core/Math/Quaternion.h"
-#include "Core/Math/Vector.h"
+#include "Assert.h"
+#include "Math/Matrix.h"
+#include "Math/Quaternion.h"
+#include "Math/Vector.h"
 
 namespace Engine {
     namespace Test {

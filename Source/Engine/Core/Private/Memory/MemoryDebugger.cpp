@@ -1,11 +1,11 @@
 
-#include "Core/Memory/MemoryDebugger.h"
+#include "Memory/MemoryDebugger.h"
 
 #include <algorithm>
 #include <chrono>
 #include <cstring>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "Log/LogSystem.h"
 #include "Platform.h"
 

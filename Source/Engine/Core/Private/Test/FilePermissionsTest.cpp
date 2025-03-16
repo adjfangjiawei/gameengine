@@ -1,7 +1,7 @@
 
 #include <string>
 
-#include "Core/FileSystem/FilePermissions.h"
+#include "FileSystem/FilePermissions.h"
 #include "FileSystem/FileSystem.h"
 #include "Log/LogSystem.h"
 

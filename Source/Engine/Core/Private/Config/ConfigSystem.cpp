@@ -5,7 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <sstream>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "FileSystem/FileSystem.h"
 #include "Log/LogSystem.h"
 

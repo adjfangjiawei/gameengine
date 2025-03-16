@@ -7,7 +7,7 @@ namespace Engine {
 
         namespace {
             constexpr uint32_t MAX_DESCRIPTOR_SETS = 1000;
-            constexpr uint32_t MAX_DESCRIPTOR_BINDINGS = 16;
+            [[maybe_unused]] constexpr uint32_t MAX_DESCRIPTOR_BINDINGS = 16;
         }  // namespace
 
         // GraphicsPipelineKey Implementation

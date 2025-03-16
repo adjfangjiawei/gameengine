@@ -11,10 +11,10 @@
 #include <thread>
 #include <vector>
 
-#include "Core/Assert.h"
-#include "Core/Threading/ThreadPoolConfig.h"
-#include "Core/Threading/ThreadPoolStats.h"
-#include "Core/Threading/ThreadTask.h"
+#include "Assert.h"
+#include "Threading/ThreadPoolConfig.h"
+#include "Threading/ThreadPoolStats.h"
+#include "Threading/ThreadTask.h"
 #include "CoreTypes.h"
 
 namespace Engine {

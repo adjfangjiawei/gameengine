@@ -4,8 +4,8 @@
 #include <sstream>
 #include <thread>
 
-#include "Core/Assert.h"
-#include "Core/Serialization/Serializer.h"
+#include "Assert.h"
+#include "Serialization/Serializer.h"
 
 namespace Engine {
     namespace Test {

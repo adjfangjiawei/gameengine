@@ -1,5 +1,5 @@
 
-#include "Core/Memory/MemoryProfiler.h"
+#include "Memory/MemoryProfiler.h"
 
 #include <algorithm>
 #include <fstream>
@@ -7,7 +7,7 @@
 #include <numeric>
 #include <thread>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "Log/LogSystem.h"
 
 #if PLATFORM_WINDOWS

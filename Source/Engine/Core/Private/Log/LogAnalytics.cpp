@@ -1,5 +1,5 @@
 
-#include "Core/Log/LogAnalytics.h"
+#include "Log/LogAnalytics.h"
 
 #include <algorithm>
 #include <numeric>

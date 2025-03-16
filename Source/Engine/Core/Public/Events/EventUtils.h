@@ -4,7 +4,7 @@
 #include <type_traits>
 #include <vector>
 
-#include "Core/Events/EventSystem.h"
+#include "Events/EventSystem.h"
 
 namespace Engine {
 

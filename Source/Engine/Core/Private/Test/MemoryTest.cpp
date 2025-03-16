@@ -3,15 +3,15 @@
 #include <thread>
 #include <vector>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "Log/LogSystem.h"
-#include "Core/Memory/HeapAllocator.h"
-#include "Core/Memory/LinearAllocator.h"
-#include "Core/Memory/MemoryDebugger.h"
-#include "Core/Memory/MemoryPoolManager.h"
-#include "Core/Memory/MemoryProfiler.h"
-#include "Core/Memory/PoolAllocator.h"
-#include "Core/Memory/StackAllocator.h"
+#include "Memory/HeapAllocator.h"
+#include "Memory/LinearAllocator.h"
+#include "Memory/MemoryDebugger.h"
+#include "Memory/MemoryPoolManager.h"
+#include "Memory/MemoryProfiler.h"
+#include "Memory/PoolAllocator.h"
+#include "Memory/StackAllocator.h"
 
 using namespace Engine::Memory;
 

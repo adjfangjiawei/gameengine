@@ -1,5 +1,54 @@
 /usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/stl_algobase.h:1170:22: error: invalid operands to binary expression ('const VkDescriptorSetLayoutBinding' and 'const VkDescriptorSetLayoutBinding') [clang-diagnostic-error]
+ 1170 |             if (!(*__first1 == *__first2))
+      |                   ~~~~~~~~~ ^  ~~~~~~~~~
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/stl_algobase.h:1219:38: note: in instantiation of function template specialization 'std::__equal<false>::equal<const VkDescriptorSetLayoutBinding *, const VkDescriptorSetLayoutBinding *>' requested here
+ 1219 |       return std::__equal<__simple>::equal(__first1, __last1, __first2);
+      |                                      ^
+--
+      |     ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/tuple:1919:5: note: candidate template ignored: could not match 'const tuple<_TElements...>' against 'const VkDescriptorSetLayoutBinding'
+ 1919 |     operator==(const tuple<_TElements...>& __t,
+      |     ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/tuple:1919:5: note: candidate template ignored: could not match 'const tuple<_TElements...>' against 'const VkDescriptorSetLayoutBinding'
 /usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/stl_algobase.h:1170:22: error: invalid operands to binary expression ('const VkPipelineShaderStageCreateInfo' and 'const VkPipelineShaderStageCreateInfo') [clang-diagnostic-error]
+ 1170 |             if (!(*__first1 == *__first2))
+      |                   ~~~~~~~~~ ^  ~~~~~~~~~
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/stl_algobase.h:1219:38: note: in instantiation of function template specialization 'std::__equal<false>::equal<const VkPipelineShaderStageCreateInfo *, const VkPipelineShaderStageCreateInfo *>' requested here
+ 1219 |       return std::__equal<__simple>::equal(__first1, __last1, __first2);
+      |                                      ^
+--
+      |     ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/tuple:1919:5: note: candidate template ignored: could not match 'const tuple<_TElements...>' against 'const VkPipelineShaderStageCreateInfo'
+ 1919 |     operator==(const tuple<_TElements...>& __t,
+      |     ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/tuple:1919:5: note: candidate template ignored: could not match 'const tuple<_TElements...>' against 'const VkPipelineShaderStageCreateInfo'
 /usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/stl_algobase.h:1170:22: error: invalid operands to binary expression ('const VkPushConstantRange' and 'const VkPushConstantRange') [clang-diagnostic-error]
+ 1170 |             if (!(*__first1 == *__first2))
+      |                   ~~~~~~~~~ ^  ~~~~~~~~~
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/stl_algobase.h:1219:38: note: in instantiation of function template specialization 'std::__equal<false>::equal<const VkPushConstantRange *, const VkPushConstantRange *>' requested here
+ 1219 |       return std::__equal<__simple>::equal(__first1, __last1, __first2);
+      |                                      ^
+--
+      |     ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/tuple:1919:5: note: candidate template ignored: could not match 'const tuple<_TElements...>' against 'const VkPushConstantRange'
+ 1919 |     operator==(const tuple<_TElements...>& __t,
+      |     ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/tuple:1919:5: note: candidate template ignored: could not match 'const tuple<_TElements...>' against 'const VkPushConstantRange'
 /usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/stl_algobase.h:1170:22: error: invalid operands to binary expression ('const VkVertexInputAttributeDescription' and 'const VkVertexInputAttributeDescription') [clang-diagnostic-error]
+ 1170 |             if (!(*__first1 == *__first2))
+      |                   ~~~~~~~~~ ^  ~~~~~~~~~
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/stl_algobase.h:1219:38: note: in instantiation of function template specialization 'std::__equal<false>::equal<const VkVertexInputAttributeDescription *, const VkVertexInputAttributeDescription *>' requested here
+ 1219 |       return std::__equal<__simple>::equal(__first1, __last1, __first2);
+      |                                      ^
+--
+      |     ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/tuple:1919:5: note: candidate template ignored: could not match 'const tuple<_TElements...>' against 'const VkVertexInputAttributeDescription'
+ 1919 |     operator==(const tuple<_TElements...>& __t,
+      |     ^
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/tuple:1919:5: note: candidate template ignored: could not match 'const tuple<_TElements...>' against 'const VkVertexInputAttributeDescription'
 /usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/stl_algobase.h:1170:22: error: invalid operands to binary expression ('const VkVertexInputBindingDescription' and 'const VkVertexInputBindingDescription') [clang-diagnostic-error]
+ 1170 |             if (!(*__first1 == *__first2))
+      |                   ~~~~~~~~~ ^  ~~~~~~~~~
+/usr/bin/../lib/gcc/x86_64-linux-gnu/13/../../../../include/c++/13/bits/stl_algobase.h:1219:38: note: in instantiation of function template specialization 'std::__equal<false>::equal<const VkVertexInputBindingDescription *, const VkVertexInputBindingDescription *>' requested here
+ 1219 |       return std::__equal<__simple>::equal(__first1, __last1, __first2);
+      |                                      ^

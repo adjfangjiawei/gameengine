@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "Core/FileSystem/FilePermissions.h"
+#include "FileSystem/FilePermissions.h"
 #include "CoreTypes.h"
 #include "String/StringUtils.h"
 

@@ -2,8 +2,8 @@
 #include <thread>
 #include <vector>
 
-#include "Core/Assert.h"
-#include "Core/Log/LogConfig.h"
+#include "Assert.h"
+#include "Log/LogConfig.h"
 #include "Log/LogSystem.h"
 #include "Platform.h"
 #include "CoreTypes.h"

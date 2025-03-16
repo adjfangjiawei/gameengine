@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "Core/Assert.h"
-#include "Core/Reflection/IReflectable.h"
-#include "Core/Reflection/ReflectionMacros.h"
-#include "Core/Reflection/TypeInfo.h"
+#include "Assert.h"
+#include "Reflection/IReflectable.h"
+#include "Reflection/ReflectionMacros.h"
+#include "Reflection/TypeInfo.h"
 
 namespace Engine {
     namespace Test {

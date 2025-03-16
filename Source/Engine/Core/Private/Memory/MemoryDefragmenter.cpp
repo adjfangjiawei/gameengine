@@ -1,10 +1,10 @@
 
-#include "Core/Memory/MemoryDefragmenter.h"
+#include "Memory/MemoryDefragmenter.h"
 
 #include <algorithm>
 #include <cstring>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "Log/LogSystem.h"
 
 namespace Engine {

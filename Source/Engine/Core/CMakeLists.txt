@@ -116,6 +116,7 @@ if(BUILD_TESTS)
         add_executable(${TEST_NAME} ${TEST_FILE})
         target_link_libraries(${TEST_NAME} PRIVATE ${PROJECT_NAME})
         target_include_directories(${TEST_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Public)
+        target_compile_definitions(${TEST_NAME} PRIVATE RUN_TESTS)
         set_target_properties(${TEST_NAME}
             PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"

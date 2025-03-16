@@ -1,5 +1,5 @@
 
-#include "Core/Log/LogConfig.h"
+#include "Log/LogConfig.h"
 
 #include <fstream>
 #include <functional>

@@ -7,8 +7,8 @@ namespace Engine {
     namespace RHI {
 
         namespace {
-            VkPrimitiveTopology ConvertToVulkanPrimitiveTopology(
-                EPrimitiveType type) {
+            [[maybe_unused]] VkPrimitiveTopology
+            ConvertToVulkanPrimitiveTopology(EPrimitiveType type) {
                 switch (type) {
                     case EPrimitiveType::Points:
                         return VK_PRIMITIVE_TOPOLOGY_POINT_LIST;
@@ -299,7 +299,6 @@ namespace Engine {
                 return;
             }
 
-            auto rtv = static_cast<VulkanRenderTargetView*>(renderTarget);
             VkClearColorValue clearValue = {};
             memcpy(clearValue.float32, clearColor, sizeof(float) * 4);
 
@@ -326,7 +325,6 @@ namespace Engine {
                 return;
             }
 
-            auto dsv = static_cast<VulkanDepthStencilView*>(depthStencil);
             VkClearDepthStencilValue clearValue = {};
             clearValue.depth = depth;
             clearValue.stencil = stencil;
@@ -380,9 +378,10 @@ namespace Engine {
         }
 
         void VulkanCommandList::SetPrimitiveTopology(
-            EPrimitiveType primitiveType) {
-            // 在Vulkan中，图元拓扑是管线状态的一部分，需要在创建管线时设置
-            // 这里可以缓存设置，在创建管线时使用
+            [[maybe_unused]] EPrimitiveType primitiveType) {
+            // Store the primitive type for later use when creating the pipeline
+            // State.PrimitiveTopology =
+            //     ConvertToVulkanPrimitiveTopology(primitiveType);
         }
 
         void VulkanCommandList::SetVertexBuffers(
@@ -536,12 +535,12 @@ namespace Engine {
 
             VkImageCopy copyRegion = {};
             copyRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            copyRegion.srcSubresource.mipLevel = 0;
+            copyRegion.srcSubresource.mipLevel = sourceSubresource;
             copyRegion.srcSubresource.baseArrayLayer = 0;
             copyRegion.srcSubresource.layerCount = 1;
             copyRegion.srcOffset = {0, 0, 0};
             copyRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-            copyRegion.dstSubresource.mipLevel = 0;
+            copyRegion.dstSubresource.mipLevel = destSubresource;
             copyRegion.dstSubresource.baseArrayLayer = 0;
             copyRegion.dstSubresource.layerCount = 1;
             copyRegion.dstOffset = {static_cast<int32_t>(destX),

@@ -3,8 +3,8 @@
 #include <iostream>
 #include <random>
 
-#include "Core/Assert.h"
-#include "Core/Threading/ThreadPool.h"
+#include "Assert.h"
+#include "Threading/ThreadPool.h"
 
 namespace Engine {
     namespace Test {

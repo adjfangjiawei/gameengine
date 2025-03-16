@@ -6,9 +6,9 @@
 #include <type_traits>
 #include <vector>
 
-#include "Core/Reflection/MethodInfo.h"
-#include "Core/Reflection/PropertyInfo.h"
-#include "Core/Reflection/TypeInfo.h"
+#include "Reflection/MethodInfo.h"
+#include "Reflection/PropertyInfo.h"
+#include "Reflection/TypeInfo.h"
 
 namespace Engine {
 

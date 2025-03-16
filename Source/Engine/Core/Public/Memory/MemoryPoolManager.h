@@ -6,9 +6,9 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Core/Memory/MemoryTypes.h"
-#include "Core/Memory/MovableMutex.h"
-#include "Core/Memory/PoolAllocator.h"
+#include "Memory/MemoryTypes.h"
+#include "Memory/MovableMutex.h"
+#include "Memory/PoolAllocator.h"
 #include "CoreTypes.h"
 
 namespace Engine {

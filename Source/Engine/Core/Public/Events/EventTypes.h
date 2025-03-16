@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "Core/Events/EventSystem.h"
+#include "Events/EventSystem.h"
 #include "CoreTypes.h"
 
 namespace Engine {

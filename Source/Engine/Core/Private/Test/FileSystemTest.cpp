@@ -2,7 +2,7 @@
 #include <iostream>
 #include <thread>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "FileSystem/FileSystem.h"
 #include "FileSystem/StandardFileSystem.h"
 

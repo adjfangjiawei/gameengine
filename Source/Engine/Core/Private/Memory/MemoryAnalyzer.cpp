@@ -1,12 +1,12 @@
 
-#include "Core/Memory/MemoryAnalyzer.h"
+#include "Memory/MemoryAnalyzer.h"
 
 #include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <numeric>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "Log/LogSystem.h"
 
 namespace Engine {

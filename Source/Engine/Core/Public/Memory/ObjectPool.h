@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "CoreTypes.h"
 
 namespace Engine {

@@ -5,9 +5,9 @@
 #include <string>
 #include <thread>
 
-#include "Core/Assert.h"
-#include "Core/Memory/ObjectPool.h"
-#include "Core/Threading/ThreadPool.h"
+#include "Assert.h"
+#include "Memory/ObjectPool.h"
+#include "Threading/ThreadPool.h"
 
 namespace Engine {
     namespace Test {

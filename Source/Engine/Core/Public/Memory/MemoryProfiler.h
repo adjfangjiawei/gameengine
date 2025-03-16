@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Core/Memory/MemoryTypes.h"
+#include "Memory/MemoryTypes.h"
 #include "CoreTypes.h"
 
 namespace Engine {

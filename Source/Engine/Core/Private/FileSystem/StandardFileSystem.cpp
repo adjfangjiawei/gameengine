@@ -8,7 +8,7 @@
 #include <regex>
 #include <system_error>
 
-#include "Core/UUID/UUID.h"
+#include "UUID/UUID.h"
 
 #if PLATFORM_WINDOWS
 #include <rpc.h>

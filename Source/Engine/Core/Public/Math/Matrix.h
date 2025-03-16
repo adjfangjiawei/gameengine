@@ -7,7 +7,7 @@
 #include <cmath>
 #include <stdexcept>
 
-#include "Core/Math/Vector.h"
+#include "Math/Vector.h"
 
 namespace Engine {
     namespace Math {

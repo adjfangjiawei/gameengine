@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "Core/Memory/MemoryTypes.h"
+#include "Memory/MemoryTypes.h"
 
 namespace Engine {
     namespace Memory {

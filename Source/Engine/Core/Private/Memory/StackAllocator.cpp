@@ -1,9 +1,9 @@
 
-#include "Core/Memory/StackAllocator.h"
+#include "Memory/StackAllocator.h"
 
 #include <cstring>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "Log/LogSystem.h"
 
 namespace Engine {

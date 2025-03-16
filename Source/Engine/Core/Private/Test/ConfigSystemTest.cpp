@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "Config/ConfigSystem.h"
 #include "FileSystem/FileSystem.h"
 

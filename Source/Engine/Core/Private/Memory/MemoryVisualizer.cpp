@@ -1,12 +1,12 @@
 
-#include "Core/Memory/MemoryVisualizer.h"
+#include "Memory/MemoryVisualizer.h"
 
 #include <algorithm>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "Log/LogSystem.h"
 
 namespace Engine {

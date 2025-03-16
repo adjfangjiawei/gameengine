@@ -4,7 +4,7 @@
 #include <iostream>
 #include <thread>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "Log/LogSinks.h"
 #include "Log/LogSystem.h"
 

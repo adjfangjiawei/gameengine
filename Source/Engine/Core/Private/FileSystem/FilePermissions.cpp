@@ -1,4 +1,4 @@
-// #include "Core/FileSystem/FilePermissions.h"
+// #include "FileSystem/FilePermissions.h"
 
 // #if PLATFORM_WINDOWS
 // #include <windows.h>

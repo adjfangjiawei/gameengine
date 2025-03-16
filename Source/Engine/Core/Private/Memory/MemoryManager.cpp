@@ -1,9 +1,9 @@
 
-#include "Core/Memory/MemoryManager.h"
+#include "Memory/MemoryManager.h"
 
 #include <algorithm>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 
 namespace Engine {
     namespace Memory {

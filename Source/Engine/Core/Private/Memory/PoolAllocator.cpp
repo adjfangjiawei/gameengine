@@ -1,9 +1,9 @@
 
-#include "Core/Memory/PoolAllocator.h"
+#include "Memory/PoolAllocator.h"
 
 #include <cstring>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "Log/LogSystem.h"
 
 namespace Engine {

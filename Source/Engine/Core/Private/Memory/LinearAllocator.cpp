@@ -1,9 +1,9 @@
 
-#include "Core/Memory/LinearAllocator.h"
+#include "Memory/LinearAllocator.h"
 
 #include <cstring>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "Log/LogSystem.h"
 
 namespace Engine {

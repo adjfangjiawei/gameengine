@@ -1,10 +1,10 @@
 
 #include <iostream>
 
-#include "Core/Assert.h"
-#include "Core/Events/EventSystem.h"
-#include "Core/Events/EventTypes.h"
-#include "Core/Events/EventUtils.h"
+#include "Assert.h"
+#include "Events/EventSystem.h"
+#include "Events/EventTypes.h"
+#include "Events/EventUtils.h"
 
 namespace Engine {
     namespace Test {

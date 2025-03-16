@@ -1,7 +1,7 @@
 #include <cmath>
 #include <iostream>
 
-#include "Core/Assert.h"
+#include "Assert.h"
 #include "String/StringUtils.h"
 
 namespace Engine {

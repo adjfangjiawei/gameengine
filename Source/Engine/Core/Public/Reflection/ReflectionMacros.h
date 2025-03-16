@@ -3,8 +3,8 @@
 #include <functional>
 #include <type_traits>
 
-#include "Core/Reflection/TypeInfo.h"
-#include "Core/Reflection/TypeRegistrar.h"
+#include "Reflection/TypeInfo.h"
+#include "Reflection/TypeRegistrar.h"
 
 // Macro to begin reflection registration for a class
 #define BEGIN_REFLECTION(className)        \

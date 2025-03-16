@@ -4,7 +4,7 @@
 #include <mutex>
 #include <vector>
 
-#include "Core/Memory/IAllocator.h"
+#include "Memory/IAllocator.h"
 
 namespace Engine {
     namespace Memory {
