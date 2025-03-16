@@ -1,0 +1,36 @@
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanRHI.cpp:535:46: error: allocating an object of abstract class type 'VulkanBuffer' [clang-diagnostic-error]
+  535 |             VulkanBuffer* vulkanBuffer = new VulkanBuffer(this, desc);
+      |                                              ^
+/game/gameenginestepbustep/Source/Engine/Rendering/Public/RHI/RHIResources.h:18:40: note: unimplemented pure virtual method 'GetName' in 'VulkanBuffer'
+--
+/game/gameenginestepbustep/Source/Engine/Rendering/Public/RHI/RHIResources.h:21:39: note: unimplemented pure virtual method 'GetCurrentState' in 'VulkanBuffer'
+   21 |             virtual ERHIResourceState GetCurrentState() const = 0;
+      |                                       ^
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanRHI.cpp:630:48: error: allocating an object of abstract class type 'VulkanTexture' [clang-diagnostic-error]
+  630 |             VulkanTexture* vulkanTexture = new VulkanTexture(this, desc);
+      |                                                ^
+/game/gameenginestepbustep/Source/Engine/Rendering/Public/RHI/RHIResources.h:18:40: note: unimplemented pure virtual method 'GetName' in 'VulkanTexture'
+--
+/game/gameenginestepbustep/Source/Engine/Rendering/Public/RHI/RHIResources.h:21:39: note: unimplemented pure virtual method 'GetCurrentState' in 'VulkanTexture'
+   21 |             virtual ERHIResourceState GetCurrentState() const = 0;
+      |                                       ^
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanRHI.cpp:682:46: error: allocating an object of abstract class type 'VulkanShader' [clang-diagnostic-error]
+  682 |             VulkanShader* vulkanShader = new VulkanShader(this, desc);
+      |                                              ^
+/game/gameenginestepbustep/Source/Engine/Rendering/Public/RHI/RHIResources.h:18:40: note: unimplemented pure virtual method 'GetName' in 'VulkanShader'
+--
+/game/gameenginestepbustep/Source/Engine/Rendering/Public/RHI/RHIResources.h:21:39: note: unimplemented pure virtual method 'GetCurrentState' in 'VulkanShader'
+   21 |             virtual ERHIResourceState GetCurrentState() const = 0;
+      |                                       ^
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanRHI.cpp:745:21: error: allocating an object of abstract class type 'VulkanRenderTargetView' [clang-diagnostic-error]
+  745 |                 new VulkanRenderTargetView(this, desc);
+      |                     ^
+/game/gameenginestepbustep/Source/Engine/Rendering/Public/RHI/RHIResources.h:18:40: note: unimplemented pure virtual method 'GetName' in 'VulkanRenderTargetView'
+--
+/game/gameenginestepbustep/Source/Engine/Rendering/Public/RHI/RHIResources.h:21:39: note: unimplemented pure virtual method 'GetCurrentState' in 'VulkanRenderTargetView'
+   21 |             virtual ERHIResourceState GetCurrentState() const = 0;
+      |                                       ^
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanRHI.cpp:819:21: error: allocating an object of abstract class type 'VulkanDepthStencilView' [clang-diagnostic-error]
+  819 |                 new VulkanDepthStencilView(this, desc);
+      |                     ^
+/game/gameenginestepbustep/Source/Engine/Rendering/Public/RHI/RHIResources.h:18:40: note: unimplemented pure virtual method 'GetName' in 'VulkanDepthStencilView'

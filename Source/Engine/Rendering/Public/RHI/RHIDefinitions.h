@@ -87,6 +87,7 @@ namespace Engine {
             D24_UNORM_S8_UINT,
             D32_FLOAT,
             D32_FLOAT_S8X24_UINT,
+            D16_UNORM,
         };
 
         // 图元类型

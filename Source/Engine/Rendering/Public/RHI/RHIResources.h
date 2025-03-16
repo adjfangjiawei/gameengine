@@ -48,6 +48,9 @@ namespace Engine {
 
             // 解除缓冲区内存映射
             virtual void Unmap(uint32 subresource = 0) = 0;
+
+            // 获取GPU虚拟地址
+            virtual uint64 GetGPUVirtualAddress() const = 0;
         };
 
         // 纹理描述

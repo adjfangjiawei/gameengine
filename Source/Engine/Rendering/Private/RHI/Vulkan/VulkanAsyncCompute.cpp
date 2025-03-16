@@ -169,7 +169,11 @@ namespace Engine {
             VulkanCommandList* vulkanCmdList =
                 static_cast<VulkanCommandList*>(commandList);
             VulkanBuffer* vulkanInputBuffer =
-                static_cast<VulkanBuffer*>(inputBuffer);
+                dynamic_cast<VulkanBuffer*>(inputBuffer);
+            if (!vulkanInputBuffer) {
+                assert(false && "Failed to cast to VulkanBuffer");
+                return;
+            }
             // outputBuffer is reserved for future use
 
             VkGeneratedCommandsInfoNV generatedCommandsInfo = {};

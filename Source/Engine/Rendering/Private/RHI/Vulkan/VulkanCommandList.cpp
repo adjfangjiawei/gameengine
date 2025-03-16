@@ -289,13 +289,13 @@ namespace Engine {
             for (uint32 i = 0; i < numRenderTargets; ++i) {
                 if (renderTargets[i]) {
                     auto rtv =
-                        static_cast<VulkanRenderTargetView*>(renderTargets[i]);
+                        dynamic_cast<VulkanRenderTargetView*>(renderTargets[i]);
                     State.RenderTargetViews.push_back(rtv->GetHandle());
                 }
             }
 
             if (depthStencil) {
-                auto dsv = static_cast<VulkanDepthStencilView*>(depthStencil);
+                auto dsv = dynamic_cast<VulkanDepthStencilView*>(depthStencil);
                 State.DepthStencilView = dsv->GetHandle();
             }
 
@@ -513,8 +513,8 @@ namespace Engine {
                 return;
             }
 
-            auto srcBuffer = static_cast<VulkanBuffer*>(source);
-            auto dstBuffer = static_cast<VulkanBuffer*>(dest);
+            auto srcBuffer = dynamic_cast<VulkanBuffer*>(source);
+            auto dstBuffer = dynamic_cast<VulkanBuffer*>(dest);
 
             VkBufferCopy copyRegion = {};
             copyRegion.srcOffset = sourceOffset;
@@ -539,8 +539,8 @@ namespace Engine {
                 return;
             }
 
-            auto srcTexture = static_cast<VulkanTexture*>(source);
-            auto dstTexture = static_cast<VulkanTexture*>(dest);
+            auto srcTexture = dynamic_cast<VulkanTexture*>(source);
+            auto dstTexture = dynamic_cast<VulkanTexture*>(dest);
 
             VkImageCopy copyRegion = {};
             copyRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -578,8 +578,175 @@ namespace Engine {
                 return;
             }
 
-            // TODO: 创建RenderPass和Framebuffer
+            // 创建颜色附件描述
+            std::vector<VkAttachmentDescription> attachments;
+            std::vector<VkAttachmentReference> colorAttachmentRefs;
+
+            // 处理颜色附件
+            for (size_t i = 0; i < State.RenderTargetViews.size(); ++i) {
+                VkAttachmentDescription colorAttachment = {};
+                colorAttachment.format =
+                    VK_FORMAT_R8G8B8A8_UNORM;  // 需要从RTV中获取实际格式
+                colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+                colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+                colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+                colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+                colorAttachment.stencilStoreOp =
+                    VK_ATTACHMENT_STORE_OP_DONT_CARE;
+                colorAttachment.initialLayout =
+                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+                colorAttachment.finalLayout =
+                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+                attachments.push_back(colorAttachment);
+
+                VkAttachmentReference colorAttachmentRef = {};
+                colorAttachmentRef.attachment = static_cast<uint32_t>(i);
+                colorAttachmentRef.layout =
+                    VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
+                colorAttachmentRefs.push_back(colorAttachmentRef);
+            }
+
+            // 处理深度模板附件
+            VkAttachmentReference depthAttachmentRef = {};
+            if (State.DepthStencilView != VK_NULL_HANDLE) {
+                VkAttachmentDescription depthAttachment = {};
+                depthAttachment.format =
+                    VK_FORMAT_D24_UNORM_S8_UINT;  // 需要从DSV中获取实际格式
+                depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
+                depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+                depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
+                depthAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
+                depthAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_STORE;
+                depthAttachment.initialLayout =
+                    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+                depthAttachment.finalLayout =
+                    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+                attachments.push_back(depthAttachment);
+
+                depthAttachmentRef.attachment =
+                    static_cast<uint32_t>(attachments.size() - 1);
+                depthAttachmentRef.layout =
+                    VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+            }
+
+            // 创建子通道描述
+            VkSubpassDescription subpass = {};
+            subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+            subpass.colorAttachmentCount =
+                static_cast<uint32_t>(colorAttachmentRefs.size());
+            subpass.pColorAttachments = colorAttachmentRefs.data();
+            if (State.DepthStencilView != VK_NULL_HANDLE) {
+                subpass.pDepthStencilAttachment = &depthAttachmentRef;
+            }
+
+            // 创建子通道依赖
+            VkSubpassDependency dependency = {};
+            dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+            dependency.dstSubpass = 0;
+            dependency.srcStageMask =
+                VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            dependency.srcAccessMask = 0;
+            dependency.dstStageMask =
+                VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+            dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT |
+                                       VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+
+            // 创建渲染通道
+            VkRenderPassCreateInfo renderPassInfo = {};
+            renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+            renderPassInfo.attachmentCount =
+                static_cast<uint32_t>(attachments.size());
+            renderPassInfo.pAttachments = attachments.data();
+            renderPassInfo.subpassCount = 1;
+            renderPassInfo.pSubpasses = &subpass;
+            renderPassInfo.dependencyCount = 1;
+            renderPassInfo.pDependencies = &dependency;
+
+            VkRenderPass renderPass;
+            if (vkCreateRenderPass(Device->GetHandle(),
+                                   &renderPassInfo,
+                                   nullptr,
+                                   &renderPass) != VK_SUCCESS) {
+                LOG_ERROR("Failed to create render pass!");
+                return;
+            }
+
+            // 创建帧缓冲
+            std::vector<VkImageView> attachmentViews;
+            attachmentViews.insert(attachmentViews.end(),
+                                   State.RenderTargetViews.begin(),
+                                   State.RenderTargetViews.end());
+            if (State.DepthStencilView != VK_NULL_HANDLE) {
+                attachmentViews.push_back(State.DepthStencilView);
+            }
+
+            VkFramebufferCreateInfo framebufferInfo = {};
+            framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+            framebufferInfo.renderPass = renderPass;
+            framebufferInfo.attachmentCount =
+                static_cast<uint32_t>(attachmentViews.size());
+            framebufferInfo.pAttachments = attachmentViews.data();
+            framebufferInfo.width = 1920;   // 需要从RTV中获取实际宽度
+            framebufferInfo.height = 1080;  // 需要从RTV中获取实际高度
+            framebufferInfo.layers = 1;
+
+            VkFramebuffer framebuffer;
+            if (vkCreateFramebuffer(Device->GetHandle(),
+                                    &framebufferInfo,
+                                    nullptr,
+                                    &framebuffer) != VK_SUCCESS) {
+                vkDestroyRenderPass(Device->GetHandle(), renderPass, nullptr);
+                LOG_ERROR("Failed to create framebuffer!");
+                return;
+            }
+
+            // 开始渲染通道
+            VkRenderPassBeginInfo renderPassBegin = {};
+            renderPassBegin.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+            renderPassBegin.renderPass = renderPass;
+            renderPassBegin.framebuffer = framebuffer;
+            renderPassBegin.renderArea.offset = {0, 0};
+            renderPassBegin.renderArea.extent = {
+                1920, 1080};  // 需要从RTV中获取实际尺寸
+
+            std::vector<VkClearValue> clearValues(attachmentViews.size());
+            vkCmdBeginRenderPass(GetCommandBuffer(),
+                                 &renderPassBegin,
+                                 VK_SUBPASS_CONTENTS_INLINE);
+
+            // 保存状态
+            State.CurrentRenderPass = renderPass;
+            State.CurrentFramebuffer = framebuffer;
             IsInRenderPass = true;
+        }
+
+        void VulkanCommandList::SetBlendState(
+            const VkPipelineColorBlendStateCreateInfo& blendState) {
+            if (!IsInRecordingState) {
+                return;
+            }
+            // 存储混合状态以在创建管线时使用
+            State.BlendState = blendState;
+        }
+
+        void VulkanCommandList::SetRasterizerState(
+            const VkPipelineRasterizationStateCreateInfo& rasterizerState,
+            const VkPipelineMultisampleStateCreateInfo& multisampleState) {
+            if (!IsInRecordingState) {
+                return;
+            }
+            // 存储光栅化和多重采样状态以在创建管线时使用
+            State.RasterizerState = rasterizerState;
+            State.MultisampleState = multisampleState;
+        }
+
+        void VulkanCommandList::SetDepthStencilState(
+            const VkPipelineDepthStencilStateCreateInfo& depthStencilState) {
+            if (!IsInRecordingState) {
+                return;
+            }
+            // 存储深度模板状态以在创建管线时使用
+            State.DepthStencilState = depthStencilState;
         }
 
         void VulkanCommandList::EndRenderPass() {

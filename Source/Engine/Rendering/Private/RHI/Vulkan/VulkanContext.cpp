@@ -1,6 +1,8 @@
 
 #include "Core//Public/Log/LogSystem.h"
+#include "VulkanCommandList.h"
 #include "VulkanRHI.h"
+#include "VulkanTypeOperators.h"
 
 namespace Engine {
     namespace RHI {
@@ -180,7 +182,49 @@ namespace Engine {
             // 渲染状态
             virtual void SetBlendState(const BlendDesc& desc) override {
                 CurrentBlendDesc = desc;
-                // TODO: 应用混合状态
+
+                if (!CurrentCommandList) return;
+
+                // 获取Vulkan命令列表
+                auto* vulkanCmdList =
+                    static_cast<VulkanCommandList*>(CurrentCommandList.get());
+
+                // 创建颜色混合附件状态
+                std::vector<VkPipelineColorBlendAttachmentState>
+                    colorBlendAttachments;
+                for (uint32_t i = 0; i < 8; ++i) {
+                    const auto& rt = desc.RenderTarget[i];
+                    VkPipelineColorBlendAttachmentState attachmentState = {};
+
+                    attachmentState.blendEnable = rt.BlendEnable;
+                    attachmentState.srcColorBlendFactor =
+                        ConvertToVkBlendFactor(rt.SrcBlend);
+                    attachmentState.dstColorBlendFactor =
+                        ConvertToVkBlendFactor(rt.DestBlend);
+                    attachmentState.colorBlendOp =
+                        ConvertToVkBlendOp(rt.BlendOp);
+                    attachmentState.srcAlphaBlendFactor =
+                        ConvertToVkBlendFactor(rt.SrcBlendAlpha);
+                    attachmentState.dstAlphaBlendFactor =
+                        ConvertToVkBlendFactor(rt.DestBlendAlpha);
+                    attachmentState.alphaBlendOp =
+                        ConvertToVkBlendOp(rt.BlendOpAlpha);
+                    attachmentState.colorWriteMask = rt.RenderTargetWriteMask;
+
+                    colorBlendAttachments.push_back(attachmentState);
+                }
+
+                // 创建颜色混合状态
+                VkPipelineColorBlendStateCreateInfo colorBlending = {};
+                colorBlending.sType =
+                    VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+                colorBlending.logicOpEnable = VK_FALSE;
+                colorBlending.attachmentCount =
+                    static_cast<uint32_t>(colorBlendAttachments.size());
+                colorBlending.pAttachments = colorBlendAttachments.data();
+
+                // 应用混合状态到当前管线
+                vulkanCmdList->SetBlendState(colorBlending);
             }
 
             virtual void SetRasterizerState(
@@ -394,7 +438,209 @@ namespace Engine {
             }
 
             virtual void ApplyState() override {
-                // TODO: 应用所有缓存的状态
+                if (!CurrentCommandList) return;
+
+                auto* vulkanCmdList =
+                    static_cast<VulkanCommandList*>(CurrentCommandList.get());
+
+                // 应用渲染目标状态
+                if (CurrentRenderTarget.RenderTarget ||
+                    CurrentRenderTarget.DepthStencil) {
+                    vulkanCmdList->SetRenderTargets(
+                        1,
+                        &CurrentRenderTarget.RenderTarget,
+                        CurrentRenderTarget.DepthStencil);
+                }
+
+                // 应用视口状态
+                if (CurrentViewport.Width > 0 && CurrentViewport.Height > 0) {
+                    vulkanCmdList->SetViewport(CurrentViewport);
+                }
+
+                // 应用裁剪矩形状态
+                if (CurrentScissor.Right > CurrentScissor.Left &&
+                    CurrentScissor.Bottom > CurrentScissor.Top) {
+                    vulkanCmdList->SetScissorRect(CurrentScissor);
+                }
+
+                // 应用混合状态
+                VkPipelineColorBlendStateCreateInfo colorBlending = {};
+                colorBlending.sType =
+                    VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;
+                colorBlending.logicOpEnable = VK_FALSE;
+
+                std::vector<VkPipelineColorBlendAttachmentState>
+                    colorBlendAttachments;
+                for (uint32_t i = 0; i < 8; ++i) {
+                    const auto& rt = CurrentBlendDesc.RenderTarget[i];
+                    VkPipelineColorBlendAttachmentState attachmentState = {};
+
+                    attachmentState.blendEnable = rt.BlendEnable;
+                    attachmentState.srcColorBlendFactor =
+                        ConvertToVkBlendFactor(rt.SrcBlend);
+                    attachmentState.dstColorBlendFactor =
+                        ConvertToVkBlendFactor(rt.DestBlend);
+                    attachmentState.colorBlendOp =
+                        ConvertToVkBlendOp(rt.BlendOp);
+                    attachmentState.srcAlphaBlendFactor =
+                        ConvertToVkBlendFactor(rt.SrcBlendAlpha);
+                    attachmentState.dstAlphaBlendFactor =
+                        ConvertToVkBlendFactor(rt.DestBlendAlpha);
+                    attachmentState.alphaBlendOp =
+                        ConvertToVkBlendOp(rt.BlendOpAlpha);
+                    attachmentState.colorWriteMask = rt.RenderTargetWriteMask;
+
+                    colorBlendAttachments.push_back(attachmentState);
+                }
+
+                colorBlending.attachmentCount =
+                    static_cast<uint32_t>(colorBlendAttachments.size());
+                colorBlending.pAttachments = colorBlendAttachments.data();
+                vulkanCmdList->SetBlendState(colorBlending);
+
+                // 应用光栅化状态
+                VkPipelineRasterizationStateCreateInfo rasterizer = {};
+                rasterizer.sType =
+                    VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+                rasterizer.depthClampEnable = VK_FALSE;
+                rasterizer.rasterizerDiscardEnable = VK_FALSE;
+                rasterizer.polygonMode =
+                    CurrentRasterizerDesc.FillMode == EFillMode::Wireframe
+                        ? VK_POLYGON_MODE_LINE
+                        : VK_POLYGON_MODE_FILL;
+
+                switch (CurrentRasterizerDesc.CullMode) {
+                    case ECullMode::None:
+                        rasterizer.cullMode = VK_CULL_MODE_NONE;
+                        break;
+                    case ECullMode::Front:
+                        rasterizer.cullMode = VK_CULL_MODE_FRONT_BIT;
+                        break;
+                    case ECullMode::Back:
+                        rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+                        break;
+                }
+
+                rasterizer.frontFace =
+                    CurrentRasterizerDesc.FrontCounterClockwise
+                        ? VK_FRONT_FACE_COUNTER_CLOCKWISE
+                        : VK_FRONT_FACE_CLOCKWISE;
+                rasterizer.depthBiasEnable =
+                    CurrentRasterizerDesc.DepthBias != 0;
+                rasterizer.depthBiasConstantFactor =
+                    static_cast<float>(CurrentRasterizerDesc.DepthBias);
+                rasterizer.depthBiasClamp =
+                    CurrentRasterizerDesc.DepthBiasClamp;
+                rasterizer.depthBiasSlopeFactor =
+                    CurrentRasterizerDesc.SlopeScaledDepthBias;
+                rasterizer.lineWidth = 1.0f;
+
+                // 创建多重采样状态
+                VkPipelineMultisampleStateCreateInfo multisampling = {};
+                multisampling.sType =
+                    VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+                multisampling.sampleShadingEnable =
+                    CurrentRasterizerDesc.MultisampleEnable;
+                multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+                multisampling.minSampleShading = 1.0f;
+                multisampling.pSampleMask = nullptr;
+                multisampling.alphaToCoverageEnable = VK_FALSE;
+                multisampling.alphaToOneEnable = VK_FALSE;
+
+                vulkanCmdList->SetRasterizerState(rasterizer, multisampling);
+
+                // 应用深度模板状态
+                VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+                depthStencil.sType =
+                    VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+                depthStencil.depthTestEnable =
+                    CurrentDepthStencilDesc.DepthEnable;
+                depthStencil.depthWriteEnable =
+                    CurrentDepthStencilDesc.DepthWriteMask;
+
+                switch (CurrentDepthStencilDesc.DepthFunc) {
+                    case ECompareFunction::Never:
+                        depthStencil.depthCompareOp = VK_COMPARE_OP_NEVER;
+                        break;
+                    case ECompareFunction::Less:
+                        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+                        break;
+                    case ECompareFunction::Equal:
+                        depthStencil.depthCompareOp = VK_COMPARE_OP_EQUAL;
+                        break;
+                    case ECompareFunction::LessEqual:
+                        depthStencil.depthCompareOp =
+                            VK_COMPARE_OP_LESS_OR_EQUAL;
+                        break;
+                    case ECompareFunction::Greater:
+                        depthStencil.depthCompareOp = VK_COMPARE_OP_GREATER;
+                        break;
+                    case ECompareFunction::NotEqual:
+                        depthStencil.depthCompareOp = VK_COMPARE_OP_NOT_EQUAL;
+                        break;
+                    case ECompareFunction::GreaterEqual:
+                        depthStencil.depthCompareOp =
+                            VK_COMPARE_OP_GREATER_OR_EQUAL;
+                        break;
+                    case ECompareFunction::Always:
+                        depthStencil.depthCompareOp = VK_COMPARE_OP_ALWAYS;
+                        break;
+                }
+
+                depthStencil.stencilTestEnable =
+                    CurrentDepthStencilDesc.StencilEnable;
+
+                // 配置前面和背面的模板状态
+                auto ConfigureStencilOp = [](VkStencilOpState& state,
+                                             const DepthStencilOpDesc& desc) {
+                    state.failOp = ConvertToVkStencilOp(desc.StencilFailOp);
+                    state.passOp = ConvertToVkStencilOp(desc.StencilPassOp);
+                    state.depthFailOp =
+                        ConvertToVkStencilOp(desc.StencilDepthFailOp);
+
+                    switch (desc.StencilFunc) {
+                        case ECompareFunction::Never:
+                            state.compareOp = VK_COMPARE_OP_NEVER;
+                            break;
+                        case ECompareFunction::Less:
+                            state.compareOp = VK_COMPARE_OP_LESS;
+                            break;
+                        case ECompareFunction::Equal:
+                            state.compareOp = VK_COMPARE_OP_EQUAL;
+                            break;
+                        case ECompareFunction::LessEqual:
+                            state.compareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+                            break;
+                        case ECompareFunction::Greater:
+                            state.compareOp = VK_COMPARE_OP_GREATER;
+                            break;
+                        case ECompareFunction::NotEqual:
+                            state.compareOp = VK_COMPARE_OP_NOT_EQUAL;
+                            break;
+                        case ECompareFunction::GreaterEqual:
+                            state.compareOp = VK_COMPARE_OP_GREATER_OR_EQUAL;
+                            break;
+                        case ECompareFunction::Always:
+                            state.compareOp = VK_COMPARE_OP_ALWAYS;
+                            break;
+                    }
+                };
+
+                ConfigureStencilOp(depthStencil.front,
+                                   CurrentDepthStencilDesc.FrontFace);
+                ConfigureStencilOp(depthStencil.back,
+                                   CurrentDepthStencilDesc.BackFace);
+
+                depthStencil.front.compareMask =
+                    CurrentDepthStencilDesc.StencilReadMask;
+                depthStencil.front.writeMask =
+                    CurrentDepthStencilDesc.StencilWriteMask;
+                depthStencil.back.compareMask =
+                    CurrentDepthStencilDesc.StencilReadMask;
+                depthStencil.back.writeMask =
+                    CurrentDepthStencilDesc.StencilWriteMask;
+
+                vulkanCmdList->SetDepthStencilState(depthStencil);
             }
 
           private:

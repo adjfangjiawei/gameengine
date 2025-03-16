@@ -6,6 +6,7 @@
 #include <set>
 
 #include "Core/Public/Log/LogSystem.h"
+#include "VulkanResources.h"
 #ifdef __linux__
 #include <xcb/bigreq.h>
 #include <xcb/xcb.h>
@@ -36,6 +37,7 @@ namespace Engine {
 #else
             const bool EnableValidationLayers = false;
 #endif
+
         }  // namespace
 
         // VulkanInstance Implementation
@@ -242,6 +244,14 @@ namespace Engine {
             QueueFamilies = FindQueueFamilies(PhysicalDevice);
             FeatureLevel = DetermineFeatureLevel(Properties);
 
+            // 创建内存分配器
+            MemoryAllocator = std::make_unique<VulkanMemoryAllocator>(
+                VK_NULL_HANDLE, PhysicalDevice);
+            if (!MemoryAllocator) {
+                LOG_ERROR("Failed to create memory allocator!");
+                return false;
+            }
+
             return true;
         }
 
@@ -362,6 +372,34 @@ namespace Engine {
         // VulkanDevice Implementation
         VulkanDevice::~VulkanDevice() { Shutdown(); }
 
+        // 将RHI像素格式转换为Vulkan格式
+        VkFormat VulkanDevice::ConvertToVkFormat(EPixelFormat format) {
+            switch (format) {
+                case EPixelFormat::D16_UNORM:
+                    return VK_FORMAT_D16_UNORM;
+                case EPixelFormat::R8G8B8A8_UNORM:
+                    return VK_FORMAT_R8G8B8A8_UNORM;
+                case EPixelFormat::B8G8R8A8_UNORM:
+                    return VK_FORMAT_B8G8R8A8_UNORM;
+                case EPixelFormat::R32G32B32A32_FLOAT:
+                    return VK_FORMAT_R32G32B32A32_SFLOAT;
+                case EPixelFormat::R32G32B32_FLOAT:
+                    return VK_FORMAT_R32G32B32_SFLOAT;
+                case EPixelFormat::R32G32_FLOAT:
+                    return VK_FORMAT_R32G32_SFLOAT;
+                case EPixelFormat::R32_FLOAT:
+                    return VK_FORMAT_R32_SFLOAT;
+                case EPixelFormat::D24_UNORM_S8_UINT:
+                    return VK_FORMAT_D24_UNORM_S8_UINT;
+                case EPixelFormat::D32_FLOAT:
+                    return VK_FORMAT_D32_SFLOAT;
+                case EPixelFormat::D32_FLOAT_S8X24_UINT:
+                    return VK_FORMAT_D32_SFLOAT_S8_UINT;
+                default:
+                    return VK_FORMAT_UNDEFINED;
+            }
+        }
+
         bool VulkanDevice::Initialize(VulkanPhysicalDevice* physicalDevice) {
             PhysicalDevice = physicalDevice;
             return CreateLogicalDevice();
@@ -442,43 +480,373 @@ namespace Engine {
             return PhysicalDevice->GetQueueFamilyIndices().TransferFamily;
         }
 
-        // IRHIBuffer* VulkanDevice::CreateBuffer(const BufferDesc& desc) {
-        //     // TODO: Implement actual buffer creation
-        //     LOG_WARNING("VulkanDevice::CreateBuffer not fully implemented");
-        //     return nullptr;
-        // }
+        IRHIBuffer* VulkanDevice::CreateBuffer(const BufferDesc& desc) {
+            VkBufferCreateInfo bufferInfo = {};
+            bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+            bufferInfo.size = desc.SizeInBytes;
+            bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT |
+                               VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+            bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-        // IRHITexture* VulkanDevice::CreateTexture(const TextureDesc& desc) {
-        //     // TODO: Implement actual texture creation
-        //     LOG_WARNING("VulkanDevice::CreateTexture not fully implemented");
-        //     return nullptr;
-        // }
+            // 根据访问标志设置内存属性
+            VkMemoryPropertyFlags memoryProperties = 0;
+            if (static_cast<uint32>(desc.Access) &
+                static_cast<uint32>(ERHIAccessFlags::CPUWrite)) {
+                memoryProperties |= VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+                memoryProperties |= VK_MEMORY_PROPERTY_HOST_COHERENT_BIT;
+            }
+            if (static_cast<uint32>(desc.Access) &
+                static_cast<uint32>(ERHIAccessFlags::GPURead)) {
+                memoryProperties |= VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
+            }
 
-        // IRHIShader* VulkanDevice::CreateShader(const ShaderDesc& desc,
-        //                                        const void* shaderData,
-        //                                        size_t dataSize) {
-        //     // TODO: Implement actual shader creation
-        //     LOG_WARNING("VulkanDevice::CreateShader not fully implemented");
-        //     return nullptr;
-        // }
+            VkBuffer buffer;
+            if (vkCreateBuffer(Device, &bufferInfo, nullptr, &buffer) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to create buffer!");
+                return nullptr;
+            }
 
-        // IRHIRenderTargetView* VulkanDevice::CreateRenderTargetView(
-        //     IRHIResource* resource, const RenderTargetViewDesc& desc) {
-        //     // TODO: Implement actual render target view creation
-        //     LOG_WARNING(
-        //         "VulkanDevice::CreateRenderTargetView not fully
-        //         implemented");
-        //     return nullptr;
-        // }
+            // 获取内存需求
+            VkMemoryRequirements memRequirements;
+            vkGetBufferMemoryRequirements(Device, buffer, &memRequirements);
 
-        // IRHIDepthStencilView* VulkanDevice::CreateDepthStencilView(
-        //     IRHIResource* resource, const DepthStencilViewDesc& desc) {
-        //     // TODO: Implement actual depth stencil view creation
-        //     LOG_WARNING(
-        //         "VulkanDevice::CreateDepthStencilView not fully
-        //         implemented");
-        //     return nullptr;
-        // }
+            // 分配内存
+            VkDeviceMemory bufferMemory =
+                PhysicalDevice->GetMemoryAllocator()->AllocateMemory(
+                    memRequirements, memoryProperties);
+
+            if (bufferMemory == VK_NULL_HANDLE) {
+                vkDestroyBuffer(Device, buffer, nullptr);
+                LOG_ERROR("Failed to allocate buffer memory!");
+                return nullptr;
+            }
+
+            // 绑定内存到缓冲区
+            if (vkBindBufferMemory(Device, buffer, bufferMemory, 0) !=
+                VK_SUCCESS) {
+                vkDestroyBuffer(Device, buffer, nullptr);
+                PhysicalDevice->GetMemoryAllocator()->FreeMemory(bufferMemory);
+                LOG_ERROR("Failed to bind buffer memory!");
+                return nullptr;
+            }
+
+            // 创建VulkanBuffer对象并初始化
+            VulkanBuffer* vulkanBuffer = new VulkanBuffer(this, desc);
+            if (vulkanBuffer) {
+                vulkanBuffer->SetHandle(buffer, bufferMemory);
+            }
+            return vulkanBuffer;
+        }
+
+        IRHITexture* VulkanDevice::CreateTexture(const TextureDesc& desc) {
+            VkImageCreateInfo imageInfo = {};
+            imageInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+            imageInfo.imageType = VK_IMAGE_TYPE_2D;
+            imageInfo.extent.width = desc.Width;
+            imageInfo.extent.height = desc.Height;
+            imageInfo.extent.depth = 1;
+            imageInfo.mipLevels = 1;
+            imageInfo.arrayLayers = 1;
+            imageInfo.format =
+                VK_FORMAT_R8G8B8A8_UNORM;  // 默认格式，需要根据desc.Format转换
+            imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
+            imageInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+            imageInfo.usage =
+                VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT;
+
+            // 根据flags设置用途
+            if (static_cast<uint32_t>(desc.Flags) &
+                static_cast<uint32_t>(ERHIResourceFlags::AllowRenderTarget)) {
+                imageInfo.usage |= VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+            }
+            if (static_cast<uint32_t>(desc.Flags) &
+                static_cast<uint32_t>(ERHIResourceFlags::AllowDepthStencil)) {
+                imageInfo.usage |= VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
+                imageInfo.format = VK_FORMAT_D24_UNORM_S8_UINT;  // 深度模板格式
+            }
+
+            imageInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+            imageInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+            imageInfo.flags = 0;
+
+            VkImage image;
+            if (vkCreateImage(Device, &imageInfo, nullptr, &image) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to create image!");
+                return nullptr;
+            }
+
+            // 获取内存需求
+            VkMemoryRequirements memRequirements;
+            vkGetImageMemoryRequirements(Device, image, &memRequirements);
+
+            // 分配内存
+            VkDeviceMemory imageMemory =
+                PhysicalDevice->GetMemoryAllocator()->AllocateMemory(
+                    memRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+            if (imageMemory == VK_NULL_HANDLE) {
+                vkDestroyImage(Device, image, nullptr);
+                LOG_ERROR("Failed to allocate image memory!");
+                return nullptr;
+            }
+
+            // 绑定内存到图像
+            if (vkBindImageMemory(Device, image, imageMemory, 0) !=
+                VK_SUCCESS) {
+                vkDestroyImage(Device, image, nullptr);
+                PhysicalDevice->GetMemoryAllocator()->FreeMemory(imageMemory);
+                LOG_ERROR("Failed to bind image memory!");
+                return nullptr;
+            }
+
+            // 创建图像视图
+            VkImageViewCreateInfo viewInfo = {};
+            viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            viewInfo.image = image;
+            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            viewInfo.format = imageInfo.format;
+            viewInfo.subresourceRange.aspectMask =
+                (static_cast<uint32_t>(desc.Flags) &
+                 static_cast<uint32_t>(ERHIResourceFlags::AllowDepthStencil))
+                    ? VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT
+                    : VK_IMAGE_ASPECT_COLOR_BIT;
+            viewInfo.subresourceRange.baseMipLevel = 0;
+            viewInfo.subresourceRange.levelCount = 1;
+            viewInfo.subresourceRange.baseArrayLayer = 0;
+            viewInfo.subresourceRange.layerCount = 1;
+
+            VkImageView imageView;
+            if (vkCreateImageView(Device, &viewInfo, nullptr, &imageView) !=
+                VK_SUCCESS) {
+                vkDestroyImage(Device, image, nullptr);
+                PhysicalDevice->GetMemoryAllocator()->FreeMemory(imageMemory);
+                LOG_ERROR("Failed to create texture image view!");
+                return nullptr;
+            }
+
+            // 创建VulkanTexture对象并初始化
+            VulkanTexture* vulkanTexture = new VulkanTexture(this, desc);
+            if (vulkanTexture) {
+                vulkanTexture->SetHandle(image, imageMemory, imageView);
+            }
+            return vulkanTexture;
+        }
+
+        IRHIShader* VulkanDevice::CreateShader(const ShaderDesc& desc,
+                                               const void* shaderData,
+                                               size_t dataSize) {
+            VkShaderModuleCreateInfo createInfo = {};
+            createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+            createInfo.codeSize = dataSize;
+            createInfo.pCode = reinterpret_cast<const uint32_t*>(shaderData);
+
+            VkShaderModule shaderModule;
+            if (vkCreateShaderModule(
+                    Device, &createInfo, nullptr, &shaderModule) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to create shader module!");
+                return nullptr;
+            }
+
+            // 创建着色器阶段信息
+            VkShaderStageFlagBits shaderStage;
+            switch (desc.Type) {
+                case EShaderType::Vertex:
+                    shaderStage = VK_SHADER_STAGE_VERTEX_BIT;
+                    break;
+                case EShaderType::Pixel:
+                    shaderStage = VK_SHADER_STAGE_FRAGMENT_BIT;
+                    break;
+                case EShaderType::Compute:
+                    shaderStage = VK_SHADER_STAGE_COMPUTE_BIT;
+                    break;
+                case EShaderType::Geometry:
+                    shaderStage = VK_SHADER_STAGE_GEOMETRY_BIT;
+                    break;
+                default:
+                    LOG_ERROR("Unsupported shader type!");
+                    vkDestroyShaderModule(Device, shaderModule, nullptr);
+                    return nullptr;
+            }
+
+            VkPipelineShaderStageCreateInfo shaderStageInfo = {};
+            shaderStageInfo.sType =
+                VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+            shaderStageInfo.stage = shaderStage;
+            shaderStageInfo.module = shaderModule;
+            shaderStageInfo.pName = desc.EntryPoint.c_str();
+
+            // 创建VulkanShader对象并初始化
+            VulkanShader* vulkanShader = new VulkanShader(this, desc);
+            if (vulkanShader) {
+                vulkanShader->SetHandle(shaderModule, shaderStageInfo);
+            }
+            return vulkanShader;
+        }
+
+        IRHIRenderTargetView* VulkanDevice::CreateRenderTargetView(
+            IRHIResource* resource, const RenderTargetViewDesc& desc) {
+            if (!resource) {
+                LOG_ERROR(
+                    "Invalid resource provided for render target view "
+                    "creation!");
+                return nullptr;
+            }
+
+            VkImage targetImage = VK_NULL_HANDLE;
+
+            // 获取目标图像
+            auto texture = dynamic_cast<VulkanTexture*>(resource);
+            if (!texture) {
+                LOG_ERROR("Unsupported resource type for render target view!");
+                return nullptr;
+            }
+            targetImage = texture->GetHandle();
+
+            if (targetImage == VK_NULL_HANDLE) {
+                LOG_ERROR("Failed to get target image for render target view!");
+                return nullptr;
+            }
+
+            // 创建图像视图
+            VkImageViewCreateInfo viewInfo = {};
+            viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            viewInfo.image = targetImage;
+            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            viewInfo.format = VulkanDevice::ConvertToVkFormat(desc.Format);
+            viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            viewInfo.subresourceRange.baseMipLevel = 0;
+            viewInfo.subresourceRange.levelCount = 1;
+            viewInfo.subresourceRange.baseArrayLayer = 0;
+            viewInfo.subresourceRange.layerCount = 1;
+
+            VkImageView imageView;
+            if (vkCreateImageView(Device, &viewInfo, nullptr, &imageView) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to create render target image view!");
+                return nullptr;
+            }
+
+            // 创建渲染目标视图描述符
+            VkDescriptorImageInfo descriptorInfo = {};
+            descriptorInfo.imageLayout =
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            descriptorInfo.imageView = imageView;
+            descriptorInfo.sampler = VK_NULL_HANDLE;  // RTV不需要采样器
+
+            // 创建VulkanRenderTargetView对象并初始化
+            VulkanRenderTargetView* vulkanRTV =
+                new VulkanRenderTargetView(this, desc);
+            if (vulkanRTV) {
+                vulkanRTV->SetResource(resource);
+                vulkanRTV->SetHandle(imageView, descriptorInfo);
+            }
+            return vulkanRTV;
+        }
+
+        IRHIDepthStencilView* VulkanDevice::CreateDepthStencilView(
+            IRHIResource* resource, const DepthStencilViewDesc& desc) {
+            if (!resource) {
+                LOG_ERROR(
+                    "Invalid resource provided for depth stencil view "
+                    "creation!");
+                return nullptr;
+            }
+
+            // 获取目标图像
+            VkImage targetImage = VK_NULL_HANDLE;
+            if (auto texture = dynamic_cast<VulkanTexture*>(resource)) {
+                targetImage = texture->GetHandle();
+            } else {
+                LOG_ERROR("Unsupported resource type for depth stencil view!");
+                return nullptr;
+            }
+
+            if (targetImage == VK_NULL_HANDLE) {
+                LOG_ERROR("Failed to get target image for depth stencil view!");
+                return nullptr;
+            }
+
+            // 创建图像视图
+            VkImageViewCreateInfo viewInfo = {};
+            viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            viewInfo.image = targetImage;
+            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            viewInfo.format = ConvertToVkFormat(desc.Format);
+
+            // 设置深度和模板方面
+            viewInfo.subresourceRange.aspectMask = 0;
+            if (IsDepthFormat(desc.Format)) {
+                viewInfo.subresourceRange.aspectMask |=
+                    VK_IMAGE_ASPECT_DEPTH_BIT;
+            }
+            if (IsStencilFormat(desc.Format)) {
+                viewInfo.subresourceRange.aspectMask |=
+                    VK_IMAGE_ASPECT_STENCIL_BIT;
+            }
+
+            viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.subresourceRange.baseMipLevel = 0;
+            viewInfo.subresourceRange.levelCount = 1;
+            viewInfo.subresourceRange.baseArrayLayer = 0;
+            viewInfo.subresourceRange.layerCount = 1;
+
+            VkImageView imageView;
+            if (vkCreateImageView(Device, &viewInfo, nullptr, &imageView) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to create depth stencil image view!");
+                return nullptr;
+            }
+
+            // 创建深度模板视图描述符
+            VkDescriptorImageInfo descriptorInfo = {};
+            descriptorInfo.imageLayout =
+                VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
+            descriptorInfo.imageView = imageView;
+            descriptorInfo.sampler = VK_NULL_HANDLE;  // DSV不需要采样器
+
+            // 创建VulkanDepthStencilView对象并初始化
+            VulkanDepthStencilView* vulkanDSV =
+                new VulkanDepthStencilView(this, desc);
+            if (vulkanDSV) {
+                vulkanDSV->SetResource(resource);
+                vulkanDSV->SetHandle(imageView, descriptorInfo);
+            }
+            return vulkanDSV;
+        }
+
+        // 辅助函数：检查是否是深度格式
+        bool VulkanDevice::IsDepthFormat(EPixelFormat format) const {
+            switch (format) {
+                case EPixelFormat::D16_UNORM:
+                case EPixelFormat::D24_UNORM_S8_UINT:
+                case EPixelFormat::D32_FLOAT:
+                case EPixelFormat::D32_FLOAT_S8X24_UINT:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        // 辅助函数：检查是否是模板格式
+        bool VulkanDevice::IsStencilFormat(EPixelFormat format) const {
+            switch (format) {
+                case EPixelFormat::D24_UNORM_S8_UINT:
+                case EPixelFormat::D32_FLOAT_S8X24_UINT:
+                    return true;
+                default:
+                    return false;
+            }
+        }
 
         // VulkanCommandPoolManager Implementation
         VulkanCommandPoolManager::~VulkanCommandPoolManager() { Shutdown(); }

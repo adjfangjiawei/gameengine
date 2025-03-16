@@ -81,8 +81,16 @@ namespace Engine {
                 return QueueFamilies;
             }
             ERHIFeatureLevel GetFeatureLevel() const { return FeatureLevel; }
+            VulkanMemoryAllocator* GetMemoryAllocator() const {
+                return MemoryAllocator.get();
+            }
+            void SetMemoryAllocator(
+                std::unique_ptr<VulkanMemoryAllocator> allocator) {
+                MemoryAllocator = std::move(allocator);
+            }
 
           private:
+            std::unique_ptr<VulkanMemoryAllocator> MemoryAllocator;
             bool SelectPhysicalDevice(VkInstance instance);
             int RateDeviceSuitability(VkPhysicalDevice device) const;
             QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device) const;
@@ -119,6 +127,11 @@ namespace Engine {
             virtual IRHIDepthStencilView* CreateDepthStencilView(
                 IRHIResource* resource,
                 const DepthStencilViewDesc& desc) override;
+
+            // 辅助函数
+            bool IsDepthFormat(EPixelFormat format) const;
+            bool IsStencilFormat(EPixelFormat format) const;
+            static VkFormat ConvertToVkFormat(EPixelFormat format);
             virtual IRHIShaderResourceView* CreateShaderResourceView(
                 IRHIResource* resource,
                 const ShaderResourceViewDesc& desc) override;

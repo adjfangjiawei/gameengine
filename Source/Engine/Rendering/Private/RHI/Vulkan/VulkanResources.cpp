@@ -28,6 +28,8 @@ namespace Engine {
                         return VK_FORMAT_D32_SFLOAT;
                     case EPixelFormat::D32_FLOAT_S8X24_UINT:
                         return VK_FORMAT_D32_SFLOAT_S8_UINT;
+                    case EPixelFormat::D16_UNORM:
+                        return VK_FORMAT_D16_UNORM;
                     default:
                         return VK_FORMAT_UNDEFINED;
                 }
@@ -100,37 +102,39 @@ namespace Engine {
         }
     }  // namespace RHI
 
-    // VulkanResource Implementation
-    RHI::VulkanResource::VulkanResource(VulkanDevice* device,
-                                        const std::string& debugName)
-        : Device(device),
-          DebugName(debugName),
-          CurrentState(ERHIResourceState::Common) {}
+    namespace RHI {
+        VulkanResource::VulkanResource(VulkanDevice* device,
+                                       const std::string& debugName)
+            : Device(device),
+              DebugName(debugName),
+              CurrentState(ERHIResourceState::Common) {}
+    }  // namespace RHI
 
-    // VulkanBuffer Implementation
-    RHI::VulkanBuffer::VulkanBuffer(VulkanDevice* device,
-                                    const BufferDesc& desc)
-        : VulkanResource(device, desc.DebugName),
-          Desc(desc),
-          Buffer(VK_NULL_HANDLE),
-          Memory(VK_NULL_HANDLE),
-          MappedData(nullptr) {
-        if (!CreateBuffer()) {
-            LOG_ERROR("Failed to create Vulkan buffer!");
-            return;
-        }
+    namespace RHI {
+        VulkanBuffer::VulkanBuffer(VulkanDevice* device, const BufferDesc& desc)
+            : VulkanResource(device, desc.DebugName),
+              IRHIBuffer(),
+              Desc(desc),
+              Buffer(VK_NULL_HANDLE),
+              Memory(VK_NULL_HANDLE),
+              MappedData(nullptr) {
+            if (!CreateBuffer()) {
+                LOG_ERROR("Failed to create Vulkan buffer!");
+                return;
+            }
 
-        if (!AllocateMemory()) {
-            LOG_ERROR("Failed to allocate memory for Vulkan buffer!");
-            return;
-        }
+            if (!AllocateMemory()) {
+                LOG_ERROR("Failed to allocate memory for Vulkan buffer!");
+                return;
+            }
 
-        if (vkBindBufferMemory(Device->GetHandle(), Buffer, Memory, 0) !=
-            VK_SUCCESS) {
-            LOG_ERROR("Failed to bind buffer memory!");
-            return;
+            if (vkBindBufferMemory(Device->GetHandle(), Buffer, Memory, 0) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to bind buffer memory!");
+                return;
+            }
         }
-    }
+    }  // namespace RHI
 
     RHI::VulkanBuffer::~VulkanBuffer() {
         if (MappedData) {
@@ -151,8 +155,9 @@ namespace Engine {
         VkBufferCreateInfo bufferInfo = {};
         bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
         bufferInfo.size = Desc.SizeInBytes;
-        bufferInfo.usage =
-            VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+        bufferInfo.usage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT |
+                           VK_BUFFER_USAGE_TRANSFER_DST_BIT |
+                           VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
 
         // 根据缓冲区用途设置使用标志
         if (static_cast<uint32>(Desc.Flags) &
@@ -192,10 +197,10 @@ namespace Engine {
             properties |= VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
         }
 
-        // Memory = VulkanRHI::Get().GetMemoryAllocator()->AllocateMemory(
-        //     memRequirements, properties);
-        // return Memory != VK_NULL_HANDLE;
-        return true;
+        Memory =
+            Device->GetPhysicalDevice()->GetMemoryAllocator()->AllocateMemory(
+                memRequirements, properties);
+        return Memory != VK_NULL_HANDLE;
     }
 
     void* RHI::VulkanBuffer::Map(uint32 subresource [[maybe_unused]]) {
@@ -223,35 +228,44 @@ namespace Engine {
         }
     }
 
-    // VulkanTexture Implementation
-    RHI::VulkanTexture::VulkanTexture(VulkanDevice* device,
-                                      const TextureDesc& desc)
-        : VulkanResource(device, desc.DebugName),
-          Desc(desc),
-          Image(VK_NULL_HANDLE),
-          Memory(VK_NULL_HANDLE),
-          DefaultView(VK_NULL_HANDLE) {
-        if (!CreateImage()) {
-            LOG_ERROR("Failed to create Vulkan image!");
-            return;
-        }
-
-        if (!AllocateMemory()) {
-            LOG_ERROR("Failed to allocate memory for Vulkan image!");
-            return;
-        }
-
-        if (vkBindImageMemory(Device->GetHandle(), Image, Memory, 0) !=
-            VK_SUCCESS) {
-            LOG_ERROR("Failed to bind image memory!");
-            return;
-        }
-
-        if (!CreateDefaultView()) {
-            LOG_ERROR("Failed to create default image view!");
-            return;
-        }
+    uint64 RHI::VulkanBuffer::GetGPUVirtualAddress() const {
+        VkBufferDeviceAddressInfo addressInfo = {};
+        addressInfo.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
+        addressInfo.buffer = Buffer;
+        return vkGetBufferDeviceAddress(Device->GetHandle(), &addressInfo);
     }
+
+    namespace RHI {
+        VulkanTexture::VulkanTexture(VulkanDevice* device,
+                                     const TextureDesc& desc)
+            : VulkanResource(device, desc.DebugName),
+              IRHITexture(),
+              Desc(desc),
+              Image(VK_NULL_HANDLE),
+              Memory(VK_NULL_HANDLE),
+              DefaultView(VK_NULL_HANDLE) {
+            if (!CreateImage()) {
+                LOG_ERROR("Failed to create Vulkan image!");
+                return;
+            }
+
+            if (!AllocateMemory()) {
+                LOG_ERROR("Failed to allocate memory for Vulkan image!");
+                return;
+            }
+
+            if (vkBindImageMemory(Device->GetHandle(), Image, Memory, 0) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to bind image memory!");
+                return;
+            }
+
+            if (!CreateDefaultView()) {
+                LOG_ERROR("Failed to create default image view!");
+                return;
+            }
+        }
+    }  // namespace RHI
 
     RHI::VulkanTexture::~VulkanTexture() {
         if (DefaultView != VK_NULL_HANDLE) {
@@ -310,11 +324,11 @@ namespace Engine {
         vkGetImageMemoryRequirements(
             Device->GetHandle(), Image, &memRequirements);
 
-        // Memory = VulkanRHI::Get().GetMemoryAllocator()->AllocateMemory(
-        //     memRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        Memory =
+            Device->GetPhysicalDevice()->GetMemoryAllocator()->AllocateMemory(
+                memRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-        // return Memory != VK_NULL_HANDLE;
-        return true;
+        return Memory != VK_NULL_HANDLE;
     }
 
     bool RHI::VulkanTexture::CreateDefaultView() {
@@ -348,18 +362,14 @@ namespace Engine {
     }
 
     // VulkanShader Implementation
-    RHI::VulkanShader::VulkanShader(VulkanDevice* device,
-                                    const ShaderDesc& desc,
-                                    const void* shaderData,
-                                    size_t dataSize)
-        : VulkanResource(device, desc.DebugName),
-          Desc(desc),
-          ShaderModule(VK_NULL_HANDLE),
-          ShaderSize(dataSize) {
-        if (!CreateShaderModule(shaderData, dataSize)) {
-            LOG_ERROR("Failed to create shader module!");
-        }
-    }
+    namespace RHI {
+        VulkanShader::VulkanShader(VulkanDevice* device, const ShaderDesc& desc)
+            : VulkanResource(device, desc.DebugName),
+              IRHIShader(),
+              Desc(desc),
+              ShaderModule(VK_NULL_HANDLE),
+              ShaderSize(0) {}
+    }  // namespace RHI
 
     RHI::VulkanShader::~VulkanShader() {
         if (ShaderModule != VK_NULL_HANDLE) {
@@ -379,23 +389,26 @@ namespace Engine {
                VK_SUCCESS;
     }
 
-    // VulkanRenderTargetView Implementation
-    RHI::VulkanRenderTargetView::VulkanRenderTargetView(
-        VulkanDevice* device,
-        IRHIResource* resource,
-        const RenderTargetViewDesc& desc)
-        : VulkanResource(device, desc.DebugName),
-          Desc(desc),
-          Resource(resource),
-          ImageView(VK_NULL_HANDLE) {
-        if (!CreateImageView()) {
-            LOG_ERROR("Failed to create render target view!");
-        }
-    }
+    namespace RHI {
+        VulkanRenderTargetView::VulkanRenderTargetView(
+            VulkanDevice* device, const RenderTargetViewDesc& desc)
+            : VulkanResource(device, desc.DebugName),
+              IRHIRenderTargetView(),
+              Desc(desc),
+              Resource(nullptr),
+              ImageView(VK_NULL_HANDLE) {}
+    }  // namespace RHI
 
     RHI::VulkanRenderTargetView::~VulkanRenderTargetView() {
         if (ImageView != VK_NULL_HANDLE) {
             vkDestroyImageView(Device->GetHandle(), ImageView, nullptr);
+        }
+    }
+
+    void RHI::VulkanRenderTargetView::SetResource(IRHIResource* resource) {
+        Resource = resource;
+        if (!CreateImageView()) {
+            LOG_ERROR("Failed to create render target view!");
         }
     }
 
@@ -426,23 +439,26 @@ namespace Engine {
                VK_SUCCESS;
     }
 
-    // VulkanDepthStencilView Implementation
-    RHI::VulkanDepthStencilView::VulkanDepthStencilView(
-        VulkanDevice* device,
-        IRHIResource* resource,
-        const DepthStencilViewDesc& desc)
-        : VulkanResource(device, desc.DebugName),
-          Desc(desc),
-          Resource(resource),
-          ImageView(VK_NULL_HANDLE) {
-        if (!CreateImageView()) {
-            LOG_ERROR("Failed to create depth stencil view!");
-        }
-    }
+    namespace RHI {
+        VulkanDepthStencilView::VulkanDepthStencilView(
+            VulkanDevice* device, const DepthStencilViewDesc& desc)
+            : VulkanResource(device, desc.DebugName),
+              IRHIDepthStencilView(),
+              Desc(desc),
+              Resource(nullptr),
+              ImageView(VK_NULL_HANDLE) {}
+    }  // namespace RHI
 
     RHI::VulkanDepthStencilView::~VulkanDepthStencilView() {
         if (ImageView != VK_NULL_HANDLE) {
             vkDestroyImageView(Device->GetHandle(), ImageView, nullptr);
+        }
+    }
+
+    void RHI::VulkanDepthStencilView::SetResource(IRHIResource* resource) {
+        Resource = resource;
+        if (!CreateImageView()) {
+            LOG_ERROR("Failed to create depth stencil view!");
         }
     }
 
@@ -483,20 +499,21 @@ namespace Engine {
         return false;
     }
 
-    // VulkanShaderResourceView Implementation
-    RHI::VulkanShaderResourceView::VulkanShaderResourceView(
-        VulkanDevice* device,
-        IRHIResource* resource,
-        const ShaderResourceViewDesc& desc)
-        : VulkanResource(device, desc.DebugName),
-          Desc(desc),
-          Resource(resource),
-          ImageView(VK_NULL_HANDLE),
-          BufferView(VK_NULL_HANDLE) {
-        if (!CreateView()) {
-            LOG_ERROR("Failed to create shader resource view!");
+    namespace RHI {
+        VulkanShaderResourceView::VulkanShaderResourceView(
+            VulkanDevice* device,
+            IRHIResource* resource,
+            const ShaderResourceViewDesc& desc)
+            : VulkanResource(device, desc.DebugName),
+              Desc(desc),
+              Resource(resource),
+              ImageView(VK_NULL_HANDLE),
+              BufferView(VK_NULL_HANDLE) {
+            if (!CreateView()) {
+                LOG_ERROR("Failed to create shader resource view!");
+            }
         }
-    }
+    }  // namespace RHI
 
     RHI::VulkanShaderResourceView::~VulkanShaderResourceView() {
         if (ImageView != VK_NULL_HANDLE) {
@@ -553,20 +570,21 @@ namespace Engine {
         }
     }
 
-    // VulkanUnorderedAccessView Implementation
-    RHI::VulkanUnorderedAccessView::VulkanUnorderedAccessView(
-        VulkanDevice* device,
-        IRHIResource* resource,
-        const UnorderedAccessViewDesc& desc)
-        : VulkanResource(device, desc.DebugName),
-          Desc(desc),
-          Resource(resource),
-          ImageView(VK_NULL_HANDLE),
-          BufferView(VK_NULL_HANDLE) {
-        if (!CreateView()) {
-            LOG_ERROR("Failed to create unordered access view!");
+    namespace RHI {
+        VulkanUnorderedAccessView::VulkanUnorderedAccessView(
+            VulkanDevice* device,
+            IRHIResource* resource,
+            const UnorderedAccessViewDesc& desc)
+            : VulkanResource(device, desc.DebugName),
+              Desc(desc),
+              Resource(resource),
+              ImageView(VK_NULL_HANDLE),
+              BufferView(VK_NULL_HANDLE) {
+            if (!CreateView()) {
+                LOG_ERROR("Failed to create unordered access view!");
+            }
         }
-    }
+    }  // namespace RHI
 
     RHI::VulkanUnorderedAccessView::~VulkanUnorderedAccessView() {
         if (ImageView != VK_NULL_HANDLE) {

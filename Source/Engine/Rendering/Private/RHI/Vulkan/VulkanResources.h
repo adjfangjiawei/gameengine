@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -38,13 +37,22 @@ namespace Engine {
         // Vulkan缓冲区实现
         class VulkanBuffer : public VulkanResource, public IRHIBuffer {
           public:
-            VulkanBuffer(VulkanDevice* device, const BufferDesc& desc);
+            explicit VulkanBuffer(VulkanDevice* device, const BufferDesc& desc);
+            void SetHandle(VkBuffer buffer, VkDeviceMemory memory);
             virtual ~VulkanBuffer();
 
             // IRHIBuffer接口实现
             virtual const BufferDesc& GetDesc() const override { return Desc; }
             virtual void* Map(uint32 subresource = 0) override;
             virtual void Unmap(uint32 subresource = 0) override;
+            virtual uint64 GetGPUVirtualAddress() const override;
+
+            virtual const std::string& GetName() const override {
+                return DebugName;
+            }
+            virtual ERHIResourceState GetCurrentState() const override {
+                return CurrentState;
+            }
 
             // IRHIResource接口实现
             virtual ERHIResourceDimension GetResourceDimension()
@@ -70,7 +78,11 @@ namespace Engine {
         // Vulkan纹理实现
         class VulkanTexture : public VulkanResource, public IRHITexture {
           public:
-            VulkanTexture(VulkanDevice* device, const TextureDesc& desc);
+            explicit VulkanTexture(VulkanDevice* device,
+                                   const TextureDesc& desc);
+            void SetHandle(VkImage image,
+                           VkDeviceMemory memory,
+                           VkImageView view);
             virtual ~VulkanTexture();
 
             // IRHITexture接口实现
@@ -95,6 +107,13 @@ namespace Engine {
             }
             virtual uint64 GetSize() const override;
 
+            virtual const std::string& GetName() const override {
+                return DebugName;
+            }
+            virtual ERHIResourceState GetCurrentState() const override {
+                return CurrentState;
+            }
+
             // Vulkan特定方法
             VkImage GetHandle() const { return Image; }
             VkDeviceMemory GetMemory() const { return Memory; }
@@ -115,10 +134,9 @@ namespace Engine {
         // Vulkan着色器实现
         class VulkanShader : public VulkanResource, public IRHIShader {
           public:
-            VulkanShader(VulkanDevice* device,
-                         const ShaderDesc& desc,
-                         const void* shaderData,
-                         size_t dataSize);
+            explicit VulkanShader(VulkanDevice* device, const ShaderDesc& desc);
+            void SetHandle(VkShaderModule shaderModule,
+                           VkPipelineShaderStageCreateInfo stageInfo);
             virtual ~VulkanShader();
 
             // IRHIShader接口实现
@@ -127,7 +145,12 @@ namespace Engine {
             virtual const std::string& GetEntryPoint() const override {
                 return Desc.EntryPoint;
             }
-
+            virtual const std::string& GetName() const override {
+                return DebugName;
+            }
+            virtual ERHIResourceState GetCurrentState() const override {
+                return CurrentState;
+            }
             // IRHIResource接口实现
             virtual ERHIResourceDimension GetResourceDimension()
                 const override {
@@ -143,6 +166,7 @@ namespace Engine {
 
             ShaderDesc Desc;
             VkShaderModule ShaderModule;
+            VkPipelineShaderStageCreateInfo ShaderStageInfo;
             size_t ShaderSize;
         };
 
@@ -150,9 +174,11 @@ namespace Engine {
         class VulkanRenderTargetView : public VulkanResource,
                                        public IRHIRenderTargetView {
           public:
-            VulkanRenderTargetView(VulkanDevice* device,
-                                   IRHIResource* resource,
-                                   const RenderTargetViewDesc& desc);
+            explicit VulkanRenderTargetView(VulkanDevice* device,
+                                            const RenderTargetViewDesc& desc);
+            void SetHandle(VkImageView imageView,
+                           VkDescriptorImageInfo descriptorInfo);
+            void SetResource(IRHIResource* resource);
             virtual ~VulkanRenderTargetView();
 
             // IRHIRenderTargetView接口实现
@@ -161,6 +187,12 @@ namespace Engine {
             }
             virtual IRHIResource* GetResource() const override {
                 return Resource;
+            }
+            virtual const std::string& GetName() const override {
+                return DebugName;
+            }
+            virtual ERHIResourceState GetCurrentState() const override {
+                return CurrentState;
             }
 
             // IRHIResource接口实现
@@ -179,15 +211,18 @@ namespace Engine {
             RenderTargetViewDesc Desc;
             IRHIResource* Resource;
             VkImageView ImageView;
+            VkDescriptorImageInfo DescriptorInfo;
         };
 
         // Vulkan深度模板视图实现
         class VulkanDepthStencilView : public VulkanResource,
                                        public IRHIDepthStencilView {
           public:
-            VulkanDepthStencilView(VulkanDevice* device,
-                                   IRHIResource* resource,
-                                   const DepthStencilViewDesc& desc);
+            explicit VulkanDepthStencilView(VulkanDevice* device,
+                                            const DepthStencilViewDesc& desc);
+            void SetHandle(VkImageView imageView,
+                           VkDescriptorImageInfo descriptorInfo);
+            void SetResource(IRHIResource* resource);
             virtual ~VulkanDepthStencilView();
 
             // IRHIDepthStencilView接口实现
@@ -198,6 +233,12 @@ namespace Engine {
                 return Resource;
             }
 
+            virtual const std::string& GetName() const override {
+                return DebugName;
+            }
+            virtual ERHIResourceState GetCurrentState() const override {
+                return CurrentState;
+            }
             // IRHIResource接口实现
             virtual ERHIResourceDimension GetResourceDimension()
                 const override {
@@ -214,6 +255,7 @@ namespace Engine {
             DepthStencilViewDesc Desc;
             IRHIResource* Resource;
             VkImageView ImageView;
+            VkDescriptorImageInfo DescriptorInfo;
         };
 
         // Vulkan着色器资源视图实现
@@ -231,6 +273,13 @@ namespace Engine {
             }
             virtual IRHIResource* GetResource() const override {
                 return Resource;
+            }
+
+            virtual const std::string& GetName() const override {
+                return DebugName;
+            }
+            virtual ERHIResourceState GetCurrentState() const override {
+                return CurrentState;
             }
 
             // IRHIResource接口实现

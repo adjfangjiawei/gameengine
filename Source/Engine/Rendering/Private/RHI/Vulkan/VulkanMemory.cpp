@@ -1,7 +1,10 @@
-
 #include "VulkanMemory.h"
 
+#include <algorithm>
 #include <cassert>
+
+#include "Core/Public/Log/LogSystem.h"
+#include "VulkanRHI.h"
 
 namespace Engine {
     namespace RHI {
@@ -140,11 +143,127 @@ namespace Engine {
         }
 
         void VulkanMemoryAllocator::Free(void* ptr) {
-            // 在实际实现中，我们需要跟踪每个分配的内存块
-            // 这里简化处理，实际项目中应该使用内存池或其他更复杂的内存管理策略
-            if (ptr) {
-                // TODO: 实现proper内存释放
-                m_Stats.CurrentUsed -= 0;  // 更新统计信息
+            if (!ptr) return;
+
+            std::lock_guard<std::mutex> lock(m_AllocationMutex);
+
+            // 查找对应的内存块
+            auto it = m_Allocations.find(ptr);
+            if (it != m_Allocations.end()) {
+                const AllocationInfo& info = it->second;
+
+                // 如果是映射的内存，先解除映射
+                if (info.IsMapped) {
+                    vkUnmapMemory(m_Device, info.Memory);
+                }
+
+                // 释放内存
+                vkFreeMemory(m_Device, info.Memory, nullptr);
+
+                // 更新统计信息
+                m_Stats.CurrentUsed -= info.Size;
+
+                // 从跟踪表中移除
+                m_Allocations.erase(it);
+
+                // 尝试合并相邻的空闲块
+                DefragmentMemory();
+            } else {
+                LOG_WARNING("Attempting to free untracked memory pointer");
+            }
+        }
+
+        void VulkanMemoryAllocator::DefragmentMemory() {
+            // 检查是否需要进行碎片整理
+            if (m_Allocations.size() > MAX_ALLOCATION_COUNT ||
+                (static_cast<float>(m_Stats.CurrentUsed) /
+                 m_Stats.TotalAllocated) < FRAGMENTATION_THRESHOLD) {
+                std::vector<std::pair<void*, AllocationInfo>> sortedAllocations(
+                    m_Allocations.begin(), m_Allocations.end());
+
+                // 按内存地址排序
+                std::sort(sortedAllocations.begin(),
+                          sortedAllocations.end(),
+                          [](const auto& a, const auto& b) {
+                              return a.first < b.first;
+                          });
+
+                // 查找并合并相邻的空闲块
+                for (size_t i = 0; i < sortedAllocations.size() - 1; ++i) {
+                    auto& current = sortedAllocations[i];
+                    auto& next = sortedAllocations[i + 1];
+
+                    // 如果两个块相邻且类型相同，尝试合并
+                    if (current.second.MemoryTypeIndex ==
+                        next.second.MemoryTypeIndex) {
+                        // 创建新的合并块
+                        VkMemoryAllocateInfo allocInfo = {};
+                        allocInfo.sType =
+                            VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+                        allocInfo.allocationSize =
+                            current.second.Size + next.second.Size;
+                        allocInfo.memoryTypeIndex =
+                            current.second.MemoryTypeIndex;
+
+                        VkDeviceMemory newMemory;
+                        if (vkAllocateMemory(
+                                m_Device, &allocInfo, nullptr, &newMemory) ==
+                            VK_SUCCESS) {
+                            // 复制数据到新块
+                            void* newData;
+                            if (vkMapMemory(m_Device,
+                                            newMemory,
+                                            0,
+                                            allocInfo.allocationSize,
+                                            0,
+                                            &newData) == VK_SUCCESS) {
+                                // 复制第一个块的数据
+                                void* srcData;
+                                vkMapMemory(m_Device,
+                                            current.second.Memory,
+                                            0,
+                                            current.second.Size,
+                                            0,
+                                            &srcData);
+                                memcpy(newData, srcData, current.second.Size);
+                                vkUnmapMemory(m_Device, current.second.Memory);
+
+                                // 复制第二个块的数据
+                                vkMapMemory(m_Device,
+                                            next.second.Memory,
+                                            0,
+                                            next.second.Size,
+                                            0,
+                                            &srcData);
+                                memcpy(static_cast<char*>(newData) +
+                                           current.second.Size,
+                                       srcData,
+                                       next.second.Size);
+                                vkUnmapMemory(m_Device, next.second.Memory);
+
+                                vkUnmapMemory(m_Device, newMemory);
+
+                                // 释放旧内存
+                                vkFreeMemory(
+                                    m_Device, current.second.Memory, nullptr);
+                                vkFreeMemory(
+                                    m_Device, next.second.Memory, nullptr);
+
+                                // 更新分配信息
+                                AllocationInfo newInfo = {
+                                    newMemory,
+                                    allocInfo.allocationSize,
+                                    false,
+                                    current.second.MemoryTypeIndex};
+
+                                // 更新跟踪表
+                                m_Allocations.erase(current.first);
+                                m_Allocations.erase(next.first);
+                                m_Allocations[newData] = newInfo;
+                            }
+                        }
+                    }
+                }
             }
         }
 

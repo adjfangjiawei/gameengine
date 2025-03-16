@@ -1,10 +1,17 @@
-
 #pragma once
 
 #include <vulkan/vulkan.h>
 
+#include <mutex>
+#include <unordered_map>
+
 #include "RHI/RHIMemory.h"
-#include "VulkanRHI.h"
+// Forward declarations
+namespace Engine {
+    namespace RHI {
+        class VulkanDevice;
+    }
+}  // namespace Engine
 
 namespace Engine {
     namespace RHI {
@@ -68,13 +75,26 @@ namespace Engine {
             void FreeMemory(VkDeviceMemory memory);
 
           private:
+            struct AllocationInfo {
+                VkDeviceMemory Memory;
+                uint64 Size;
+                bool IsMapped;
+                uint32 MemoryTypeIndex;
+            };
+
             uint32_t FindMemoryType(uint32_t typeFilter,
                                     VkMemoryPropertyFlags properties);
+            void DefragmentMemory();
+
+            static constexpr size_t MAX_ALLOCATION_COUNT = 1000;
+            static constexpr float FRAGMENTATION_THRESHOLD = 0.7f;
 
             VkDevice m_Device;
             VkPhysicalDevice m_PhysicalDevice;
             VkPhysicalDeviceMemoryProperties m_MemoryProperties;
             std::vector<VkDeviceMemory> AllocatedMemory;
+            std::mutex m_AllocationMutex;
+            std::unordered_map<void*, AllocationInfo> m_Allocations;
 
             // 内存统计
             struct {

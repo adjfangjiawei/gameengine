@@ -122,6 +122,15 @@ namespace Engine {
             VkCommandBuffer GetCommandBuffer() const;
             bool IsRecording() const { return IsInRecordingState; }
 
+            // 添加Vulkan特定的状态设置方法
+            void SetBlendState(
+                const VkPipelineColorBlendStateCreateInfo& blendState);
+            void SetRasterizerState(
+                const VkPipelineRasterizationStateCreateInfo& rasterizerState,
+                const VkPipelineMultisampleStateCreateInfo& multisampleState);
+            void SetDepthStencilState(
+                const VkPipelineDepthStencilStateCreateInfo& depthStencilState);
+
           private:
             void BeginRenderPass();
             void EndRenderPass();
@@ -145,6 +154,12 @@ namespace Engine {
                 VkPipeline CurrentPipeline;
                 VkPipelineLayout CurrentPipelineLayout;
                 std::vector<VkDescriptorSet> CurrentDescriptorSets;
+
+                // Pipeline states
+                VkPipelineColorBlendStateCreateInfo BlendState;
+                VkPipelineRasterizationStateCreateInfo RasterizerState;
+                VkPipelineMultisampleStateCreateInfo MultisampleState;
+                VkPipelineDepthStencilStateCreateInfo DepthStencilState;
             } State;
         };
 
