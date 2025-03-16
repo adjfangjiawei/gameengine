@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "name": "MemoryTest",
+            "type": "lldb",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/build/bin/MemoryTest",
+            // "stopOnEntry": true
+        }
+    ]
+}

@@ -265,13 +265,13 @@ namespace Engine {
     void FileLogSink::OpenLogFile(bool append) {
         try {
             FileMode mode = append ? FileMode::Append : FileMode::Write;
-            auto file = FileSystem::Get().OpenFile(m_filename, mode);
-            if (!file) {
+            m_fileHandle = FileSystem::Get().OpenFile(m_filename, mode);
+            if (!m_fileHandle) {
                 throw std::runtime_error("Failed to open log file");
             }
 
             m_currentSize = append && FileSystem::Get().Exists(m_filename)
-                                ? file->GetSize()
+                                ? m_fileHandle->GetSize()
                                 : 0;
 
             m_file = std::ofstream(

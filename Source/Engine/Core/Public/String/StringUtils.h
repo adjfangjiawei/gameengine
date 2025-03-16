@@ -81,11 +81,11 @@ namespace Engine {
         static std::string Replace(const std::string &str,
                                    const std::string &from,
                                    const std::string &to,
-                                   size_t maxReplacements = 0);
+                                   size_t maxReplacements = 100);
         static std::string ReplaceAll(std::string_view str,
                                       std::string_view from,
                                       std::string_view to,
-                                      size_t maxReplacements = 0);
+                                      size_t maxReplacements = 100);
         template <typename... Args>
         static std::string Format(const char *format, Args &&...args) {
             std::ostringstream oss;

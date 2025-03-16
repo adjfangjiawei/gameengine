@@ -134,7 +134,7 @@ namespace Engine {
         std::unordered_map<std::string, std::unique_ptr<Logger>> m_loggers;
         LogFormat m_format;
         LogLevel m_minLevel;
-        mutable std::mutex m_mutex;
+        mutable std::recursive_mutex m_mutex;
         friend class ILogSink;
         friend class FileLogSink;
         friend class ConsoleLogSink;

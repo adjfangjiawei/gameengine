@@ -36,7 +36,7 @@ namespace Engine {
 
       private:
         FILE *m_handle;
-        mutable std::mutex m_mutex;
+        mutable std::recursive_mutex m_mutex;
         bool m_closed;
     };
 
@@ -149,7 +149,7 @@ namespace Engine {
                                    const std::string &pattern);
 
       private:
-        mutable std::mutex m_mutex;
+        mutable std::recursive_mutex m_mutex;
     };
 
 }  // namespace Engine

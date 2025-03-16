@@ -5,8 +5,8 @@
 #include <iomanip>
 #include <iostream>
 
-#include "Log/LogSinks.h"
 #include "Log/LogCommon.h"
+#include "Log/LogSinks.h"
 #include "String/StringUtils.h"
 
 namespace Engine {
@@ -48,7 +48,7 @@ namespace Engine {
     }
 
     void LogSystem::Initialize() {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         // Add default console sink with colors
         AddSink(std::make_unique<ConsoleLogSink>(true));
 
@@ -62,19 +62,19 @@ namespace Engine {
     }
 
     void LogSystem::Shutdown() {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         Flush();
         m_sinks.clear();
         m_loggers.clear();
     }
 
     void LogSystem::AddSink(std::unique_ptr<ILogSink> sink) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         m_sinks.push_back(std::move(sink));
     }
 
     void LogSystem::RemoveSink(ILogSink *sink) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         auto it =
             std::find_if(m_sinks.begin(), m_sinks.end(), [sink](const auto &s) {
                 return s.get() == sink;
@@ -85,27 +85,28 @@ namespace Engine {
     }
 
     void LogSystem::SetLogLevel(LogLevel level) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         m_minLevel = level;
     }
 
     LogLevel LogSystem::GetLogLevel() const {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         return m_minLevel;
     }
 
     void LogSystem::SetFormat(const LogFormat &format) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         m_format = format;
     }
 
     const LogFormat &LogSystem::GetFormat() const {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         return m_format;
     }
 
     Logger &LogSystem::GetLogger(const std::string &category) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
+        Initialize();
         auto it = m_loggers.find(category);
         if (it == m_loggers.end()) {
             auto [newIt, inserted] =
@@ -120,7 +121,7 @@ namespace Engine {
             return;
         }
 
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         for (const auto &sink : m_sinks) {
             sink->Write(message);
         }
@@ -131,7 +132,7 @@ namespace Engine {
     }
 
     void LogSystem::Flush() {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         for (const auto &sink : m_sinks) {
             sink->Flush();
         }

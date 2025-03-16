@@ -29,7 +29,7 @@ namespace Engine {
 
     StandardFile::~StandardFile() {
         if (!m_closed) {
-            std::lock_guard<std::mutex> lock(m_mutex);
+            std::lock_guard<std::recursive_mutex> lock(m_mutex);
             if (!m_closed) {
                 fclose(m_handle);
                 m_closed = true;
@@ -38,26 +38,26 @@ namespace Engine {
     }
 
     size_t StandardFile::Read(void* buffer, size_t size) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         if (m_closed || !buffer || size == 0) return 0;
         return fread(buffer, 1, size, m_handle);
     }
 
     size_t StandardFile::Write(const void* buffer, size_t size) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         if (m_closed || !buffer || size == 0) return 0;
         return fwrite(buffer, 1, size, m_handle);
     }
 
     void StandardFile::Flush() {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         if (!m_closed) {
             fflush(m_handle);
         }
     }
 
     void StandardFile::Seek(int64_t offset, int origin) const {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         if (!m_closed) {
 #if PLATFORM_WINDOWS
             _fseeki64(m_handle, offset, origin);
@@ -68,7 +68,7 @@ namespace Engine {
     }
 
     int64_t StandardFile::Tell() const {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         if (m_closed) return -1;
 #if PLATFORM_WINDOWS
         return _ftelli64(m_handle);
@@ -78,7 +78,7 @@ namespace Engine {
     }
 
     size_t StandardFile::GetSize() const {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         if (m_closed) return 0;
 
         int64_t currentPos = Tell();
@@ -89,13 +89,13 @@ namespace Engine {
     }
 
     bool StandardFile::IsEOF() const {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         if (m_closed) return true;
         return feof(m_handle) != 0;
     }
 
     void StandardFile::Close() {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         if (!m_closed) {
             fclose(m_handle);
             m_closed = true;
@@ -103,7 +103,7 @@ namespace Engine {
     }
 
     std::vector<uint8_t> StandardFile::ReadAll() {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         if (m_closed) return std::vector<uint8_t>();
 
         size_t size = GetSize();
@@ -132,7 +132,7 @@ namespace Engine {
     }
 
     bool StandardFile::WriteAllBytes(const std::vector<uint8_t>& data) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         if (m_closed) return false;
 
         Seek(0, SEEK_SET);
@@ -162,7 +162,7 @@ namespace Engine {
     std::unique_ptr<IFile> StandardFileSystem::OpenFile(const std::string& path,
                                                         FileMode mode,
                                                         FileShare share) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
         try {
             // Check if path is empty
@@ -241,7 +241,7 @@ namespace Engine {
     }
 
     bool StandardFileSystem::CreateDirectory(const std::string& path) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         try {
             if (Exists(path)) {
                 if (IsDirectory(path)) {
@@ -272,7 +272,7 @@ namespace Engine {
     }
 
     bool StandardFileSystem::DeleteFile(const std::string& path) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         try {
             if (!Exists(path)) {
                 return false;  // File doesn't exist
@@ -305,7 +305,7 @@ namespace Engine {
 
     bool StandardFileSystem::MoveFile(const std::string& source,
                                       const std::string& destination) {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
         try {
             if (!Exists(source)) {
                 return false;  // Source file doesn't exist
@@ -738,7 +738,7 @@ namespace Engine {
     std::vector<FileSystemEntry> StandardFileSystem::ListDirectory(
         const std::string& path, const std::string& pattern) const {
         std::vector<FileSystemEntry> entries;
-        std::lock_guard<std::mutex> lock(m_mutex);
+        std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
         try {
             // Check if directory exists

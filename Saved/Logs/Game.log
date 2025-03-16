@@ -1,0 +1,21 @@
+
+[2025-03-16 18:35:22.03s][INFO][Default][140737314913152] Starting memory management tests...
+[2025-03-16 18:36:24.03s][INFO][Default][140737314913152] Testing LinearAllocator...
+[2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr1) == 128 - Allocation size should match
+[2025-03-16 18:35:22.03s][INFO][Default][140737314913152] Starting memory management tests...
+[2025-03-16 18:36:24.03s][INFO][Default][140737314913152] Testing LinearAllocator...
+[2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr1) == 128 - Allocation size should match
+[2025-03-16 18:36:24.03s][INFO][Default][140737314913152] Testing LinearAllocator...
+[2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr1) == 128 - Allocation size should match
+[2025-03-16 18:36:24.03s][INFO][Default][140737314913152] Testing LinearAllocator...
+[2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr1) == 128 - Allocation size should match
+[2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr1) == 128 - Allocation size should match
+[2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr1) == 128 - Allocation size should match
+[2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr2) == 256 - Second allocation size should match
+[2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr2) == 256 - Second allocation size should match
+[2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr2) == 256 - Second allocation size should match
+[2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr2) == 256 - Second allocation size should match
+[2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr2) == 256 - Second allocation size should match
+[2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr2) == 256 - Second allocation size should match
+[2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr2) == 256 - Second allocation size should match
+[2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr2) == 256 - Second allocation size should match
