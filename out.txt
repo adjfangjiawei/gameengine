@@ -1,0 +1,85 @@
+/game/gameenginestepbustep/Source/Engine/Public/Core/FileSystem/FilePermissions.h:34:16: warning: The value '5' provided to the cast expression is not in the valid range of values for 'FilePermission' [clang-analyzer-optin.core.EnumCastOutOfRange]
+   34 |         return static_cast<FilePermission>(static_cast<int>(a) |
+      |                ^
+/game/gameenginestepbustep/Source/Engine/Public/Core/FileSystem/FilePermissions.h:10:16: note: enum declared here
+   10 |     enum class FilePermission {
+      |     ~~~~~~~~~~~^~~~~~~~~~~~~~~~
+   11 |         None = 0,
+      |         ~~~~~~~~~
+   12 |         UserRead = 1 << 0,
+      |         ~~~~~~~~~~~~~~~~~~
+   13 |         UserWrite = 1 << 1,
+      |         ~~~~~~~~~~~~~~~~~~~
+   14 |         UserExecute = 1 << 2,
+      |         ~~~~~~~~~~~~~~~~~~~~~
+   15 |         GroupRead = 1 << 3,
+      |         ~~~~~~~~~~~~~~~~~~~
+   16 |         GroupWrite = 1 << 4,
+      |         ~~~~~~~~~~~~~~~~~~~~
+   17 |         GroupExecute = 1 << 5,
+      |         ~~~~~~~~~~~~~~~~~~~~~~
+   18 |         OtherRead = 1 << 6,
+      |         ~~~~~~~~~~~~~~~~~~~
+   19 |         OtherWrite = 1 << 7,
+      |         ~~~~~~~~~~~~~~~~~~~~
+   20 |         OtherExecute = 1 << 8,
+      |         ~~~~~~~~~~~~~~~~~~~~~~
+   21 | 
+   22 |         // Common combinations
+      |         ~~~~~~~~~~~~~~~~~~~~~~
+   23 |         UserAll = UserRead | UserWrite | UserExecute,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   24 |         GroupAll = GroupRead | GroupWrite | GroupExecute,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   25 |         OtherAll = OtherRead | OtherWrite | OtherExecute,
+      |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:196:21: note: Calling 'main'
+  196 | int main() { return Engine::Test::main(); }
+      |                     ^~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:179:23: note: Calling 'TestDirectoryPermissions'
+  179 |             result |= TestDirectoryPermissions();
+      |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:75:13: note: Assuming the condition is false
+   75 |             TEST_ASSERT(FileSystem::Get().CreateDirectory(testDir),
+      |             ^
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:17:13: note: expanded from macro 'TEST_ASSERT'
+   17 |         if (!(condition)) {                        \
+      |             ^~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:75:13: note: Taking false branch
+   75 |             TEST_ASSERT(FileSystem::Get().CreateDirectory(testDir),
+      |             ^
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:17:9: note: expanded from macro 'TEST_ASSERT'
+   17 |         if (!(condition)) {                        \
+      |         ^
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:75:13: note: Loop condition is false.  Exiting loop
+   75 |             TEST_ASSERT(FileSystem::Get().CreateDirectory(testDir),
+      |             ^
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:16:5: note: expanded from macro 'TEST_ASSERT'
+   16 |     do {                                           \
+      |     ^
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:80:25: note: Assuming the condition is true
+   80 |             TEST_ASSERT((perms & FilePermission::DefaultDir) ==
+      |                         ^
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:17:15: note: expanded from macro 'TEST_ASSERT'
+   17 |         if (!(condition)) {                        \
+      |               ^~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:80:13: note: Taking false branch
+   80 |             TEST_ASSERT((perms & FilePermission::DefaultDir) ==
+      |             ^
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:17:9: note: expanded from macro 'TEST_ASSERT'
+   17 |         if (!(condition)) {                        \
+      |         ^
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:80:13: note: Loop condition is false.  Exiting loop
+   80 |             TEST_ASSERT((perms & FilePermission::DefaultDir) ==
+      |             ^
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:16:5: note: expanded from macro 'TEST_ASSERT'
+   16 |     do {                                           \
+      |     ^
+/game/gameenginestepbustep/Source/Engine/Private/Core/Test/FilePermissionsTest.cpp:86:17: note: Calling 'operator|'
+   86 |                 FilePermission::UserRead | FilePermission::UserExecute;
+      |                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Public/Core/FileSystem/FilePermissions.h:34:16: note: The value '5' provided to the cast expression is not in the valid range of values for 'FilePermission'
+   34 |         return static_cast<FilePermission>(static_cast<int>(a) |
+      |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   35 |                                            static_cast<int>(b));
+      |                                            ~~~~~~~~~~~~~~~~~~~~

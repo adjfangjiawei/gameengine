@@ -1,0 +1,536 @@
+#!/bin/bash
+
+# Create top-level directories
+mkdir -p Binaries
+mkdir -p Build
+mkdir -p Config
+mkdir -p Content
+mkdir -p DerivedDataCache
+mkdir -p Intermediate
+mkdir -p Plugins
+mkdir -p Saved
+mkdir -p Source
+
+# Content directory structure - Animations
+mkdir -p Content/Animations/Characters/Humanoid
+mkdir -p Content/Animations/Characters/Creatures
+mkdir -p Content/Animations/Characters/Monsters
+mkdir -p Content/Animations/Characters/NPCs
+mkdir -p Content/Animations/Characters/Players
+mkdir -p Content/Animations/Props
+mkdir -p Content/Animations/Vehicles
+mkdir -p Content/Animations/Weapons
+mkdir -p Content/Animations/Environment
+mkdir -p Content/Animations/FX
+mkdir -p Content/Animations/UI
+mkdir -p Content/Animations/Cutscenes
+mkdir -p Content/Animations/Sequences
+mkdir -p Content/Animations/Montages
+mkdir -p Content/Animations/BlendSpaces
+mkdir -p Content/Animations/RetargetingPresets
+mkdir -p Content/Animations/MorphTargets
+mkdir -p Content/Animations/Poses
+mkdir -p Content/Animations/AnimationLayers
+mkdir -p Content/Animations/StatesMachines
+
+# Content directory structure - Audio
+mkdir -p Content/Audio/Ambient
+mkdir -p Content/Audio/Music
+mkdir -p Content/Audio/SFX
+mkdir -p Content/Audio/Voice
+mkdir -p Content/Audio/Dialogue
+mkdir -p Content/Audio/Foley
+mkdir -p Content/Audio/UI
+mkdir -p Content/Audio/Weapons
+mkdir -p Content/Audio/Vehicles
+mkdir -p Content/Audio/Characters
+mkdir -p Content/Audio/Environment
+mkdir -p Content/Audio/Cinematics
+mkdir -p Content/Audio/Creatures
+mkdir -p Content/Audio/Props
+mkdir -p Content/Audio/Weather
+mkdir -p Content/Audio/Impacts
+mkdir -p Content/Audio/Footsteps
+mkdir -p Content/Audio/Abilities
+mkdir -p Content/Audio/Atmospheres
+mkdir -p Content/Audio/Reverb
+mkdir -p Content/Audio/Soundscapes
+
+# Content directory structure - Blueprints
+mkdir -p Content/Blueprints/Characters
+mkdir -p Content/Blueprints/AI
+mkdir -p Content/Blueprints/Interfaces
+mkdir -p Content/Blueprints/GameFramework
+mkdir -p Content/Blueprints/Weapons
+mkdir -p Content/Blueprints/Items
+mkdir -p Content/Blueprints/Vehicles
+mkdir -p Content/Blueprints/Environment
+mkdir -p Content/Blueprints/UI
+mkdir -p Content/Blueprints/Gameplay
+mkdir -p Content/Blueprints/VFX
+mkdir -p Content/Blueprints/Animation
+mkdir -p Content/Blueprints/Audio
+mkdir -p Content/Blueprints/Utilities
+mkdir -p Content/Blueprints/DataTables
+mkdir -p Content/Blueprints/Enums
+mkdir -p Content/Blueprints/Structs
+mkdir -p Content/Blueprints/Functions
+mkdir -p Content/Blueprints/Macros
+mkdir -p Content/Blueprints/Systems
+
+# Content directory structure - Characters
+mkdir -p Content/Characters/Player
+mkdir -p Content/Characters/NPCs
+mkdir -p Content/Characters/Enemies
+mkdir -p Content/Characters/Creatures
+mkdir -p Content/Characters/Humanoids
+mkdir -p Content/Characters/Monsters
+mkdir -p Content/Characters/Animals
+mkdir -p Content/Characters/Robots
+mkdir -p Content/Characters/Vehicles
+mkdir -p Content/Characters/Props
+mkdir -p Content/Characters/Accessories
+mkdir -p Content/Characters/Equipment
+mkdir -p Content/Characters/Clothing
+mkdir -p Content/Characters/Hair
+mkdir -p Content/Characters/Faces
+mkdir -p Content/Characters/Bodies
+mkdir -p Content/Characters/Animations
+mkdir -p Content/Characters/Materials
+mkdir -p Content/Characters/Textures
+mkdir -p Content/Characters/Rigs
+
+# Content directory structure - Cinematics
+mkdir -p Content/Cinematics/Sequences
+mkdir -p Content/Cinematics/Cameras
+mkdir -p Content/Cinematics/Animations
+mkdir -p Content/Cinematics/VFX
+mkdir -p Content/Cinematics/Audio
+mkdir -p Content/Cinematics/Lighting
+mkdir -p Content/Cinematics/Props
+mkdir -p Content/Cinematics/Characters
+mkdir -p Content/Cinematics/Environments
+mkdir -p Content/Cinematics/UI
+mkdir -p Content/Cinematics/Cutscenes
+mkdir -p Content/Cinematics/Transitions
+mkdir -p Content/Cinematics/Intros
+mkdir -p Content/Cinematics/Outros
+mkdir -p Content/Cinematics/Events
+mkdir -p Content/Cinematics/Backgrounds
+mkdir -p Content/Cinematics/Overlays
+mkdir -p Content/Cinematics/Timeline
+mkdir -p Content/Cinematics/Markers
+mkdir -p Content/Cinematics/Tracks
+
+# Content directory structure - Environments
+mkdir -p Content/Environments/Landscapes
+mkdir -p Content/Environments/Architecture
+mkdir -p Content/Environments/Props
+mkdir -p Content/Environments/Vegetation
+mkdir -p Content/Environments/Rocks
+mkdir -p Content/Environments/Weather
+mkdir -p Content/Environments/Sky
+mkdir -p Content/Environments/Water
+mkdir -p Content/Environments/Particles
+mkdir -p Content/Environments/Lighting
+mkdir -p Content/Environments/Effects
+mkdir -p Content/Environments/Materials
+mkdir -p Content/Environments/Textures
+mkdir -p Content/Environments/Foliage
+mkdir -p Content/Environments/Terrain
+mkdir -p Content/Environments/Buildings
+mkdir -p Content/Environments/Roads
+mkdir -p Content/Environments/Structures
+mkdir -p Content/Environments/Decorations
+mkdir -p Content/Environments/Climate
+
+# Content directory structure - Gameplay
+mkdir -p Content/Gameplay/Abilities
+mkdir -p Content/Gameplay/AI
+mkdir -p Content/Gameplay/Combat
+mkdir -p Content/Gameplay/Inventory
+mkdir -p Content/Gameplay/Quests
+mkdir -p Content/Gameplay/Dialogue
+mkdir -p Content/Gameplay/Progression
+mkdir -p Content/Gameplay/Stats
+mkdir -p Content/Gameplay/Items
+mkdir -p Content/Gameplay/Weapons
+mkdir -p Content/Gameplay/Skills
+mkdir -p Content/Gameplay/Crafting
+mkdir -p Content/Gameplay/Trading
+mkdir -p Content/Gameplay/Missions
+mkdir -p Content/Gameplay/Objectives
+mkdir -p Content/Gameplay/Achievements
+mkdir -p Content/Gameplay/Events
+mkdir -p Content/Gameplay/Mechanics
+mkdir -p Content/Gameplay/Systems
+mkdir -p Content/Gameplay/Rules
+
+# Content directory structure - Materials
+mkdir -p Content/Materials/Characters
+mkdir -p Content/Materials/Environment
+mkdir -p Content/Materials/Props
+mkdir -p Content/Materials/Weapons
+mkdir -p Content/Materials/Vehicles
+mkdir -p Content/Materials/Architecture
+mkdir -p Content/Materials/Nature
+mkdir -p Content/Materials/Effects
+mkdir -p Content/Materials/UI
+mkdir -p Content/Materials/Shared
+mkdir -p Content/Materials/Master
+mkdir -p Content/Materials/Instances
+mkdir -p Content/Materials/Functions
+mkdir -p Content/Materials/Layers
+mkdir -p Content/Materials/Decals
+mkdir -p Content/Materials/PostProcess
+mkdir -p Content/Materials/Shaders
+mkdir -p Content/Materials/Textures
+mkdir -p Content/Materials/Parameters
+mkdir -p Content/Materials/Blends
+
+# Content directory structure - Meshes
+mkdir -p Content/Meshes/Characters
+mkdir -p Content/Meshes/Environment
+mkdir -p Content/Meshes/Props
+mkdir -p Content/Meshes/Weapons
+mkdir -p Content/Meshes/Vehicles
+mkdir -p Content/Meshes/Architecture
+mkdir -p Content/Meshes/Nature
+mkdir -p Content/Meshes/Decorative
+mkdir -p Content/Meshes/Industrial
+mkdir -p Content/Meshes/Furniture
+mkdir -p Content/Meshes/Tools
+mkdir -p Content/Meshes/Containers
+mkdir -p Content/Meshes/Structures
+mkdir -p Content/Meshes/Collision
+mkdir -p Content/Meshes/LODs
+mkdir -p Content/Meshes/Primitives
+mkdir -p Content/Meshes/Modular
+mkdir -p Content/Meshes/Foliage
+mkdir -p Content/Meshes/Effects
+mkdir -p Content/Meshes/UI
+
+# Content directory structure - Niagara
+mkdir -p Content/Niagara/Systems
+mkdir -p Content/Niagara/Emitters
+mkdir -p Content/Niagara/Modules
+mkdir -p Content/Niagara/Functions
+mkdir -p Content/Niagara/Parameters
+mkdir -p Content/Niagara/Effects
+mkdir -p Content/Niagara/Particles
+mkdir -p Content/Niagara/Materials
+mkdir -p Content/Niagara/Textures
+mkdir -p Content/Niagara/Meshes
+mkdir -p Content/Niagara/Sprites
+mkdir -p Content/Niagara/Ribbons
+mkdir -p Content/Niagara/Templates
+mkdir -p Content/Niagara/Presets
+mkdir -p Content/Niagara/Libraries
+mkdir -p Content/Niagara/Debug
+mkdir -p Content/Niagara/Tools
+mkdir -p Content/Niagara/Utilities
+mkdir -p Content/Niagara/Examples
+mkdir -p Content/Niagara/Tests
+
+# Content directory structure - Physics
+mkdir -p Content/Physics/Constraints
+mkdir -p Content/Physics/Forces
+mkdir -p Content/Physics/Joints
+mkdir -p Content/Physics/Materials
+mkdir -p Content/Physics/Collision
+mkdir -p Content/Physics/Ragdolls
+mkdir -p Content/Physics/Vehicles
+mkdir -p Content/Physics/Cloth
+mkdir -p Content/Physics/Destruction
+mkdir -p Content/Physics/Particles
+mkdir -p Content/Physics/Ropes
+mkdir -p Content/Physics/Chains
+mkdir -p Content/Physics/Hinges
+mkdir -p Content/Physics/Springs
+mkdir -p Content/Physics/Presets
+mkdir -p Content/Physics/Templates
+mkdir -p Content/Physics/Simulations
+mkdir -p Content/Physics/Effects
+mkdir -p Content/Physics/Tools
+mkdir -p Content/Physics/Debug
+
+# Content directory structure - Python
+mkdir -p Content/Python/Scripts
+mkdir -p Content/Python/Tools
+mkdir -p Content/Python/Utilities
+mkdir -p Content/Python/Editor
+mkdir -p Content/Python/Automation
+mkdir -p Content/Python/Build
+mkdir -p Content/Python/Debug
+mkdir -p Content/Python/Tests
+mkdir -p Content/Python/Examples
+mkdir -p Content/Python/Libraries
+mkdir -p Content/Python/Modules
+mkdir -p Content/Python/Functions
+mkdir -p Content/Python/Classes
+mkdir -p Content/Python/Data
+mkdir -p Content/Python/Config
+mkdir -p Content/Python/Templates
+mkdir -p Content/Python/Plugins
+mkdir -p Content/Python/Documentation
+mkdir -p Content/Python/Resources
+mkdir -p Content/Python/Logs
+
+# Content directory structure - Script
+mkdir -p Content/Script/AI
+mkdir -p Content/Script/Animation
+mkdir -p Content/Script/Audio
+mkdir -p Content/Script/Camera
+mkdir -p Content/Script/Characters
+mkdir -p Content/Script/Combat
+mkdir -p Content/Script/Core
+mkdir -p Content/Script/Debug
+mkdir -p Content/Script/Editor
+mkdir -p Content/Script/Events
+mkdir -p Content/Script/Gameplay
+mkdir -p Content/Script/Input
+mkdir -p Content/Script/Inventory
+mkdir -p Content/Script/Level
+mkdir -p Content/Script/Manager
+mkdir -p Content/Script/Menu
+mkdir -p Content/Script/Network
+mkdir -p Content/Script/Physics
+mkdir -p Content/Script/UI
+
+# Content directory structure - Shaders
+mkdir -p Content/Shaders/PostProcess
+mkdir -p Content/Shaders/Materials
+mkdir -p Content/Shaders/Lighting
+mkdir -p Content/Shaders/Effects
+mkdir -p Content/Shaders/Compute
+mkdir -p Content/Shaders/Custom
+mkdir -p Content/Shaders/Debug
+mkdir -p Content/Shaders/Development
+mkdir -p Content/Shaders/Environment
+mkdir -p Content/Shaders/Characters
+mkdir -p Content/Shaders/UI
+mkdir -p Content/Shaders/Utility
+mkdir -p Content/Shaders/Water
+mkdir -p Content/Shaders/Sky
+mkdir -p Content/Shaders/Particles
+mkdir -p Content/Shaders/Deferred
+mkdir -p Content/Shaders/Forward
+mkdir -p Content/Shaders/Shadow
+mkdir -p Content/Shaders/VR
+mkdir -p Content/Shaders/Mobile
+
+# Content directory structure - Textures
+mkdir -p Content/Textures/Characters
+mkdir -p Content/Textures/Environment
+mkdir -p Content/Textures/Props
+mkdir -p Content/Textures/Weapons
+mkdir -p Content/Textures/Vehicles
+mkdir -p Content/Textures/UI
+mkdir -p Content/Textures/Effects
+mkdir -p Content/Textures/Materials
+mkdir -p Content/Textures/Lighting
+mkdir -p Content/Textures/Decals
+mkdir -p Content/Textures/Masks
+mkdir -p Content/Textures/Noise
+mkdir -p Content/Textures/Patterns
+mkdir -p Content/Textures/Reference
+mkdir -p Content/Textures/Sprites
+mkdir -p Content/Textures/Icons
+mkdir -p Content/Textures/Logos
+mkdir -p Content/Textures/Backgrounds
+mkdir -p Content/Textures/Particles
+mkdir -p Content/Textures/Shared
+
+# Content directory structure - UI
+mkdir -p Content/UI/HUD
+mkdir -p Content/UI/Menus
+mkdir -p Content/UI/Icons
+mkdir -p Content/UI/Textures
+mkdir -p Content/UI/Fonts
+mkdir -p Content/UI/Widgets
+mkdir -p Content/UI/Animations
+mkdir -p Content/UI/Blueprints
+mkdir -p Content/UI/Materials
+mkdir -p Content/UI/Layouts
+mkdir -p Content/UI/Styles
+mkdir -p Content/UI/Elements
+mkdir -p Content/UI/Screens
+mkdir -p Content/UI/Popups
+mkdir -p Content/UI/Overlays
+mkdir -p Content/UI/Components
+mkdir -p Content/UI/Effects
+mkdir -p Content/UI/Cursors
+mkdir -p Content/UI/Themes
+mkdir -p Content/UI/Debug
+
+# Content directory structure - VFX
+mkdir -p Content/VFX/Particles
+mkdir -p Content/VFX/Materials
+mkdir -p Content/VFX/Textures
+mkdir -p Content/VFX/Meshes
+mkdir -p Content/VFX/Systems
+mkdir -p Content/VFX/Blueprints
+mkdir -p Content/VFX/Animations
+mkdir -p Content/VFX/Decals
+mkdir -p Content/VFX/Lighting
+mkdir -p Content/VFX/PostProcess
+mkdir -p Content/VFX/Sequences
+mkdir -p Content/VFX/Elements
+mkdir -p Content/VFX/Environment
+mkdir -p Content/VFX/Characters
+mkdir -p Content/VFX/Weapons
+mkdir -p Content/VFX/UI
+mkdir -p Content/VFX/Weather
+mkdir -p Content/VFX/Magic
+mkdir -p Content/VFX/Impact
+mkdir -p Content/VFX/Trail
+
+# Content directory structure - Weapons
+mkdir -p Content/Weapons/Melee
+mkdir -p Content/Weapons/Ranged
+mkdir -p Content/Weapons/Throwable
+mkdir -p Content/Weapons/Magic
+mkdir -p Content/Weapons/Ammunition
+mkdir -p Content/Weapons/Attachments
+mkdir -p Content/Weapons/Effects
+mkdir -p Content/Weapons/Animations
+mkdir -p Content/Weapons/Audio
+mkdir -p Content/Weapons/Materials
+mkdir -p Content/Weapons/Textures
+mkdir -p Content/Weapons/Meshes
+mkdir -p Content/Weapons/Blueprints
+mkdir -p Content/Weapons/UI
+mkdir -p Content/Weapons/Particles
+mkdir -p Content/Weapons/Stats
+mkdir -p Content/Weapons/Icons
+mkdir -p Content/Weapons/Projectiles
+mkdir -p Content/Weapons/Systems
+mkdir -p Content/Weapons/Data
+
+# Source directory structure
+mkdir -p Source/Engine/Public/Core
+mkdir -p Source/Engine/Public/Gameplay
+mkdir -p Source/Engine/Public/AI
+mkdir -p Source/Engine/Public/UI
+mkdir -p Source/Engine/Public/Animation
+mkdir -p Source/Engine/Public/Physics
+mkdir -p Source/Engine/Public/Network
+mkdir -p Source/Engine/Public/Audio
+mkdir -p Source/Engine/Public/Input
+mkdir -p Source/Engine/Public/Rendering
+mkdir -p Source/Engine/Private/Core
+mkdir -p Source/Engine/Private/Gameplay
+mkdir -p Source/Engine/Private/AI
+mkdir -p Source/Engine/Private/UI
+mkdir -p Source/Engine/Private/Animation
+mkdir -p Source/Engine/Private/Physics
+mkdir -p Source/Engine/Private/Network
+mkdir -p Source/Engine/Private/Audio
+mkdir -p Source/Engine/Private/Input
+mkdir -p Source/Engine/Private/Rendering
+
+# Source ThirdParty structure
+mkdir -p Source/ThirdParty/Include/Graphics
+mkdir -p Source/ThirdParty/Include/Physics
+mkdir -p Source/ThirdParty/Include/Audio
+mkdir -p Source/ThirdParty/Include/Network
+mkdir -p Source/ThirdParty/Include/Math
+mkdir -p Source/ThirdParty/Lib/Windows/x64
+mkdir -p Source/ThirdParty/Lib/Windows/x86
+mkdir -p Source/ThirdParty/Lib/Linux/x64
+mkdir -p Source/ThirdParty/Lib/Mac/x64
+mkdir -p Source/ThirdParty/Windows/DirectX
+mkdir -p Source/ThirdParty/Windows/Vulkan
+mkdir -p Source/ThirdParty/Windows/OpenGL
+
+# Plugins directory structure
+mkdir -p Plugins/Marketplace/Analytics
+mkdir -p Plugins/Marketplace/Animation
+mkdir -p Plugins/Marketplace/Audio
+mkdir -p Plugins/Marketplace/Developer
+mkdir -p Plugins/Marketplace/Editor
+mkdir -p Plugins/Marketplace/Graphics
+mkdir -p Plugins/Marketplace/Input
+mkdir -p Plugins/Marketplace/Networking
+mkdir -p Plugins/Marketplace/Physics
+mkdir -p Plugins/Marketplace/Platform
+mkdir -p Plugins/Enterprise/Analytics
+mkdir -p Plugins/Enterprise/Animation
+mkdir -p Plugins/Enterprise/Audio
+mkdir -p Plugins/Enterprise/Developer
+mkdir -p Plugins/Enterprise/Editor
+mkdir -p Plugins/Enterprise/Graphics
+mkdir -p Plugins/Enterprise/Input
+mkdir -p Plugins/Enterprise/Networking
+mkdir -p Plugins/Enterprise/Physics
+mkdir -p Plugins/Enterprise/Platform
+mkdir -p Plugins/Runtime/Media
+mkdir -p Plugins/Runtime/Audio
+mkdir -p Plugins/Runtime/Graphics
+mkdir -p Plugins/Runtime/Input
+mkdir -p Plugins/Runtime/Network
+mkdir -p Plugins/Runtime/Physics
+mkdir -p Plugins/Runtime/Platform
+mkdir -p Plugins/Runtime/Rendering
+mkdir -p Plugins/Runtime/Scripting
+mkdir -p Plugins/Runtime/UI
+mkdir -p Plugins/Editor/AssetManagement
+mkdir -p Plugins/Editor/Automation
+mkdir -p Plugins/Editor/Documentation
+mkdir -p Plugins/Editor/LevelDesign
+mkdir -p Plugins/Editor/MaterialEditor
+mkdir -p Plugins/Editor/Packaging
+mkdir -p Plugins/Editor/Scripting
+mkdir -p Plugins/Editor/UI
+mkdir -p Plugins/Editor/VFX
+mkdir -p Plugins/Editor/Workflow
+
+# Intermediate directory structure
+mkdir -p Intermediate/Build/Win64
+mkdir -p Intermediate/Build/Mac
+mkdir -p Intermediate/Build/Linux
+mkdir -p Intermediate/Build/Android
+mkdir -p Intermediate/Build/IOS
+mkdir -p Intermediate/ProjectFiles/VS2022
+mkdir -p Intermediate/ProjectFiles/XCode
+mkdir -p Intermediate/ProjectFiles/MakeFiles
+mkdir -p Intermediate/ShaderCache/PCD3D_SM5
+mkdir -p Intermediate/ShaderCache/PCD3D_SM6
+mkdir -p Intermediate/ShaderCache/Vulkan
+mkdir -p Intermediate/ShaderCache/Metal
+mkdir -p Intermediate/ShaderCache/OpenGL
+mkdir -p Intermediate/ShaderCache/GLSL
+mkdir -p Intermediate/ShaderCache/HLSL
+mkdir -p Intermediate/ShaderCache/MSL
+mkdir -p Intermediate/ShaderCache/SPIR-V
+
+# Saved directory structure
+mkdir -p Saved/Autosaves/Maps
+mkdir -p Saved/Autosaves/Content
+mkdir -p Saved/Backup/Maps
+mkdir -p Saved/Backup/Content
+mkdir -p Saved/Collections/Maps
+mkdir -p Saved/Collections/Assets
+mkdir -p Saved/Config/Windows
+mkdir -p Saved/Config/Mac
+mkdir -p Saved/Config/Linux
+mkdir -p Saved/Config/Android
+mkdir -p Saved/Config/IOS
+mkdir -p Saved/Logs/Build
+mkdir -p Saved/Logs/Cook
+mkdir -p Saved/Logs/Launch
+mkdir -p Saved/Logs/Package
+mkdir -p Saved/Logs/UnrealVersionSelector
+mkdir -p Saved/PackageCache/Windows
+mkdir -p Saved/PackageCache/Mac
+mkdir -p Saved/PackageCache/Linux
+mkdir -p Saved/PackageCache/Android
+mkdir -p Saved/PackageCache/IOS
+mkdir -p Saved/StagedBuilds/Windows
+mkdir -p Saved/StagedBuilds/Mac
+mkdir -p Saved/StagedBuilds/Linux
+mkdir -p Saved/StagedBuilds/Android
+mkdir -p Saved/StagedBuilds/IOS
+
+# Make the script executable
+chmod +x "$(dirname "$0")/$(basename "$0")"
