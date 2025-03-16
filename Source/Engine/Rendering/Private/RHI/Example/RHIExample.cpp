@@ -25,8 +25,8 @@ namespace Engine {
                 }
 
                 // 获取设备和上下文
-                Device = GetDevice();
-                Context = GetImmediateContext();
+                Device = RHIDevicePtr(GetDevice());
+                Context = RHIContextPtr(GetImmediateContext());
 
                 if (!Device || !Context) {
                     LOG_ERROR("Failed to get device or context!");
@@ -42,7 +42,8 @@ namespace Engine {
                 swapChainDesc.Format = EPixelFormat::R8G8B8A8_UNORM;
                 swapChainDesc.VSync = true;
 
-                SwapChain = Device->CreateSwapChain(swapChainDesc);
+                SwapChain =
+                    RHISwapChainPtr(Device->CreateSwapChain(swapChainDesc));
                 if (!SwapChain) {
                     LOG_ERROR("Failed to create swap chain!");
                     return false;
@@ -52,8 +53,9 @@ namespace Engine {
                 for (uint32_t i = 0; i < swapChainDesc.BufferCount; ++i) {
                     RenderTargetViewDesc rtvDesc;
                     rtvDesc.Format = swapChainDesc.Format;
-                    auto rtv = Device->CreateRenderTargetView(
-                        SwapChain->GetBackBuffer(i), rtvDesc);
+                    auto rtv =
+                        RHIRenderTargetViewPtr(Device->CreateRenderTargetView(
+                            SwapChain->GetBackBuffer(i), rtvDesc));
                     if (!rtv) {
                         LOG_ERROR("Failed to create render target view!");
                         return false;
@@ -68,7 +70,7 @@ namespace Engine {
                 depthDesc.Format = EPixelFormat::D24_UNORM_S8_UINT;
                 depthDesc.Flags = ERHIResourceFlags::AllowDepthStencil;
 
-                DepthTexture = Device->CreateTexture(depthDesc);
+                DepthTexture = RHITexturePtr(Device->CreateTexture(depthDesc));
                 if (!DepthTexture) {
                     LOG_ERROR("Failed to create depth texture!");
                     return false;
@@ -78,7 +80,8 @@ namespace Engine {
                 DepthStencilViewDesc dsvDesc;
                 dsvDesc.Format = depthDesc.Format;
                 DepthStencilView =
-                    Device->CreateDepthStencilView(DepthTexture, dsvDesc);
+                    RHIDepthStencilViewPtr(Device->CreateDepthStencilView(
+                        DepthTexture.get(), dsvDesc));
                 if (!DepthStencilView) {
                     LOG_ERROR("Failed to create depth stencil view!");
                     return false;
@@ -102,7 +105,7 @@ namespace Engine {
                 vbDesc.Access =
                     ERHIAccessFlags::CPUWrite | ERHIAccessFlags::GPURead;
 
-                VertexBuffer = Device->CreateBuffer(vbDesc);
+                VertexBuffer = RHIBufferPtr(Device->CreateBuffer(vbDesc));
                 if (!VertexBuffer) {
                     LOG_ERROR("Failed to create vertex buffer!");
                     return false;
@@ -137,14 +140,14 @@ namespace Engine {
                 ShaderDesc vsDesc;
                 vsDesc.Type = EShaderType::Vertex;
                 vsDesc.EntryPoint = "main";
-                VertexShader = Device->CreateShader(
-                    vsDesc, vertexShaderCode, strlen(vertexShaderCode));
+                VertexShader = RHIShaderPtr(Device->CreateShader(
+                    vsDesc, vertexShaderCode, strlen(vertexShaderCode)));
 
                 ShaderDesc psDesc;
                 psDesc.Type = EShaderType::Pixel;
                 psDesc.EntryPoint = "main";
-                PixelShader = Device->CreateShader(
-                    psDesc, pixelShaderCode, strlen(pixelShaderCode));
+                PixelShader = RHIShaderPtr(Device->CreateShader(
+                    psDesc, pixelShaderCode, strlen(pixelShaderCode)));
 
                 if (!VertexShader || !PixelShader) {
                     LOG_ERROR("Failed to create shaders!");
@@ -152,8 +155,8 @@ namespace Engine {
                 }
 
                 // 创建命令分配器
-                CommandAllocator =
-                    Device->CreateCommandAllocator(ECommandListType::Direct);
+                CommandAllocator = RHICommandAllocatorPtr(
+                    Device->CreateCommandAllocator(ECommandListType::Direct));
                 if (!CommandAllocator) {
                     LOG_ERROR("Failed to create command allocator!");
                     return false;
@@ -167,19 +170,17 @@ namespace Engine {
                     Device->WaitForGPU();
                 }
 
-                for (auto rtv : RenderTargetViews) {
-                    delete rtv;
-                }
+                // 清除所有智能指针
                 RenderTargetViews.clear();
-
-                delete DepthStencilView;
-                delete DepthTexture;
-                delete VertexBuffer;
-                delete VertexShader;
-                delete PixelShader;
-                delete SwapChain;
-
+                DepthStencilView.reset();
+                DepthTexture.reset();
+                VertexBuffer.reset();
+                VertexShader.reset();
+                PixelShader.reset();
+                SwapChain.reset();
                 CommandAllocator.reset();
+                Context.reset();
+                Device.reset();
 
                 Shutdown();
             }
@@ -190,18 +191,18 @@ namespace Engine {
                 // 获取当前后备缓冲区
                 uint32_t backBufferIndex =
                     SwapChain->GetCurrentBackBufferIndex();
-                auto rtv = RenderTargetViews[backBufferIndex];
+                auto& rtv = RenderTargetViews[backBufferIndex];
 
                 // 设置渲染目标
                 RenderTargetBinding rtBinding;
-                rtBinding.RenderTarget = rtv;
-                rtBinding.DepthStencil = DepthStencilView;
+                rtBinding.RenderTarget = rtv.get();
+                rtBinding.DepthStencil = DepthStencilView.get();
                 Context->SetRenderTargets(rtBinding);
 
                 // 清除渲染目标
                 float clearColor[] = {0.0f, 0.2f, 0.4f, 1.0f};
-                Context->ClearRenderTarget(rtv, clearColor);
-                Context->ClearDepthStencil(DepthStencilView, 1.0f, 0);
+                Context->ClearRenderTarget(rtv.get(), clearColor);
+                Context->ClearDepthStencil(DepthStencilView.get(), 1.0f, 0);
 
                 // 设置视口和裁剪矩形
                 Viewport viewport;
@@ -219,17 +220,17 @@ namespace Engine {
 
                 // 设置着色器
                 ShaderBinding vsBinding;
-                vsBinding.Shader = VertexShader;
+                vsBinding.Shader = VertexShader.get();
                 Context->SetVertexShader(vsBinding);
 
                 ShaderBinding psBinding;
-                psBinding.Shader = PixelShader;
+                psBinding.Shader = PixelShader.get();
                 Context->SetPixelShader(psBinding);
 
                 // 设置顶点缓冲区
                 VertexStreamBinding vertexBinding;
                 VertexBufferView vbView;
-                vbView.Buffer = VertexBuffer;
+                vbView.Buffer = VertexBuffer.get();
                 vbView.Offset = 0;
                 vbView.Stride = sizeof(float) * 7;  // position(3) + color(4)
                 vertexBinding.VertexBuffers.push_back(vbView);
@@ -246,15 +247,15 @@ namespace Engine {
             }
 
           private:
-            IRHIDevice* Device = nullptr;
-            IRHIContext* Context = nullptr;
-            IRHISwapChain* SwapChain = nullptr;
-            std::vector<IRHIRenderTargetView*> RenderTargetViews;
-            IRHITexture* DepthTexture = nullptr;
-            IRHIDepthStencilView* DepthStencilView = nullptr;
-            IRHIBuffer* VertexBuffer = nullptr;
-            IRHIShader* VertexShader = nullptr;
-            IRHIShader* PixelShader = nullptr;
+            RHIDevicePtr Device;
+            RHIContextPtr Context;
+            RHISwapChainPtr SwapChain;
+            std::vector<RHIRenderTargetViewPtr> RenderTargetViews;
+            RHITexturePtr DepthTexture;
+            RHIDepthStencilViewPtr DepthStencilView;
+            RHIBufferPtr VertexBuffer;
+            RHIShaderPtr VertexShader;
+            RHIShaderPtr PixelShader;
             RHICommandAllocatorPtr CommandAllocator;
         };
 

@@ -10,7 +10,9 @@ namespace Engine {
         class VulkanContextImpl : public IRHIContext {
           public:
             VulkanContextImpl(IRHIDevice* device)
-                : Device(device), CurrentCommandList(nullptr), FrameIndex(0) {
+                : Device(RHIDevicePtr(device)),
+                  CurrentCommandList(nullptr),
+                  FrameIndex(0) {
                 // 创建命令分配器
                 CommandAllocators[0] =
                     Device->CreateCommandAllocator(ECommandListType::Direct);
@@ -27,9 +29,9 @@ namespace Engine {
             }
 
             // 设备访问
-            virtual IRHIDevice* GetDevice() override { return Device; }
+            virtual IRHIDevice* GetDevice() override { return Device.get(); }
             virtual const IRHIDevice* GetDevice() const override {
-                return Device;
+                return Device.get();
             }
 
             // 命令列表管理
@@ -710,7 +712,7 @@ namespace Engine {
                 }
             }
 
-            IRHIDevice* Device;
+            RHIDevicePtr Device;
             RHICommandAllocatorPtr CommandAllocators[2];
             RHICommandListPtr CurrentCommandList;
             uint32 FrameIndex;

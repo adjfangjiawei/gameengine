@@ -217,7 +217,8 @@ namespace Engine {
                                                    : nullptr;
         }
 
-        uint32 VulkanRayTracingPipelineState::GetShaderIdentifierSize() const {
+        static uint32 GetShaderIdentifierSizeForDevice(
+            VkPhysicalDevice physicalDevice) {
             VkPhysicalDeviceRayTracingPipelinePropertiesKHR rtProperties = {};
             rtProperties.sType =
                 VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR;
@@ -226,14 +227,17 @@ namespace Engine {
             props2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
             props2.pNext = &rtProperties;
 
-            // 获取物理设备属性
+            vkGetPhysicalDeviceProperties2(physicalDevice, &props2);
+
+            return rtProperties.shaderGroupHandleSize;
+        }
+
+        uint32 VulkanRayTracingPipelineState::GetShaderIdentifierSize() const {
             VkPhysicalDevice physicalDevice =
                 static_cast<VulkanDevice*>(VulkanRHI::Get().GetDevice())
                     ->GetPhysicalDevice()
                     ->GetHandle();
-            vkGetPhysicalDeviceProperties2(physicalDevice, &props2);
-
-            return rtProperties.shaderGroupHandleSize;
+            return GetShaderIdentifierSizeForDevice(physicalDevice);
         }
 
         void VulkanRayTracingPipelineState::CreatePipeline() {
@@ -367,7 +371,12 @@ namespace Engine {
                    "Failed to create ray tracing pipeline!");
 
             // 5. 获取着色器标识符
-            uint32_t handleSize = GetShaderIdentifierSize();
+            VkPhysicalDevice physicalDevice =
+                static_cast<VulkanDevice*>(VulkanRHI::Get().GetDevice())
+                    ->GetPhysicalDevice()
+                    ->GetHandle();
+            uint32_t handleSize =
+                GetShaderIdentifierSizeForDevice(physicalDevice);
             uint32_t handleSizeAligned = (handleSize + 15) & ~15;
             uint32_t groupCount = static_cast<uint32_t>(shaderGroups.size());
             std::vector<uint8_t> shaderHandleStorage(groupCount *

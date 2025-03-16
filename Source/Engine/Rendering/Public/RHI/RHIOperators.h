@@ -12,24 +12,36 @@ namespace Engine {
 
         // ERHIAccessFlags operators
         inline ERHIAccessFlags operator|(ERHIAccessFlags a, ERHIAccessFlags b) {
-            uint32 result = static_cast<uint32>(a) | static_cast<uint32>(b);
-            // 确保结果不超过有效范围（最大值是15，即所有标志位组合）
-            result &= 0xF;  // 0xF = 15 = 1111b
-            return static_cast<ERHIAccessFlags>(result);
+            // 先将枚举值转换为底层类型
+            const uint32 val_a = static_cast<uint32>(a);
+            const uint32 val_b = static_cast<uint32>(b);
+            // 执行位运算
+            const uint32 result = val_a | val_b;
+            // 验证结果是否为有效的枚举值组合
+            // ERHIAccessFlags只使用低4位，每一位都有特定含义
+            const uint32 validMask =
+                static_cast<uint32>(ERHIAccessFlags::GPURead) |
+                static_cast<uint32>(ERHIAccessFlags::GPUWrite) |
+                static_cast<uint32>(ERHIAccessFlags::CPURead) |
+                static_cast<uint32>(ERHIAccessFlags::CPUWrite);
+            // 确保结果只包含有效的标志位
+            const uint32 maskedResult = result & validMask;
+            return static_cast<ERHIAccessFlags>(maskedResult);
         }
 
         inline ERHIAccessFlags operator&(ERHIAccessFlags a, ERHIAccessFlags b) {
-            uint32 result = static_cast<uint32>(a) & static_cast<uint32>(b);
             // 对于&操作，结果总是小于等于操作数，所以不需要额外的范围检查
+            const uint32 val_a = static_cast<uint32>(a);
+            const uint32 val_b = static_cast<uint32>(b);
+            const uint32 result = val_a & val_b;
+            // 由于AND操作的结果必定小于等于操作数，所以结果一定在有效范围内
             return static_cast<ERHIAccessFlags>(result);
         }
 
         inline ERHIAccessFlags& operator|=(ERHIAccessFlags& a,
                                            ERHIAccessFlags b) {
-            uint32 result = static_cast<uint32>(a) | static_cast<uint32>(b);
-            // 确保结果不超过有效范围
-            result &= 0xF;  // 0xF = 15 = 1111b
-            a = static_cast<ERHIAccessFlags>(result);
+            // 使用已经定义的|运算符来确保一致性
+            a = a | b;
             return a;
         }
 

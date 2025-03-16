@@ -18,6 +18,7 @@
 #include "RHIDevice.h"
 #include "RHIModule.h"
 #include "RHIOperators.h"
+#include "RHIPointers.h"
 #include "RHIResources.h"
 
 namespace Engine {

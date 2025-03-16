@@ -58,7 +58,8 @@ namespace Engine {
             virtual void UnregisterListener(
                 IRHIShaderHotReloadListener* listener) override;
             virtual void StartWatching(const std::string& directory) override;
-            virtual void StopWatching() override;
+            void StopWatching()
+                override;  // 移除virtual关键字，因为这个函数不需要在派生类中重写
             virtual void TriggerRecompile(
                 const std::string& shaderPath) override;
 
