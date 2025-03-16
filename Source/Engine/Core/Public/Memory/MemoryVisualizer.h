@@ -10,8 +10,8 @@
 #include <unordered_map>
 #include <vector>
 
-#include "Memory/MemoryTypes.h"
 #include "CoreTypes.h"
+#include "Memory/MemoryTypes.h"
 
 namespace Engine {
     namespace Memory {
@@ -145,7 +145,6 @@ namespace Engine {
 
             bool isRunning{false};
             bool isPaused{false};
-            bool shouldStop{false};
             std::thread updateThread;
             mutable std::mutex mutex;
             std::condition_variable condition;

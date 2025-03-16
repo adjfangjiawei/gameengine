@@ -134,7 +134,8 @@ namespace Engine {
 
     RHI::VulkanBuffer::~VulkanBuffer() {
         if (MappedData) {
-            Unmap();
+            vkUnmapMemory(Device->GetHandle(), Memory);
+            MappedData = nullptr;
         }
 
         if (Buffer != VK_NULL_HANDLE) {

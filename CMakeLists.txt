@@ -1,8 +1,8 @@
 
 # Set minimum CMake version
 cmake_minimum_required(VERSION 3.10)
-# set(CMAKE_CXX_COMPILER "clang++-21")
-# set(CMAKE_C_COMPILER "clang-21")
+set(CMAKE_CXX_COMPILER "clang++-21")
+set(CMAKE_C_COMPILER "clang-21")
 # Set project name and version
 project(GameEngine VERSION 1.0)
 
@@ -45,7 +45,7 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2")
 else()
     # GCC/Clang
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -Wno-deprecated-literal-operator")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -O0 -g")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
 endif()

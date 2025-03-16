@@ -76,8 +76,8 @@ namespace Engine {
             void Reset() override;
 
             // Debug functions
-            void DumpAllocationInfo() const;
-            void ValidateHeap() const;
+            void DumpAllocationInfo() const override;
+            void ValidateHeap() const override;
             void CheckForLeaks() const;
             void AnalyzeFragmentation() const;
             void DumpMemoryStats() const;

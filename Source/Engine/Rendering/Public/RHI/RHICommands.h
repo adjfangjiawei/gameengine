@@ -6,24 +6,16 @@
 namespace Engine {
     namespace RHI {
 
-        // 命令列表类型
-        enum class ECommandListType : uint8 {
-            Direct,   // 直接命令列表
-            Bundle,   // 命令包
-            Compute,  // 计算命令列表
-            Copy      // 复制命令列表
-        };
-
         // 命令列表描述
         struct CommandListDesc {
             ECommandListType Type = ECommandListType::Direct;
             std::string DebugName;
         };
 
-        // 命令列表接口
-        class IRHICommandList : public IRHIResource {
+        // 基础命令列表接口
+        class IRHICommandListBase : public IRHIResource {
           public:
-            virtual ~IRHICommandList() = default;
+            virtual ~IRHICommandListBase() = default;
 
             // 获取描述
             virtual const CommandListDesc& GetDesc() const = 0;

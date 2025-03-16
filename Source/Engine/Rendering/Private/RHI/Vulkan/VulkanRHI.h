@@ -12,6 +12,7 @@
 #include "RHI/RHIDefinitions.h"
 #include "RHI/RHIDevice.h"
 #include "RHI/RHIResources.h"
+#include "VulkanMemory.h"
 
 namespace Engine {
     namespace RHI {
@@ -127,10 +128,17 @@ namespace Engine {
             virtual IRHISamplerState* CreateSamplerState(
                 const SamplerDesc& desc) override;
             virtual RHICommandAllocatorPtr CreateCommandAllocator(
-                ECommandListType type) override;
+                ECommandListType /*type*/) override {
+                // TODO: Implement actual Vulkan command pool creation
+                return nullptr;
+            }
+
             virtual RHICommandListPtr CreateCommandList(
-                ECommandListType type,
-                IRHICommandAllocator* allocator) override;
+                ECommandListType /*type*/,
+                IRHICommandAllocator* /*allocator*/) override {
+                // TODO: Implement actual Vulkan command buffer creation
+                return nullptr;
+            }
             virtual IRHISwapChain* CreateSwapChain(
                 const SwapChainDesc& desc) override;
             virtual void SubmitCommandLists(
@@ -200,27 +208,8 @@ namespace Engine {
             VkCommandPool TransferCommandPool = VK_NULL_HANDLE;
         };
 
-        // Vulkan内存分配器包装器
-        class VulkanMemoryAllocator {
-          public:
-            VulkanMemoryAllocator() = default;
-            ~VulkanMemoryAllocator();
-
-            bool Initialize(VulkanDevice* device);
-            void Shutdown();
-
-            VkDeviceMemory AllocateMemory(
-                const VkMemoryRequirements& memRequirements,
-                VkMemoryPropertyFlags properties);
-            void FreeMemory(VkDeviceMemory memory);
-
-          private:
-            uint32_t FindMemoryType(uint32_t typeFilter,
-                                    VkMemoryPropertyFlags properties) const;
-
-            VulkanDevice* Device = nullptr;
-            std::vector<VkDeviceMemory> AllocatedMemory;
-        };
+        // 前向声明
+        class VulkanMemoryAllocator;
 
         // Vulkan RHI实现类，继承自IRHIModule
         class VulkanRHI : public IRHIModule {
@@ -278,7 +267,7 @@ namespace Engine {
             VulkanPhysicalDevice PhysicalDevice;
             VulkanDevice Device;
             VulkanCommandPoolManager CommandPoolManager;
-            VulkanMemoryAllocator MemoryAllocator;
+            std::unique_ptr<VulkanMemoryAllocator> MemoryAllocator;
             std::unique_ptr<IRHIContext> ImmediateContext;
 
             ERHIModuleState State = ERHIModuleState::Uninitialized;

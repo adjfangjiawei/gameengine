@@ -5,8 +5,24 @@ project(Rendering)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Find Vulkan package
+# Find required packages
 find_package(Vulkan REQUIRED)
+find_package(PkgConfig REQUIRED)
+
+#Find shaderc
+pkg_check_modules(SHADERC REQUIRED shaderc)
+
+# Find SPIRV-Cross components
+find_library(SPIRV_CROSS_CORE_LIB spirv-cross-core)
+find_library(SPIRV_CROSS_GLSL_LIB spirv-cross-glsl)
+find_library(SPIRV_CROSS_HLSL_LIB spirv-cross-hlsl)
+find_library(SPIRV_CROSS_CPP_LIB spirv-cross-cpp)
+
+if(NOT SPIRV_CROSS_CORE_LIB OR NOT SPIRV_CROSS_GLSL_LIB)
+    message(FATAL_ERROR "Required SPIRV-Cross libraries not found")
+endif()
+
+
 
 # Add source files
 set(VULKAN_SOURCES
@@ -48,12 +64,22 @@ target_include_directories(Rendering
         ${Vulkan_INCLUDE_DIRS}
         ${CMAKE_ENGINE_DIR}
         ${CMAKE_ENGINE_DIR}/Core/Public
+        /usr/include/spirv_cross
+        ${SHADERC_INCLUDE_DIRS}
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/Private
 )
 
-# 链接vulkan
-target_link_libraries(Rendering PRIVATE Vulkan::Vulkan)
+# Link libraries
+target_link_libraries(Rendering 
+    PRIVATE 
+        Vulkan::Vulkan
+        ${SPIRV_CROSS_CORE_LIB}
+        ${SPIRV_CROSS_GLSL_LIB}
+        ${SPIRV_CROSS_HLSL_LIB}
+        ${SPIRV_CROSS_CPP_LIB}
+        ${SHADERC_LIBRARIES}
+)
 
 # # Add tests if enabled
 # option(BUILD_TESTS "Build the tests" ON)

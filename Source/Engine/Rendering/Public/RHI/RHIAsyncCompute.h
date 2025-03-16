@@ -24,7 +24,7 @@ namespace Engine {
 
             // 提交命令列表
             virtual void ExecuteCommandLists(
-                uint32 count, IRHICommandList* const* commandLists) = 0;
+                uint32 count, IRHICommandListBase* const* commandLists) = 0;
 
             // 同步原语
             virtual void Signal(IRHIFence* fence, uint64 value) = 0;
@@ -93,7 +93,7 @@ namespace Engine {
             virtual ~IRHICommandGenerator() = default;
 
             // 生成间接命令
-            virtual void GenerateCommands(IRHICommandList* commandList,
+            virtual void GenerateCommands(IRHICommandListBase* commandList,
                                           IRHIBuffer* inputBuffer,
                                           IRHIBuffer* outputBuffer,
                                           uint32 maxCommands) = 0;

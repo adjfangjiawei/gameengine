@@ -6,6 +6,14 @@
 namespace Engine {
     namespace RHI {
 
+        // 命令列表类型
+        enum class ECommandListType : uint8 {
+            Direct,   // 直接命令列表，支持所有类型的命令
+            Bundle,   // 捆绑命令列表，用于预录制常用命令序列
+            Compute,  // 计算命令列表，仅支持计算相关命令
+            Copy      // 复制命令列表，仅支持资源复制命令
+        };
+
         // RHI Feature Level - 定义硬件能力级别
         enum class ERHIFeatureLevel : uint8 {
             ES2,    // OpenGL ES 2.0 级别特性

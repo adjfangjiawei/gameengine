@@ -547,24 +547,46 @@ namespace Engine {
         }
 
         // VulkanMemoryAllocator Implementation
-        VulkanMemoryAllocator::~VulkanMemoryAllocator() { Shutdown(); }
+        VulkanMemoryAllocator::VulkanMemoryAllocator(
+            VkDevice device, VkPhysicalDevice physicalDevice)
+            : m_Device(device), m_PhysicalDevice(physicalDevice) {
+            vkGetPhysicalDeviceMemoryProperties(physicalDevice,
+                                                &m_MemoryProperties);
+            m_Stats = {0, 0};
+        }
 
-        bool VulkanMemoryAllocator::Initialize(VulkanDevice* device) {
-            Device = device;
-            return true;
+        VulkanMemoryAllocator::~VulkanMemoryAllocator() {
+            // 清理所有已分配的内存
+            for (auto memory : AllocatedMemory) {
+                vkFreeMemory(m_Device, memory, nullptr);
+            }
+            AllocatedMemory.clear();
         }
 
         void VulkanMemoryAllocator::Shutdown() {
-            if (Device && Device->GetHandle() != VK_NULL_HANDLE) {
-                for (auto memory : AllocatedMemory) {
-                    vkFreeMemory(Device->GetHandle(), memory, nullptr);
+            // 清理所有已分配的内存
+            for (auto memory : AllocatedMemory) {
+                if (memory != VK_NULL_HANDLE) {
+                    vkFreeMemory(m_Device, memory, nullptr);
                 }
-                AllocatedMemory.clear();
             }
+            AllocatedMemory.clear();
+            m_Stats = {0, 0};
+        }
+
+        bool VulkanMemoryAllocator::Initialize(VkDevice device) {
+            if (device == VK_NULL_HANDLE) {
+                LOG_ERROR(
+                    "Invalid device handle provided to "
+                    "VulkanMemoryAllocator::Initialize");
+                return false;
+            }
+            m_Device = device;
+            return true;
         }
 
         VkDeviceMemory VulkanMemoryAllocator::AllocateMemory(
-            const VkMemoryRequirements& memRequirements,
+            VkMemoryRequirements memRequirements,
             VkMemoryPropertyFlags properties) {
             VkMemoryAllocateInfo allocInfo = {};
             allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -573,14 +595,15 @@ namespace Engine {
                 FindMemoryType(memRequirements.memoryTypeBits, properties);
 
             VkDeviceMemory memory;
-            if (vkAllocateMemory(
-                    Device->GetHandle(), &allocInfo, nullptr, &memory) !=
+            if (vkAllocateMemory(m_Device, &allocInfo, nullptr, &memory) !=
                 VK_SUCCESS) {
                 LOG_ERROR("Failed to allocate device memory!");
                 return VK_NULL_HANDLE;
             }
 
             AllocatedMemory.push_back(memory);
+            m_Stats.TotalAllocated += memRequirements.size;
+            m_Stats.CurrentUsed += memRequirements.size;
             return memory;
         }
 
@@ -588,21 +611,17 @@ namespace Engine {
             auto it = std::find(
                 AllocatedMemory.begin(), AllocatedMemory.end(), memory);
             if (it != AllocatedMemory.end()) {
-                vkFreeMemory(Device->GetHandle(), memory, nullptr);
+                vkFreeMemory(m_Device, memory, nullptr);
                 AllocatedMemory.erase(it);
             }
         }
 
-        uint32_t VulkanMemoryAllocator::FindMemoryType(
-            uint32_t typeFilter, VkMemoryPropertyFlags properties) const {
-            VkPhysicalDeviceMemoryProperties memProperties;
-            vkGetPhysicalDeviceMemoryProperties(
-                Device->GetPhysicalDevice()->GetHandle(), &memProperties);
-
-            for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+        uint32 VulkanMemoryAllocator::FindMemoryType(
+            uint32 typeFilter, VkMemoryPropertyFlags properties) {
+            for (uint32_t i = 0; i < m_MemoryProperties.memoryTypeCount; i++) {
                 if ((typeFilter & (1 << i)) &&
-                    (memProperties.memoryTypes[i].propertyFlags & properties) ==
-                        properties) {
+                    (m_MemoryProperties.memoryTypes[i].propertyFlags &
+                     properties) == properties) {
                     return i;
                 }
             }
@@ -638,7 +657,7 @@ namespace Engine {
                 return false;
             }
 
-            if (!MemoryAllocator.Initialize(&Device)) {
+            if (!MemoryAllocator->Initialize(Device.GetHandle())) {
                 LOG_ERROR("Failed to initialize Vulkan memory allocator!");
                 return false;
             }
@@ -647,7 +666,7 @@ namespace Engine {
         }
 
         void VulkanRHI::Shutdown() {
-            MemoryAllocator.Shutdown();
+            MemoryAllocator->Shutdown();
             CommandPoolManager.Shutdown();
             Device.Shutdown();
             Instance.Shutdown();

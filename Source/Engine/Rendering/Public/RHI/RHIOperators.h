@@ -12,18 +12,25 @@ namespace Engine {
 
         // ERHIAccessFlags operators
         inline ERHIAccessFlags operator|(ERHIAccessFlags a, ERHIAccessFlags b) {
-            return static_cast<ERHIAccessFlags>(static_cast<uint32>(a) |
-                                                static_cast<uint32>(b));
+            uint32 result = static_cast<uint32>(a) | static_cast<uint32>(b);
+            // 确保结果不超过有效范围（最大值是15，即所有标志位组合）
+            result &= 0xF;  // 0xF = 15 = 1111b
+            return static_cast<ERHIAccessFlags>(result);
         }
 
         inline ERHIAccessFlags operator&(ERHIAccessFlags a, ERHIAccessFlags b) {
-            return static_cast<ERHIAccessFlags>(static_cast<uint32>(a) &
-                                                static_cast<uint32>(b));
+            uint32 result = static_cast<uint32>(a) & static_cast<uint32>(b);
+            // 对于&操作，结果总是小于等于操作数，所以不需要额外的范围检查
+            return static_cast<ERHIAccessFlags>(result);
         }
 
         inline ERHIAccessFlags& operator|=(ERHIAccessFlags& a,
                                            ERHIAccessFlags b) {
-            return a = a | b;
+            uint32 result = static_cast<uint32>(a) | static_cast<uint32>(b);
+            // 确保结果不超过有效范围
+            result &= 0xF;  // 0xF = 15 = 1111b
+            a = static_cast<ERHIAccessFlags>(result);
+            return a;
         }
 
         // ERHIResourceFlags operators

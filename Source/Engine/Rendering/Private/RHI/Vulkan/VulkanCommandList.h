@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "RHI/RHICommandList.h"
 #include "VulkanRHI.h"
 #include "VulkanResources.h"
 
@@ -36,94 +37,86 @@ namespace Engine {
         class VulkanCommandList : public IRHICommandList {
           public:
             VulkanCommandList(VulkanDevice* device, ECommandListType type);
-            virtual ~VulkanCommandList();
+            ~VulkanCommandList() override;
 
             // IRHICommandList接口实现
-            virtual void Reset(IRHICommandAllocator* allocator) override;
-            virtual void Close() override;
-            virtual void BeginEvent(const char* name) override;
-            virtual void EndEvent() override;
+            void Reset() override;
+            void ResetWithAllocator(IRHICommandAllocator* allocator) override;
+            void Close() override;
+            void BeginEvent(const char* name) override;
+            void EndEvent() override;
 
-            virtual void ResourceBarrier(IRHIResource* resource,
-                                         ERHIResourceState before,
-                                         ERHIResourceState after) override;
+            void ResourceBarrier(IRHIResource* resource,
+                                 ERHIResourceState before,
+                                 ERHIResourceState after) override;
 
-            virtual void SetRenderTargets(
-                uint32 numRenderTargets,
-                IRHIRenderTargetView* const* renderTargets,
-                IRHIDepthStencilView* depthStencil) override;
+            void SetRenderTargets(uint32 numRenderTargets,
+                                  IRHIRenderTargetView* const* renderTargets,
+                                  IRHIDepthStencilView* depthStencil) override;
 
-            virtual void ClearRenderTargetView(
-                IRHIRenderTargetView* renderTarget,
-                const float* clearColor) override;
+            void ClearRenderTargetView(IRHIRenderTargetView* renderTarget,
+                                       const float* clearColor) override;
 
-            virtual void ClearDepthStencilView(
-                IRHIDepthStencilView* depthStencil,
-                float depth,
-                uint8 stencil) override;
+            void ClearDepthStencilView(IRHIDepthStencilView* depthStencil,
+                                       float depth,
+                                       uint8 stencil) override;
 
-            virtual void SetViewport(const Viewport& viewport) override;
-            virtual void SetScissorRect(const ScissorRect& scissor) override;
-            virtual void SetPrimitiveTopology(
-                EPrimitiveType primitiveType) override;
+            void SetViewport(const Viewport& viewport) override;
+            void SetScissorRect(const ScissorRect& scissor) override;
+            void SetPrimitiveTopology(EPrimitiveType primitiveType) override;
 
-            virtual void SetVertexBuffers(
-                uint32 startSlot,
-                uint32 numBuffers,
-                const VertexBufferView* views) override;
+            void SetVertexBuffers(uint32 startSlot,
+                                  uint32 numBuffers,
+                                  const VertexBufferView* views) override;
 
-            virtual void SetIndexBuffer(const IndexBufferView& view) override;
+            void SetIndexBuffer(const IndexBufferView& view) override;
 
-            virtual void SetShader(EShaderType type,
-                                   IRHIShader* shader) override;
+            void SetShader(EShaderType type, IRHIShader* shader) override;
 
-            virtual void SetConstantBuffer(uint32 slot,
-                                           IRHIBuffer* buffer) override;
+            void SetConstantBuffer(uint32 slot, IRHIBuffer* buffer) override;
 
-            virtual void SetShaderResource(
-                uint32 slot, IRHIShaderResourceView* srv) override;
+            void SetShaderResource(uint32 slot,
+                                   IRHIShaderResourceView* srv) override;
 
-            virtual void SetUnorderedAccessView(
-                uint32 slot, IRHIUnorderedAccessView* uav) override;
+            void SetUnorderedAccessView(uint32 slot,
+                                        IRHIUnorderedAccessView* uav) override;
 
-            virtual void Draw(uint32 vertexCount,
-                              uint32 startVertexLocation) override;
+            void Draw(uint32 vertexCount, uint32 startVertexLocation) override;
 
-            virtual void DrawIndexed(uint32 indexCount,
-                                     uint32 startIndexLocation,
-                                     int32 baseVertexLocation) override;
+            void DrawIndexed(uint32 indexCount,
+                             uint32 startIndexLocation,
+                             int32 baseVertexLocation) override;
 
-            virtual void DrawInstanced(uint32 vertexCountPerInstance,
-                                       uint32 instanceCount,
-                                       uint32 startVertexLocation,
-                                       uint32 startInstanceLocation) override;
+            void DrawInstanced(uint32 vertexCountPerInstance,
+                               uint32 instanceCount,
+                               uint32 startVertexLocation,
+                               uint32 startInstanceLocation) override;
 
-            virtual void DrawIndexedInstanced(
-                uint32 indexCountPerInstance,
-                uint32 instanceCount,
-                uint32 startIndexLocation,
-                int32 baseVertexLocation,
-                uint32 startInstanceLocation) override;
+            void DrawIndexedInstanced(uint32 indexCountPerInstance,
+                                      uint32 instanceCount,
+                                      uint32 startIndexLocation,
+                                      int32 baseVertexLocation,
+                                      uint32 startInstanceLocation) override;
 
-            virtual void Dispatch(uint32 threadGroupCountX,
-                                  uint32 threadGroupCountY,
-                                  uint32 threadGroupCountZ) override;
+            void Dispatch(uint32 threadGroupCountX,
+                          uint32 threadGroupCountY,
+                          uint32 threadGroupCountZ) override;
 
-            virtual void CopyBuffer(IRHIBuffer* dest,
-                                    uint64 destOffset,
-                                    IRHIBuffer* source,
-                                    uint64 sourceOffset,
-                                    uint64 size) override;
+            void CopyBuffer(IRHIBuffer* dest,
+                            uint64 destOffset,
+                            IRHIBuffer* source,
+                            uint64 sourceOffset,
+                            uint64 size) override;
 
-            virtual void CopyTexture(IRHITexture* dest,
-                                     uint32 destSubresource,
-                                     uint32 destX,
-                                     uint32 destY,
-                                     uint32 destZ,
-                                     IRHITexture* source,
-                                     uint32 sourceSubresource) override;
+            void CopyTexture(IRHITexture* dest,
+                             uint32 destSubresource,
+                             uint32 destX,
+                             uint32 destY,
+                             uint32 destZ,
+                             IRHITexture* source,
+                             uint32 sourceSubresource) override;
 
-            virtual ECommandListType GetType() const override { return Type; }
+            ECommandListType GetType() const override { return Type; }
 
             // Vulkan特定方法
             VkCommandBuffer GetCommandBuffer() const;
@@ -159,11 +152,11 @@ namespace Engine {
         class VulkanCommandAllocator : public IRHICommandAllocator {
           public:
             VulkanCommandAllocator(VulkanDevice* device, ECommandListType type);
-            virtual ~VulkanCommandAllocator();
+            ~VulkanCommandAllocator() override;
 
             // IRHICommandAllocator接口实现
-            virtual void Reset() override;
-            virtual ECommandListType GetType() const override { return Type; }
+            void Reset() override;
+            ECommandListType GetType() const override { return Type; }
 
             // Vulkan特定方法
             VkCommandPool GetCommandPool() const { return CommandPool; }

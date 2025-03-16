@@ -44,8 +44,7 @@ namespace Engine {
             std::string function;
         };
 
-#define MEMORY_LOCATION \
-    MemoryLocation { __FILE__, __LINE__, __FUNCTION__ }
+#define MEMORY_LOCATION MemoryLocation{__FILE__, __LINE__, "unknown"}
 
         /**
          * @brief Memory allocation statistics

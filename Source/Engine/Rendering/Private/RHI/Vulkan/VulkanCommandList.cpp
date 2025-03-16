@@ -124,7 +124,16 @@ namespace Engine {
 
         VulkanCommandList::~VulkanCommandList() { delete CurrentCommandBuffer; }
 
-        void VulkanCommandList::Reset(IRHICommandAllocator* allocator) {
+        void VulkanCommandList::Reset() {
+            if (CurrentCommandBuffer) {
+                CurrentCommandBuffer->Reset();
+                IsInRecordingState = false;
+                IsInRenderPass = false;
+            }
+        }
+
+        void VulkanCommandList::ResetWithAllocator(
+            IRHICommandAllocator* allocator) {
             auto vulkanAllocator =
                 dynamic_cast<VulkanCommandAllocator*>(allocator);
             if (!vulkanAllocator) {

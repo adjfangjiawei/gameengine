@@ -3,6 +3,7 @@
 
 #include <memory>
 
+#include "RHICommands.h"
 #include "RHIResources.h"
 
 namespace Engine {
@@ -45,14 +46,6 @@ namespace Engine {
             EPixelFormat Format = EPixelFormat::R32_FLOAT;
         };
 
-        // 命令列表类型
-        enum class ECommandListType : uint8 {
-            Direct,   // 可以执行任何类型的命令
-            Bundle,   // 预录制的命令包
-            Compute,  // 仅计算命令
-            Copy,     // 仅复制命令
-        };
-
         // 命令分配器接口
         class IRHICommandAllocator {
           public:
@@ -65,14 +58,18 @@ namespace Engine {
             virtual ECommandListType GetType() const = 0;
         };
 
-        // 命令列表接口
-        class IRHICommandList {
+        // 扩展命令列表接口
+        class IRHICommandList : public IRHICommandListBase {
           public:
-            virtual ~IRHICommandList() = default;
+            virtual ~IRHICommandList() override = default;
 
             // 基础操作
-            virtual void Reset(IRHICommandAllocator* allocator) = 0;
-            virtual void Close() = 0;
+            // 实现基类的Reset
+            virtual void Reset() override = 0;
+            // 使用分配器重置
+            virtual void ResetWithAllocator(
+                IRHICommandAllocator* allocator) = 0;
+            virtual void Close() override = 0;
             virtual void BeginEvent(const char* name) = 0;
             virtual void EndEvent() = 0;
 
