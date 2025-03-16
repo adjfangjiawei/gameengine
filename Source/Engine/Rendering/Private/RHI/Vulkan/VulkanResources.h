@@ -292,6 +292,10 @@ namespace Engine {
             // Vulkan特定方法
             VkImageView GetImageView() const { return ImageView; }
             VkBufferView GetBufferView() const { return BufferView; }
+            VkSampler GetSampler() const { return Sampler; }
+            const VkDescriptorImageInfo& GetDescriptorInfo() const {
+                return DescriptorInfo;
+            }
 
           private:
             bool CreateView();
@@ -300,6 +304,8 @@ namespace Engine {
             IRHIResource* Resource;
             VkImageView ImageView;
             VkBufferView BufferView;
+            VkSampler Sampler;
+            VkDescriptorImageInfo DescriptorInfo;
         };
 
         // Vulkan无序访问视图实现

@@ -61,6 +61,9 @@ namespace Engine {
 
             // 解除映射
             virtual void Unmap() = 0;
+
+            // 获取原生句柄
+            virtual void* GetNativeHandle() const = 0;
         };
 
         // 内存分配器接口

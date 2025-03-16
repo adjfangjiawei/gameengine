@@ -89,6 +89,10 @@ namespace Engine {
                 MemoryAllocator = std::move(allocator);
             }
 
+            // Memory type helper function
+            uint32_t GetMemoryTypeIndex(uint32_t typeBits,
+                                        VkMemoryPropertyFlags properties) const;
+
           private:
             std::unique_ptr<VulkanMemoryAllocator> MemoryAllocator;
             bool SelectPhysicalDevice(VkInstance instance);
@@ -154,6 +158,15 @@ namespace Engine {
             }
             virtual IRHISwapChain* CreateSwapChain(
                 const SwapChainDesc& desc) override;
+
+            // 同步对象创建接口
+            virtual IRHIEvent* CreateEvent() override;
+            virtual IRHITimelineSemaphore* CreateTimelineSemaphore(
+                const TimelineSemaphoreDesc& desc) override;
+            virtual IRHIShaderFeedbackBuffer* CreateShaderFeedbackBuffer(
+                const ShaderFeedbackDesc& desc) override;
+            virtual IRHIPredicate* CreatePredicate(
+                const PredicateDesc& desc) override;
             virtual void SubmitCommandLists(
                 uint32 count, IRHICommandList* const* commandLists) override;
             virtual void WaitForGPU() override;
@@ -169,6 +182,14 @@ namespace Engine {
             virtual void EndFrame() override;
             virtual void SetDebugName(IRHIResource* resource,
                                       const char* name) override;
+
+            // Vulkan specific debug name setting
+            void SetDebugName(VkObjectType objectType,
+                              uint64_t object,
+                              const char* name);
+
+            // Format conversion utility
+            static VkFormat GetVkFormat(EPixelFormat format);
 
             // Vulkan特定接口
             VkDevice GetHandle() const { return Device; }

@@ -1040,5 +1040,94 @@ namespace Engine {
             Instance.Shutdown();
         }
 
+        IRHIShaderResourceView* VulkanDevice::CreateShaderResourceView(
+            IRHIResource* resource, const ShaderResourceViewDesc& desc) {
+            if (!resource) {
+                LOG_ERROR(
+                    "Invalid resource provided for shader resource view "
+                    "creation!");
+                return nullptr;
+            }
+
+            VkImage targetImage = VK_NULL_HANDLE;
+
+            // 获取目标图像
+            if (auto texture = dynamic_cast<VulkanTexture*>(resource)) {
+                targetImage = texture->GetHandle();
+            } else {
+                LOG_ERROR(
+                    "Unsupported resource type for shader resource view!");
+                return nullptr;
+            }
+
+            if (targetImage == VK_NULL_HANDLE) {
+                LOG_ERROR(
+                    "Failed to get target image for shader resource view!");
+                return nullptr;
+            }
+
+            // 创建图像视图
+            VkImageViewCreateInfo viewInfo = {};
+            viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+            viewInfo.image = targetImage;
+            viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+            viewInfo.format = ConvertToVkFormat(desc.Format);
+            viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+            viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+            viewInfo.subresourceRange.baseMipLevel = desc.MostDetailedMip;
+            viewInfo.subresourceRange.levelCount = desc.MipLevels;
+            viewInfo.subresourceRange.baseArrayLayer = desc.FirstArraySlice;
+            viewInfo.subresourceRange.layerCount = desc.ArraySize;
+
+            VkImageView imageView;
+            if (vkCreateImageView(Device, &viewInfo, nullptr, &imageView) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to create shader resource image view!");
+                return nullptr;
+            }
+
+            // 创建采样器
+            VkSamplerCreateInfo samplerInfo = {};
+            samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+            samplerInfo.magFilter = VK_FILTER_LINEAR;
+            samplerInfo.minFilter = VK_FILTER_LINEAR;
+            samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+            samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+            samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+            samplerInfo.anisotropyEnable = VK_TRUE;
+            samplerInfo.maxAnisotropy = 16.0f;
+            samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
+            samplerInfo.unnormalizedCoordinates = VK_FALSE;
+            samplerInfo.compareEnable = VK_FALSE;
+            samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+            samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+            samplerInfo.mipLodBias = 0.0f;
+            samplerInfo.minLod = 0.0f;
+            samplerInfo.maxLod = static_cast<float>(desc.MipLevels);
+
+            VkSampler sampler;
+            if (vkCreateSampler(Device, &samplerInfo, nullptr, &sampler) !=
+                VK_SUCCESS) {
+                vkDestroyImageView(Device, imageView, nullptr);
+                LOG_ERROR("Failed to create texture sampler!");
+                return nullptr;
+            }
+
+            // 创建描述符信息
+            VkDescriptorImageInfo descriptorInfo = {};
+            descriptorInfo.imageLayout =
+                VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+            descriptorInfo.imageView = imageView;
+            descriptorInfo.sampler = sampler;
+
+            // 创建VulkanShaderResourceView对象并初始化
+            // 创建VulkanShaderResourceView对象
+            // 构造函数会自动调用CreateView
+            return new VulkanShaderResourceView(this, resource, desc);
+        }
+
     }  // namespace RHI
 }  // namespace Engine

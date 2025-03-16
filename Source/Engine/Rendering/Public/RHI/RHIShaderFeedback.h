@@ -48,16 +48,16 @@ namespace Engine {
         // 条件渲染谓词描述
         struct PredicateDesc {
             EPredicateType Type;
-            union {
-                struct {
+            union ValueUnion {
+                struct BinaryValue {
                     bool Value;
                 } Binary;
-                struct {
+                struct NumericValue {
                     uint64 Value;
                     uint64 Reference;
                     ECompareFunction CompareOp;
                 } Numeric;
-            };
+            } Value;
             std::string DebugName;
         };
 

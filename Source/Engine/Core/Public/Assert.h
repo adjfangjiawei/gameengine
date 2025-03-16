@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "Log/LogSystem.h"
@@ -70,11 +69,16 @@ namespace Engine {
             LOG_ERROR("Verification failed: {}", #condition); \
         }                                                     \
     } while (0)
+
+// Add check macro as an alias for ASSERT
+#define check(condition) ASSERT(condition, "")
+
 #else
 #define ASSERT(condition, str) ((void)0)
 #define ASSERT_MSG(condition, message, type) ((void)0)
 #define ASSERT_SOFT(condition, message) ((void)0)
 #define VERIFY(condition) (condition)
+#define check(condition) ((void)0)
 #endif
 
 }  // namespace Engine

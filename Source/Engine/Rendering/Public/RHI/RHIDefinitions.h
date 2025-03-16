@@ -337,5 +337,25 @@ namespace Engine {
             float MaxLOD;
         };
 
+        // 共享句柄标志
+        enum class ESharedHandleFlags : uint32 {
+            None = 0,
+            Shared = 1 << 0,        // 进程间共享
+            CrossAdapter = 1 << 1,  // 跨适配器共享
+            GlobalShare = 1 << 2    // 全局共享
+        };
+
+        inline ESharedHandleFlags operator|(ESharedHandleFlags a,
+                                            ESharedHandleFlags b) {
+            return static_cast<ESharedHandleFlags>(static_cast<uint32>(a) |
+                                                   static_cast<uint32>(b));
+        }
+
+        inline ESharedHandleFlags operator&(ESharedHandleFlags a,
+                                            ESharedHandleFlags b) {
+            return static_cast<ESharedHandleFlags>(static_cast<uint32>(a) &
+                                                   static_cast<uint32>(b));
+        }
+
     }  // namespace RHI
 }  // namespace Engine

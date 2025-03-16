@@ -1,25 +1,10 @@
-
 #pragma once
 
+#include "RHICommands.h"
 #include "RHIDefinitions.h"
 
 namespace Engine {
     namespace RHI {
-
-        // 围栏接口
-        class IRHIFence {
-          public:
-            virtual ~IRHIFence() = default;
-
-            // 获取当前值
-            virtual uint64 GetCompletedValue() const = 0;
-
-            // 等待特定值
-            virtual void Wait(uint64 value) = 0;
-
-            // 信号特定值
-            virtual void Signal(uint64 value) = 0;
-        };
 
         // 事件接口
         class IRHIEvent {

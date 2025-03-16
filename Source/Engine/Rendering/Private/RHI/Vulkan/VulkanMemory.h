@@ -41,6 +41,9 @@ namespace Engine {
             }
             virtual void* Map() override;
             virtual void Unmap() override;
+            virtual void* GetNativeHandle() const override {
+                return (void*)(uint64_t)m_DeviceMemory;
+            }
 
             // Vulkan特定方法
             VkDeviceMemory GetVkDeviceMemory() const { return m_DeviceMemory; }

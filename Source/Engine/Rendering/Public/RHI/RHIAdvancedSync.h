@@ -7,14 +7,6 @@
 namespace Engine {
     namespace RHI {
 
-        // 共享句柄标志
-        enum class ESharedHandleFlags : uint32 {
-            None = 0,
-            Shared = 1 << 0,        // 进程间共享
-            CrossAdapter = 1 << 1,  // 跨适配器共享
-            GlobalShare = 1 << 2,   // 全局共享
-        };
-
         // 共享资源描述
         struct SharedResourceDesc {
             ESharedHandleFlags Flags;

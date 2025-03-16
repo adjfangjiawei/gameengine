@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <float.h>
@@ -7,6 +6,8 @@
 
 #include "RHICommandList.h"
 #include "RHIDefinitions.h"
+#include "RHIShaderFeedback.h"
+#include "RHISync.h"
 
 namespace Engine {
     namespace RHI {
@@ -109,6 +110,15 @@ namespace Engine {
             // 交换链创建
             virtual IRHISwapChain* CreateSwapChain(
                 const SwapChainDesc& desc) = 0;
+
+            // 同步对象创建
+            virtual IRHIEvent* CreateEvent() = 0;
+            virtual IRHITimelineSemaphore* CreateTimelineSemaphore(
+                const TimelineSemaphoreDesc& desc) = 0;
+            virtual IRHIShaderFeedbackBuffer* CreateShaderFeedbackBuffer(
+                const ShaderFeedbackDesc& desc) = 0;
+            virtual IRHIPredicate* CreatePredicate(
+                const PredicateDesc& desc) = 0;
 
             // 命令提交和同步
             virtual void SubmitCommandLists(
