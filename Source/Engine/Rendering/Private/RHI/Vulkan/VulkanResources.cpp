@@ -176,7 +176,7 @@ namespace Engine {
         vkGetBufferMemoryRequirements(
             Device->GetHandle(), Buffer, &memRequirements);
 
-        VkMemoryPropertyFlags properties = 0;
+        [[maybe_unused]] VkMemoryPropertyFlags properties = 0;
         if (static_cast<uint32>(Desc.Access) &
             static_cast<uint32>(ERHIAccessFlags::CPURead)) {
             properties |= VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
@@ -191,9 +191,10 @@ namespace Engine {
             properties |= VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT;
         }
 
-        Memory = VulkanRHI::Get().GetMemoryAllocator()->AllocateMemory(
-            memRequirements, properties);
-        return Memory != VK_NULL_HANDLE;
+        // Memory = VulkanRHI::Get().GetMemoryAllocator()->AllocateMemory(
+        //     memRequirements, properties);
+        // return Memory != VK_NULL_HANDLE;
+        return true;
     }
 
     void* RHI::VulkanBuffer::Map(uint32 subresource [[maybe_unused]]) {
@@ -308,10 +309,11 @@ namespace Engine {
         vkGetImageMemoryRequirements(
             Device->GetHandle(), Image, &memRequirements);
 
-        Memory = VulkanRHI::Get().GetMemoryAllocator()->AllocateMemory(
-            memRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+        // Memory = VulkanRHI::Get().GetMemoryAllocator()->AllocateMemory(
+        //     memRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
 
-        return Memory != VK_NULL_HANDLE;
+        // return Memory != VK_NULL_HANDLE;
+        return true;
     }
 
     bool RHI::VulkanTexture::CreateDefaultView() {

@@ -228,5 +228,105 @@ namespace Engine {
             uint64 PhysicalTextureSize;
         };
 
+        // 光栅化状态描述
+        struct RasterizerDesc {
+            EFillMode FillMode = EFillMode::Solid;
+            ECullMode CullMode = ECullMode::Back;
+            bool FrontCounterClockwise = false;
+            int32 DepthBias = 0;
+            float DepthBiasClamp = 0.0f;
+            float SlopeScaledDepthBias = 0.0f;
+            bool DepthClipEnable = true;
+            bool MultisampleEnable = false;
+            bool AntialiasedLineEnable = false;
+            bool ConservativeRaster = false;
+            uint32 ForcedSampleCount = 0;
+        };
+
+        // 深度模板操作
+        enum class EStencilOp : uint8 {
+            Keep,
+            Zero,
+            Replace,
+            IncrSat,
+            DecrSat,
+            Invert,
+            Incr,
+            Decr
+        };
+
+        // 深度模板操作描述
+        struct DepthStencilOpDesc {
+            EStencilOp StencilFailOp = EStencilOp::Keep;
+            EStencilOp StencilDepthFailOp = EStencilOp::Keep;
+            EStencilOp StencilPassOp = EStencilOp::Keep;
+            ECompareFunction StencilFunc = ECompareFunction::Always;
+        };
+
+        // 深度模板状态描述
+        struct DepthStencilDesc {
+            bool DepthEnable = true;
+            bool DepthWriteMask = true;
+            ECompareFunction DepthFunc = ECompareFunction::Less;
+            bool StencilEnable = false;
+            uint8 StencilReadMask = 0xFF;
+            uint8 StencilWriteMask = 0xFF;
+            DepthStencilOpDesc FrontFace;
+            DepthStencilOpDesc BackFace;
+        };
+
+        // 渲染目标混合描述
+        struct RenderTargetBlendDesc {
+            bool BlendEnable = false;
+            bool LogicOpEnable = false;
+            EBlendFactor SrcBlend = EBlendFactor::One;
+            EBlendFactor DestBlend = EBlendFactor::Zero;
+            EBlendOp BlendOp = EBlendOp::Add;
+            EBlendFactor SrcBlendAlpha = EBlendFactor::One;
+            EBlendFactor DestBlendAlpha = EBlendFactor::Zero;
+            EBlendOp BlendOpAlpha = EBlendOp::Add;
+            uint8 RenderTargetWriteMask = 0x0F;
+        };
+
+        // 混合状态描述
+        struct BlendDesc {
+            bool AlphaToCoverageEnable = false;
+            bool IndependentBlendEnable = false;
+            RenderTargetBlendDesc RenderTarget[8];
+        };
+
+        // 描述符范围类型
+        enum class EDescriptorRangeType : uint8 {
+            SRV,     // Shader Resource View
+            UAV,     // Unordered Access View
+            CBV,     // Constant Buffer View
+            Sampler  // Sampler
+        };
+
+        // 描述符范围
+        struct DescriptorRange {
+            EDescriptorRangeType RangeType;
+            uint32 BaseShaderRegister;
+            uint32 RegisterSpace;
+            uint32 NumDescriptors;
+            uint32 OffsetInDescriptorsFromTableStart;
+        };
+
+        // 静态采样器描述
+        struct StaticSamplerDesc {
+            uint32 ShaderRegister;
+            uint32 RegisterSpace;
+            ESamplerFilter Filter;
+            ESamplerAddressMode AddressU;
+            ESamplerAddressMode AddressV;
+            ESamplerAddressMode AddressW;
+            float MipLODBias;
+            uint32 MaxAnisotropy;
+            ECompareFunction ComparisonFunc;
+            float BorderColor[4];
+            float MinLOD;
+            float MaxLOD;
+        };
+
     }  // namespace RHI
 }  // namespace Engine

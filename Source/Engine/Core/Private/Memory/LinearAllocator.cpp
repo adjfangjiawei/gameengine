@@ -1,6 +1,8 @@
 
 #include "Memory/LinearAllocator.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <cstring>
 
 #include "Assert.h"
@@ -45,6 +47,13 @@ namespace Engine {
             void *alignedAddress = AlignPointer(current, alignment);
             adjustment = static_cast<char *>(alignedAddress) -
                          static_cast<char *>(current);
+            ASSERT_MSG(
+                adjustment == (size_t)(static_cast<char *>(alignedAddress) -
+                                       static_cast<char *>(current)),
+                "Adjustment should be equal to the difference between the "
+                "aligned address and the current address",
+                AssertType::Error);
+            current = alignedAddress;
 
             // Check if we have enough space
             size_t totalRequired = size + adjustment + sizeof(AllocationHeader);
@@ -69,7 +78,8 @@ namespace Engine {
             stats.peakUsage = std::max(stats.peakUsage, stats.currentUsage);
 
             // Zero memory if requested
-            void *userPtr = alignedAddress;
+            void *userPtr =
+                static_cast<char *>(alignedAddress) + sizeof(AllocationHeader);
             if ((flags & AllocFlags::ZeroMemory) == AllocFlags::ZeroMemory) {
                 std::memset(userPtr, 0, size);
             }
@@ -106,7 +116,20 @@ namespace Engine {
                 return 0;
             }
 
-            AllocationHeader *header = static_cast<AllocationHeader *>(ptr) - 1;
+            // The header is located at (userPtr - adjustment -
+            // sizeof(AllocationHeader)) First, get the aligned user pointer
+            char *userPtr = static_cast<char *>(ptr);
+
+            // Find the header by going backwards by one byte to get a value we
+            // can use to determine the adjustment
+            AllocationHeader *header = reinterpret_cast<AllocationHeader *>(
+                userPtr - sizeof(AllocationHeader));
+
+            // Now use the adjustment value from the header to get the actual
+            // header location
+            header = reinterpret_cast<AllocationHeader *>(
+                reinterpret_cast<char *>(header) - header->adjustment);
+
             return header->size;
         }
 

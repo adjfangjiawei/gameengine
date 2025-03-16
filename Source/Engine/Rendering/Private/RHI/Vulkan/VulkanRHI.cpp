@@ -442,6 +442,44 @@ namespace Engine {
             return PhysicalDevice->GetQueueFamilyIndices().TransferFamily;
         }
 
+        // IRHIBuffer* VulkanDevice::CreateBuffer(const BufferDesc& desc) {
+        //     // TODO: Implement actual buffer creation
+        //     LOG_WARNING("VulkanDevice::CreateBuffer not fully implemented");
+        //     return nullptr;
+        // }
+
+        // IRHITexture* VulkanDevice::CreateTexture(const TextureDesc& desc) {
+        //     // TODO: Implement actual texture creation
+        //     LOG_WARNING("VulkanDevice::CreateTexture not fully implemented");
+        //     return nullptr;
+        // }
+
+        // IRHIShader* VulkanDevice::CreateShader(const ShaderDesc& desc,
+        //                                        const void* shaderData,
+        //                                        size_t dataSize) {
+        //     // TODO: Implement actual shader creation
+        //     LOG_WARNING("VulkanDevice::CreateShader not fully implemented");
+        //     return nullptr;
+        // }
+
+        // IRHIRenderTargetView* VulkanDevice::CreateRenderTargetView(
+        //     IRHIResource* resource, const RenderTargetViewDesc& desc) {
+        //     // TODO: Implement actual render target view creation
+        //     LOG_WARNING(
+        //         "VulkanDevice::CreateRenderTargetView not fully
+        //         implemented");
+        //     return nullptr;
+        // }
+
+        // IRHIDepthStencilView* VulkanDevice::CreateDepthStencilView(
+        //     IRHIResource* resource, const DepthStencilViewDesc& desc) {
+        //     // TODO: Implement actual depth stencil view creation
+        //     LOG_WARNING(
+        //         "VulkanDevice::CreateDepthStencilView not fully
+        //         implemented");
+        //     return nullptr;
+        // }
+
         // VulkanCommandPoolManager Implementation
         VulkanCommandPoolManager::~VulkanCommandPoolManager() { Shutdown(); }
 

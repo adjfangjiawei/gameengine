@@ -105,6 +105,12 @@ namespace Engine {
             }
         };
 
+        // 管线使用统计信息
+        struct PipelineUsageStats {
+            uint32_t UseCount = 0;      // 使用次数
+            double LastUsedTime = 0.0;  // 最后使用时间
+        };
+
         // 管线状态管理器
         class VulkanPipelineManager {
           public:
@@ -123,6 +129,21 @@ namespace Engine {
             // 清理未使用的管线
             void CleanupUnusedPipelines();
 
+            // 获取统计信息
+            uint32_t GetGraphicsPipelineCount() const {
+                return static_cast<uint32_t>(GraphicsPipelines.size());
+            }
+            uint32_t GetComputePipelineCount() const {
+                return static_cast<uint32_t>(ComputePipelines.size());
+            }
+            uint32_t GetPipelineLayoutCount() const {
+                return static_cast<uint32_t>(PipelineLayouts.size());
+            }
+
+            // 获取资源使用统计
+            std::vector<std::pair<uint32_t, uint32_t>> GetPipelineUsageStats()
+                const;
+
           private:
             VkPipelineLayout CreatePipelineLayout(const PipelineLayoutKey& key);
             VkPipeline CreateGraphicsPipeline(const GraphicsPipelineKey& key);
@@ -130,18 +151,41 @@ namespace Engine {
 
             VulkanDevice* Device;
 
+            // 管线布局及其使用统计
             std::unordered_map<PipelineLayoutKey,
                                VkPipelineLayout,
                                PipelineLayoutKeyHash>
                 PipelineLayouts;
+            std::unordered_map<PipelineLayoutKey,
+                               PipelineUsageStats,
+                               PipelineLayoutKeyHash>
+                PipelineLayoutStats;
+
+            // 图形管线及其使用统计
             std::unordered_map<GraphicsPipelineKey,
                                VkPipeline,
                                GraphicsPipelineKeyHash>
                 GraphicsPipelines;
+            std::unordered_map<GraphicsPipelineKey,
+                               PipelineUsageStats,
+                               GraphicsPipelineKeyHash>
+                GraphicsPipelineStats;
+
+            // 计算管线及其使用统计
             std::unordered_map<ComputePipelineKey,
                                VkPipeline,
                                ComputePipelineKeyHash>
                 ComputePipelines;
+            std::unordered_map<ComputePipelineKey,
+                               PipelineUsageStats,
+                               ComputePipelineKeyHash>
+                ComputePipelineStats;
+
+            // 清理配置
+            static constexpr uint32_t MIN_USES_BEFORE_CLEANUP =
+                5;  // 清理前最小使用次数
+            static constexpr double UNUSED_THRESHOLD =
+                300.0;  // 未使用阈值（秒）
         };
 
         // 描述符集布局缓存键
@@ -165,6 +209,13 @@ namespace Engine {
                 }
                 return hash;
             }
+        };
+
+        // 描述符集布局使用统计
+        struct DescriptorLayoutUsageStats {
+            uint32_t UseCount = 0;                    // 使用次数
+            double LastUsedTime = 0.0;                // 最后使用时间
+            std::vector<VkDescriptorSet> ActiveSets;  // 活跃的描述符集
         };
 
         // 描述符集管理器
@@ -191,6 +242,20 @@ namespace Engine {
             // 清理未使用的描述符集布局
             void CleanupUnusedLayouts();
 
+            // 获取统计信息
+            uint32_t GetDescriptorSetLayoutCount() const {
+                return static_cast<uint32_t>(DescriptorSetLayouts.size());
+            }
+            uint32_t GetTotalActiveDescriptorSetCount() const;
+
+            // 获取描述符集布局使用统计
+            struct LayoutUsageInfo {
+                uint32_t UseCount;          // 使用次数
+                uint32_t TimeSinceLastUse;  // 自上次使用以来的时间（秒）
+                uint32_t ActiveSetCount;    // 活跃的描述符集数量
+            };
+            std::vector<LayoutUsageInfo> GetLayoutUsageStats() const;
+
           private:
             VkDescriptorSetLayout CreateDescriptorSetLayout(
                 const DescriptorSetLayoutKey& key);
@@ -203,6 +268,19 @@ namespace Engine {
                                VkDescriptorSetLayout,
                                DescriptorSetLayoutKeyHash>
                 DescriptorSetLayouts;
+
+            std::unordered_map<DescriptorSetLayoutKey,
+                               DescriptorLayoutUsageStats,
+                               DescriptorSetLayoutKeyHash>
+                LayoutUsageStats;
+
+            // 清理配置
+            static constexpr uint32_t MIN_USES_BEFORE_CLEANUP =
+                5;  // 清理前最小使用次数
+            static constexpr double UNUSED_THRESHOLD =
+                300.0;  // 未使用阈值（秒）
+            static constexpr uint32_t MAX_UNUSED_SETS_PER_LAYOUT =
+                10;  // 每个布局允许的最大未使用描述符集数量
         };
 
     }  // namespace RHI

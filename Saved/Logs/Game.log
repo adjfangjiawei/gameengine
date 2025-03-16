@@ -19,3 +19,525 @@
 [2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr2) == 256 - Second allocation size should match
 [2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr2) == 256 - Second allocation size should match
 [2025-03-16 18:36:26.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr2) == 256 - Second allocation size should match
+[2025-03-16 18:46:54.03s][INFO][Default][140737314913152] Starting memory management tests...
+[2025-03-16 18:46:54.03s][INFO][Default][140737314913152] Testing LinearAllocator...
+[2025-03-16 18:47:08.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr1) == 128 - Allocation size should match
+[2025-03-16 18:46:54.03s][INFO][Default][140737314913152] Starting memory management tests...
+[2025-03-16 18:46:54.03s][INFO][Default][140737314913152] Testing LinearAllocator...
+[2025-03-16 18:47:08.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr1) == 128 - Allocation size should match
+[2025-03-16 18:46:54.03s][INFO][Default][140737314913152] Testing LinearAllocator...
+[2025-03-16 18:47:08.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr1) == 128 - Allocation size should match
+[2025-03-16 18:46:54.03s][INFO][Default][140737314913152] Testing LinearAllocator...
+[2025-03-16 18:47:08.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr1) == 128 - Allocation size should match
+[2025-03-16 18:47:08.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr1) == 128 - Allocation size should match
+[2025-03-16 18:47:08.03s][ERROR][Default][140737314913152] Assertion failed: allocator.GetAllocationSize(ptr1) == 128 - Allocation size should match
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] Starting memory management tests...
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] Testing LinearAllocator...
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] LinearAllocator tests passed
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] Testing StackAllocator...
+[2025-03-16 19:38:21.03s][INFO][Default][140737314913152] StackAllocator tests passed
+[2025-03-16 19:38:25.03s][INFO][Default][140737314913152] Testing HeapAllocator...
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] === Memory Allocation Information ===
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] Starting memory management tests...
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] Testing LinearAllocator...
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] LinearAllocator tests passed
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] Testing StackAllocator...
+[2025-03-16 19:38:21.03s][INFO][Default][140737314913152] StackAllocator tests passed
+[2025-03-16 19:38:25.03s][INFO][Default][140737314913152] Testing HeapAllocator...
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] === Memory Allocation Information ===
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] Testing LinearAllocator...
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] LinearAllocator tests passed
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] Testing StackAllocator...
+[2025-03-16 19:38:21.03s][INFO][Default][140737314913152] StackAllocator tests passed
+[2025-03-16 19:38:25.03s][INFO][Default][140737314913152] Testing HeapAllocator...
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] === Memory Allocation Information ===
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] Testing LinearAllocator...
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] LinearAllocator tests passed
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] Testing StackAllocator...
+[2025-03-16 19:38:21.03s][INFO][Default][140737314913152] StackAllocator tests passed
+[2025-03-16 19:38:25.03s][INFO][Default][140737314913152] Testing HeapAllocator...
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] === Memory Allocation Information ===
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] LinearAllocator tests passed
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] Testing StackAllocator...
+[2025-03-16 19:38:21.03s][INFO][Default][140737314913152] StackAllocator tests passed
+[2025-03-16 19:38:25.03s][INFO][Default][140737314913152] Testing HeapAllocator...
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] === Memory Allocation Information ===
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] LinearAllocator tests passed
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] Testing StackAllocator...
+[2025-03-16 19:38:21.03s][INFO][Default][140737314913152] StackAllocator tests passed
+[2025-03-16 19:38:25.03s][INFO][Default][140737314913152] Testing HeapAllocator...
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] === Memory Allocation Information ===
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] Testing StackAllocator...
+[2025-03-16 19:38:21.03s][INFO][Default][140737314913152] StackAllocator tests passed
+[2025-03-16 19:38:25.03s][INFO][Default][140737314913152] Testing HeapAllocator...
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] === Memory Allocation Information ===
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:07.03s][INFO][Default][140737314913152] Testing StackAllocator...
+[2025-03-16 19:38:21.03s][INFO][Default][140737314913152] StackAllocator tests passed
+[2025-03-16 19:38:25.03s][INFO][Default][140737314913152] Testing HeapAllocator...
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] === Memory Allocation Information ===
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:21.03s][INFO][Default][140737314913152] StackAllocator tests passed
+[2025-03-16 19:38:25.03s][INFO][Default][140737314913152] Testing HeapAllocator...
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] === Memory Allocation Information ===
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:21.03s][INFO][Default][140737314913152] StackAllocator tests passed
+[2025-03-16 19:38:25.03s][INFO][Default][140737314913152] Testing HeapAllocator...
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] === Memory Allocation Information ===
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:25.03s][INFO][Default][140737314913152] Testing HeapAllocator...
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] === Memory Allocation Information ===
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:25.03s][INFO][Default][140737314913152] Testing HeapAllocator...
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] === Memory Allocation Information ===
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] === Memory Allocation Information ===
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] === Memory Allocation Information ===
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Total allocations: 1
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Current memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Peak memory usage: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Memory overhead: 424 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] Fragmentation ratio: {:.2f}%
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by type:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   TestBlock: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Allocation by file:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h: 128 bytes
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152] 
+Detailed allocation list:
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:35.03s][INFO][Default][140737314913152]   Address: {:p}, Size: 0x555555698368, Type: 128
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Memory header corruption detected at /game/gameenginestepbustep/Source/Engine/Core/Public/Memory/HeapAllocator.h:70
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected
+[2025-03-16 19:38:42.03s][ERROR][Default][140737314913152] Assertion failed: false,Memory header corruption detected

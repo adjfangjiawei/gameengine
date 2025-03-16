@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "RHICommandList.h"
+#include "RHIDefinitions.h"
 
 namespace Engine {
     namespace RHI {
@@ -70,49 +71,6 @@ namespace Engine {
         class IRHISamplerState : public IRHIResource {
           public:
             virtual const SamplerDesc& GetDesc() const = 0;
-        };
-
-        // 栅格化状态描述
-        struct RasterizerDesc {
-            EFillMode FillMode = EFillMode::Solid;
-            ECullMode CullMode = ECullMode::Back;
-            bool FrontCounterClockwise = false;
-            int32 DepthBias = 0;
-            float DepthBiasClamp = 0.0f;
-            float SlopeScaledDepthBias = 0.0f;
-            bool DepthClipEnable = true;
-            bool MultisampleEnable = false;
-            bool AntialiasedLineEnable = false;
-            bool ConservativeRaster = false;
-            std::string DebugName;
-        };
-
-        // 深度模板状态描述
-        struct DepthStencilDesc {
-            bool DepthEnable = true;
-            bool DepthWriteMask = true;
-            ECompareFunction DepthFunc = ECompareFunction::Less;
-            bool StencilEnable = false;
-            uint8 StencilReadMask = 0xFF;
-            uint8 StencilWriteMask = 0xFF;
-            std::string DebugName;
-        };
-
-        // 混合状态描述
-        struct BlendDesc {
-            bool AlphaToCoverageEnable = false;
-            bool IndependentBlendEnable = false;
-            struct RenderTarget {
-                bool BlendEnable = false;
-                EBlendFactor SrcBlend = EBlendFactor::One;
-                EBlendFactor DestBlend = EBlendFactor::Zero;
-                EBlendOp BlendOp = EBlendOp::Add;
-                EBlendFactor SrcBlendAlpha = EBlendFactor::One;
-                EBlendFactor DestBlendAlpha = EBlendFactor::Zero;
-                EBlendOp BlendOpAlpha = EBlendOp::Add;
-                uint8 RenderTargetWriteMask = 0x0F;
-            } RenderTarget[8];
-            std::string DebugName;
         };
 
         // 设备接口

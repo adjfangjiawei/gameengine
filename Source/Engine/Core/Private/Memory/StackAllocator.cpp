@@ -21,7 +21,8 @@ namespace Engine {
                 memory, "Failed to allocate memory block", AssertType::Fatal);
 
             current = memory;
-            markers.push(0);  // Push initial marker
+            markers.push(reinterpret_cast<size_t>(
+                memory));  // Push initial marker with actual memory address
         }
 
         StackAllocator::~StackAllocator() {
@@ -40,14 +41,16 @@ namespace Engine {
 
             std::lock_guard<std::mutex> lock(mutex);
 
-            // Calculate aligned address and adjustment
-            size_t adjustment = 0;
-            void *alignedAddress = AlignPointer(current, alignment);
-            adjustment = static_cast<char *>(alignedAddress) -
-                         static_cast<char *>(current);
+            // Calculate header position and aligned address
+            void *headerPos = current;
+            void *userPos =
+                static_cast<char *>(headerPos) + sizeof(AllocationHeader);
+            void *alignedAddress = AlignPointer(userPos, alignment);
+            size_t adjustment = static_cast<char *>(alignedAddress) -
+                                static_cast<char *>(userPos);
 
             // Check if we have enough space
-            size_t totalRequired = size + adjustment + sizeof(AllocationHeader);
+            size_t totalRequired = sizeof(AllocationHeader) + adjustment + size;
             if (static_cast<char *>(memory) + totalSize <
                 static_cast<char *>(current) + totalRequired) {
                 LOG_ERROR("Stack allocator out of memory");
@@ -55,14 +58,16 @@ namespace Engine {
             }
 
             // Setup header
-            AllocationHeader *header = static_cast<AllocationHeader *>(current);
+            AllocationHeader *header =
+                static_cast<AllocationHeader *>(headerPos);
             header->size = size;
             header->adjustment = adjustment;
-            header->prevMarker = markers.top();
+            header->prevMarker =
+                markers
+                    .top();  // Store current top marker before this allocation
 
-            // Update current pointer
+            // Update current pointer (after allocation)
             current = static_cast<char *>(alignedAddress) + size;
-            markers.push(reinterpret_cast<size_t>(current));
 
             // Update stats
             stats.totalAllocated += size;
@@ -89,9 +94,12 @@ namespace Engine {
 
             std::lock_guard<std::mutex> lock(mutex);
 
-            // Get header
+            // Get header by going back by adjustment amount
             AllocationHeader *header = reinterpret_cast<AllocationHeader *>(
-                static_cast<char *>(ptr) - sizeof(AllocationHeader));
+                static_cast<char *>(ptr) - sizeof(AllocationHeader) -
+                reinterpret_cast<AllocationHeader *>(static_cast<char *>(ptr) -
+                                                     sizeof(AllocationHeader))
+                    ->adjustment);
 
             // Update stats
             stats.totalDeallocated += header->size;
@@ -100,7 +108,12 @@ namespace Engine {
 
             // Reset current pointer to previous marker
             current = reinterpret_cast<void *>(header->prevMarker);
-            markers.pop();
+
+            // Pop markers until we've reached the previous state
+            // (only if they're greater than where we're rewinding to)
+            while (!markers.empty() && markers.top() > header->prevMarker) {
+                markers.pop();
+            }
         }
 
         void *StackAllocator::AllocateTracked(size_t size,
@@ -118,8 +131,13 @@ namespace Engine {
                 return 0;
             }
 
+            // Find the header by going back from the user pointer
             AllocationHeader *header = reinterpret_cast<AllocationHeader *>(
-                static_cast<char *>(ptr) - sizeof(AllocationHeader));
+                static_cast<char *>(ptr) - sizeof(AllocationHeader) -
+                reinterpret_cast<AllocationHeader *>(static_cast<char *>(ptr) -
+                                                     sizeof(AllocationHeader))
+                    ->adjustment);
+
             return header->size;
         }
 
@@ -133,13 +151,15 @@ namespace Engine {
             std::lock_guard<std::mutex> lock(mutex);
             current = memory;
             while (!markers.empty()) markers.pop();
-            markers.push(0);  // Push initial marker
+            markers.push(reinterpret_cast<size_t>(
+                memory));  // Push initial marker with actual memory address
             stats = MemoryStats{};
         }
 
         size_t StackAllocator::GetMarker() const {
             std::lock_guard<std::mutex> lock(mutex);
-            return markers.top();
+            return reinterpret_cast<size_t>(
+                current);  // Return the current position as a marker
         }
 
         void StackAllocator::FreeToMarker(size_t marker) {
@@ -151,19 +171,25 @@ namespace Engine {
                 return;
             }
 
-            // Pop markers until we reach the target
+            // Calculate freed memory amount
+            size_t freedMemory = reinterpret_cast<size_t>(current) - marker;
+
+            // Update current pointer to marker position
+            current = reinterpret_cast<void *>(marker);
+
+            // Pop markers until we reach a marker that's less than or equal to
+            // our target
             while (!markers.empty() && markers.top() > marker) {
                 markers.pop();
             }
 
-            // Update current pointer
-            current = reinterpret_cast<void *>(marker);
-
             // Update stats (approximate as we don't track individual
             // allocations)
-            size_t freedMemory = reinterpret_cast<char *>(current) -
-                                 reinterpret_cast<char *>(marker);
-            stats.currentUsage -= freedMemory;
+            if (freedMemory > stats.currentUsage) {
+                stats.currentUsage = 0;
+            } else {
+                stats.currentUsage -= freedMemory;
+            }
         }
 
     }  // namespace Memory
