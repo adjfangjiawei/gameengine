@@ -232,13 +232,152 @@ namespace Engine {
             virtual void SetRasterizerState(
                 const RasterizerDesc& desc) override {
                 CurrentRasterizerDesc = desc;
-                // TODO: 应用光栅化状态
+
+                if (!CurrentCommandList) return;
+
+                auto* vulkanCmdList =
+                    static_cast<VulkanCommandList*>(CurrentCommandList.get());
+
+                // 创建光栅化状态
+                VkPipelineRasterizationStateCreateInfo rasterizer = {};
+                rasterizer.sType =
+                    VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO;
+                rasterizer.depthClampEnable = VK_FALSE;
+                rasterizer.rasterizerDiscardEnable = VK_FALSE;
+                rasterizer.polygonMode = desc.FillMode == EFillMode::Wireframe
+                                             ? VK_POLYGON_MODE_LINE
+                                             : VK_POLYGON_MODE_FILL;
+
+                switch (desc.CullMode) {
+                    case ECullMode::None:
+                        rasterizer.cullMode = VK_CULL_MODE_NONE;
+                        break;
+                    case ECullMode::Front:
+                        rasterizer.cullMode = VK_CULL_MODE_FRONT_BIT;
+                        break;
+                    case ECullMode::Back:
+                        rasterizer.cullMode = VK_CULL_MODE_BACK_BIT;
+                        break;
+                }
+
+                rasterizer.frontFace = desc.FrontCounterClockwise
+                                           ? VK_FRONT_FACE_COUNTER_CLOCKWISE
+                                           : VK_FRONT_FACE_CLOCKWISE;
+                rasterizer.depthBiasEnable = desc.DepthBias != 0;
+                rasterizer.depthBiasConstantFactor =
+                    static_cast<float>(desc.DepthBias);
+                rasterizer.depthBiasClamp = desc.DepthBiasClamp;
+                rasterizer.depthBiasSlopeFactor = desc.SlopeScaledDepthBias;
+                rasterizer.lineWidth = 1.0f;
+
+                // 创建多重采样状态
+                VkPipelineMultisampleStateCreateInfo multisampling = {};
+                multisampling.sType =
+                    VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
+                multisampling.sampleShadingEnable = desc.MultisampleEnable;
+                multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+                multisampling.minSampleShading = 1.0f;
+                multisampling.pSampleMask = nullptr;
+                multisampling.alphaToCoverageEnable = VK_FALSE;
+                multisampling.alphaToOneEnable = VK_FALSE;
+
+                vulkanCmdList->SetRasterizerState(rasterizer, multisampling);
             }
 
             virtual void SetDepthStencilState(
                 const DepthStencilDesc& desc) override {
                 CurrentDepthStencilDesc = desc;
-                // TODO: 应用深度模板状态
+
+                if (!CurrentCommandList) return;
+
+                auto* vulkanCmdList =
+                    static_cast<VulkanCommandList*>(CurrentCommandList.get());
+
+                VkPipelineDepthStencilStateCreateInfo depthStencil = {};
+                depthStencil.sType =
+                    VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+                depthStencil.depthTestEnable = desc.DepthEnable;
+                depthStencil.depthWriteEnable = desc.DepthWriteMask;
+
+                // 设置深度比较函数
+                switch (desc.DepthFunc) {
+                    case ECompareFunction::Never:
+                        depthStencil.depthCompareOp = VK_COMPARE_OP_NEVER;
+                        break;
+                    case ECompareFunction::Less:
+                        depthStencil.depthCompareOp = VK_COMPARE_OP_LESS;
+                        break;
+                    case ECompareFunction::Equal:
+                        depthStencil.depthCompareOp = VK_COMPARE_OP_EQUAL;
+                        break;
+                    case ECompareFunction::LessEqual:
+                        depthStencil.depthCompareOp =
+                            VK_COMPARE_OP_LESS_OR_EQUAL;
+                        break;
+                    case ECompareFunction::Greater:
+                        depthStencil.depthCompareOp = VK_COMPARE_OP_GREATER;
+                        break;
+                    case ECompareFunction::NotEqual:
+                        depthStencil.depthCompareOp = VK_COMPARE_OP_NOT_EQUAL;
+                        break;
+                    case ECompareFunction::GreaterEqual:
+                        depthStencil.depthCompareOp =
+                            VK_COMPARE_OP_GREATER_OR_EQUAL;
+                        break;
+                    case ECompareFunction::Always:
+                        depthStencil.depthCompareOp = VK_COMPARE_OP_ALWAYS;
+                        break;
+                }
+
+                depthStencil.stencilTestEnable = desc.StencilEnable;
+
+                // 配置前面和背面的模板状态
+                auto ConfigureStencilOp = [](VkStencilOpState& state,
+                                             const DepthStencilOpDesc& desc) {
+                    state.failOp = ConvertToVkStencilOp(desc.StencilFailOp);
+                    state.passOp = ConvertToVkStencilOp(desc.StencilPassOp);
+                    state.depthFailOp =
+                        ConvertToVkStencilOp(desc.StencilDepthFailOp);
+
+                    switch (desc.StencilFunc) {
+                        case ECompareFunction::Never:
+                            state.compareOp = VK_COMPARE_OP_NEVER;
+                            break;
+                        case ECompareFunction::Less:
+                            state.compareOp = VK_COMPARE_OP_LESS;
+                            break;
+                        case ECompareFunction::Equal:
+                            state.compareOp = VK_COMPARE_OP_EQUAL;
+                            break;
+                        case ECompareFunction::LessEqual:
+                            state.compareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+                            break;
+                        case ECompareFunction::Greater:
+                            state.compareOp = VK_COMPARE_OP_GREATER;
+                            break;
+                        case ECompareFunction::NotEqual:
+                            state.compareOp = VK_COMPARE_OP_NOT_EQUAL;
+                            break;
+                        case ECompareFunction::GreaterEqual:
+                            state.compareOp = VK_COMPARE_OP_GREATER_OR_EQUAL;
+                            break;
+                        case ECompareFunction::Always:
+                            state.compareOp = VK_COMPARE_OP_ALWAYS;
+                            break;
+                    }
+                };
+
+                ConfigureStencilOp(depthStencil.front, desc.FrontFace);
+                ConfigureStencilOp(depthStencil.back, desc.BackFace);
+
+                depthStencil.front.compareMask = desc.StencilReadMask;
+                depthStencil.front.writeMask = desc.StencilWriteMask;
+                depthStencil.front.reference = desc.StencilRef;
+                depthStencil.back.compareMask = desc.StencilReadMask;
+                depthStencil.back.writeMask = desc.StencilWriteMask;
+                depthStencil.back.reference = desc.StencilRef;
+
+                vulkanCmdList->SetDepthStencilState(depthStencil);
             }
 
             // 绘制调用

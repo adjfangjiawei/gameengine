@@ -292,6 +292,18 @@ namespace Engine {
             // Vulkan特定方法
             VkImageView GetImageView() const { return ImageView; }
             VkBufferView GetBufferView() const { return BufferView; }
+            VkImageView GetHandle() const { return ImageView; }
+            VkBuffer GetBufferHandle() const {
+                auto buffer = dynamic_cast<VulkanBuffer*>(Resource);
+                return buffer ? buffer->GetHandle() : VK_NULL_HANDLE;
+            }
+            VkImage GetImageHandle() const {
+                auto texture = dynamic_cast<VulkanTexture*>(Resource);
+                return texture ? texture->GetHandle() : VK_NULL_HANDLE;
+            }
+            ERHIResourceDimension GetResourceType() const {
+                return Resource->GetResourceDimension();
+            }
             VkSampler GetSampler() const { return Sampler; }
             const VkDescriptorImageInfo& GetDescriptorInfo() const {
                 return DescriptorInfo;
@@ -331,10 +343,38 @@ namespace Engine {
                 return Resource->GetResourceDimension();
             }
             virtual uint64 GetSize() const override { return 0; }
+            virtual const std::string& GetName() const override {
+                return DebugName;
+            }
+            virtual ERHIResourceState GetCurrentState() const override {
+                return CurrentState;
+            }
 
             // Vulkan特定方法
             VkImageView GetImageView() const { return ImageView; }
             VkBufferView GetBufferView() const { return BufferView; }
+            VkImageView GetHandle() const { return ImageView; }
+            VkBuffer GetBufferHandle() const {
+                auto buffer = dynamic_cast<VulkanBuffer*>(Resource);
+                return buffer ? buffer->GetHandle() : VK_NULL_HANDLE;
+            }
+            VkImage GetImageHandle() const {
+                auto texture = dynamic_cast<VulkanTexture*>(Resource);
+                return texture ? texture->GetHandle() : VK_NULL_HANDLE;
+            }
+            ERHIResourceDimension GetResourceType() const {
+                return Resource->GetResourceDimension();
+            }
+
+            void SetResource(IRHIResource* resource) { Resource = resource; }
+            void SetHandle(VkImageView imageView,
+                           VkDescriptorImageInfo descriptorInfo) {
+                ImageView = imageView;
+                DescriptorInfo = descriptorInfo;
+            }
+            void SetBufferView(VkBufferView bufferView) {
+                BufferView = bufferView;
+            }
 
           private:
             bool CreateView();
@@ -343,6 +383,7 @@ namespace Engine {
             IRHIResource* Resource;
             VkImageView ImageView;
             VkBufferView BufferView;
+            VkDescriptorImageInfo DescriptorInfo;
         };
 
     }  // namespace RHI

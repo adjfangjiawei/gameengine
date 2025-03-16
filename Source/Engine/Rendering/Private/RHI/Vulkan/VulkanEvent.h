@@ -10,6 +10,7 @@ namespace Engine {
         class VulkanEvent : public IRHIEvent {
           public:
             VulkanEvent(VulkanDevice* InDevice);
+            VulkanEvent(VulkanDevice* InDevice, VkEvent InEvent);
             virtual ~VulkanEvent();
 
             // IRHIEvent接口实现

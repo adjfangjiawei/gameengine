@@ -19,11 +19,8 @@ namespace Engine {
             const uint32 result = val_a | val_b;
             // 验证结果是否为有效的枚举值组合
             // ERHIAccessFlags只使用低4位，每一位都有特定含义
-            const uint32 validMask =
-                static_cast<uint32>(ERHIAccessFlags::GPURead) |
-                static_cast<uint32>(ERHIAccessFlags::GPUWrite) |
-                static_cast<uint32>(ERHIAccessFlags::CPURead) |
-                static_cast<uint32>(ERHIAccessFlags::CPUWrite);
+            // 0xF = 1111b，覆盖所有四个可能的标志位
+            const uint32 validMask = 0xF;
             // 确保结果只包含有效的标志位
             const uint32 maskedResult = result & validMask;
             return static_cast<ERHIAccessFlags>(maskedResult);

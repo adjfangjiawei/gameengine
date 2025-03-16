@@ -235,6 +235,8 @@ namespace Engine {
             uint64 UploadHeapSize;
             uint64 VirtualTextureSize;
             uint64 PhysicalTextureSize;
+            uint64 TotalMemoryAllocated;  // 总分配内存
+            uint64 CurrentMemoryUsed;     // 当前使用的内存
         };
 
         // 光栅化状态描述
@@ -280,6 +282,7 @@ namespace Engine {
             bool StencilEnable = false;
             uint8 StencilReadMask = 0xFF;
             uint8 StencilWriteMask = 0xFF;
+            uint32 StencilRef = 0;
             DepthStencilOpDesc FrontFace;
             DepthStencilOpDesc BackFace;
         };

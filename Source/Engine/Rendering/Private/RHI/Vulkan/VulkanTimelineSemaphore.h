@@ -11,6 +11,9 @@ namespace Engine {
           public:
             VulkanTimelineSemaphore(VulkanDevice* InDevice,
                                     const TimelineSemaphoreDesc& InDesc);
+            VulkanTimelineSemaphore(VulkanDevice* InDevice,
+                                    const TimelineSemaphoreDesc& InDesc,
+                                    VkSemaphore InSemaphore);
             virtual ~VulkanTimelineSemaphore();
 
             // IRHITimelineSemaphore接口实现

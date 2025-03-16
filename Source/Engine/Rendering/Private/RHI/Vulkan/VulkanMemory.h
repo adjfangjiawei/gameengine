@@ -77,6 +77,13 @@ namespace Engine {
                                           VkMemoryPropertyFlags properties);
             void FreeMemory(VkDeviceMemory memory);
 
+            // 获取内存统计信息
+            struct MemoryStats {
+                uint64 TotalAllocated;
+                uint64 CurrentUsed;
+            };
+            const MemoryStats& GetStats() const { return m_Stats; }
+
           private:
             struct AllocationInfo {
                 VkDeviceMemory Memory;
@@ -99,11 +106,7 @@ namespace Engine {
             std::mutex m_AllocationMutex;
             std::unordered_map<void*, AllocationInfo> m_Allocations;
 
-            // 内存统计
-            struct {
-                uint64 TotalAllocated;
-                uint64 CurrentUsed;
-            } m_Stats;
+            MemoryStats m_Stats;
         };
 
     }  // namespace RHI

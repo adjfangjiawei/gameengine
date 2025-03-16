@@ -20,6 +20,7 @@ namespace Engine {
             EShaderFeedbackFlags Flags;
             uint32 SampleCount;
             uint32 MaxEntries;
+            uint64 SizeInBytes;
             std::string DebugName;
         };
 

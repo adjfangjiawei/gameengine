@@ -9,6 +9,9 @@ namespace Engine {
     namespace RHI {
 
         class VulkanSwapChain : public IRHISwapChain {
+            friend class VulkanRHI;
+            friend class VulkanDevice;
+
           public:
             VulkanSwapChain(VulkanDevice* device, const SwapChainDesc& desc);
             virtual ~VulkanSwapChain();

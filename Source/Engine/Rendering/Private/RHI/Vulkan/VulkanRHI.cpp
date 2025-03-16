@@ -6,7 +6,14 @@
 #include <set>
 
 #include "Core/Public/Log/LogSystem.h"
+#include "VulkanCommandList.h"
+#include "VulkanEvent.h"
+#include "VulkanMeshShader.h"
 #include "VulkanResources.h"
+#include "VulkanSamplerState.h"
+#include "VulkanShaderFeedback.h"
+#include "VulkanSwapChain.h"
+#include "VulkanTimelineSemaphore.h"
 #ifdef __linux__
 #include <xcb/bigreq.h>
 #include <xcb/xcb.h>
@@ -1127,6 +1134,544 @@ namespace Engine {
             // 创建VulkanShaderResourceView对象
             // 构造函数会自动调用CreateView
             return new VulkanShaderResourceView(this, resource, desc);
+        }
+        // 创建无序访问视图
+        IRHIUnorderedAccessView* VulkanDevice::CreateUnorderedAccessView(
+            IRHIResource* resource, const UnorderedAccessViewDesc& desc) {
+            if (!resource) {
+                LOG_ERROR(
+                    "Invalid resource provided for unordered access view "
+                    "creation!");
+                return nullptr;
+            }
+
+            VkImage targetImage = VK_NULL_HANDLE;
+            VkBuffer targetBuffer = VK_NULL_HANDLE;
+
+            // 根据资源类型获取目标
+            if (auto texture = dynamic_cast<VulkanTexture*>(resource)) {
+                targetImage = texture->GetHandle();
+            } else if (auto buffer = dynamic_cast<VulkanBuffer*>(resource)) {
+                targetBuffer = buffer->GetHandle();
+            } else {
+                LOG_ERROR(
+                    "Unsupported resource type for unordered access view!");
+                return nullptr;
+            }
+
+            if (targetImage == VK_NULL_HANDLE &&
+                targetBuffer == VK_NULL_HANDLE) {
+                LOG_ERROR(
+                    "Failed to get target resource for unordered access view!");
+                return nullptr;
+            }
+
+            if (targetImage) {
+                // 创建图像视图
+                VkImageViewCreateInfo viewInfo = {};
+                viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+                viewInfo.image = targetImage;
+                viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+                viewInfo.format = ConvertToVkFormat(desc.Format);
+                viewInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+                viewInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+                viewInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+                viewInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+                viewInfo.subresourceRange.aspectMask =
+                    VK_IMAGE_ASPECT_COLOR_BIT;
+                viewInfo.subresourceRange.baseMipLevel = desc.MipSlice;
+                viewInfo.subresourceRange.levelCount = 1;
+                viewInfo.subresourceRange.baseArrayLayer = desc.FirstArraySlice;
+                viewInfo.subresourceRange.layerCount = desc.ArraySize;
+
+                VkImageView imageView;
+                if (vkCreateImageView(Device, &viewInfo, nullptr, &imageView) !=
+                    VK_SUCCESS) {
+                    LOG_ERROR("Failed to create unordered access image view!");
+                    return nullptr;
+                }
+
+                // 创建VulkanUnorderedAccessView对象
+                VulkanUnorderedAccessView* vulkanUAV =
+                    new VulkanUnorderedAccessView(this, resource, desc);
+                if (vulkanUAV) {
+                    vulkanUAV->SetResource(resource);
+                    VkDescriptorImageInfo descriptorInfo = {};
+                    descriptorInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+                    descriptorInfo.imageView = imageView;
+                    descriptorInfo.sampler = VK_NULL_HANDLE;
+                    vulkanUAV->SetHandle(imageView, descriptorInfo);
+                }
+                return vulkanUAV;
+            } else {
+                // 创建缓冲区视图
+                VkBufferViewCreateInfo viewInfo = {};
+                viewInfo.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
+                viewInfo.buffer = targetBuffer;
+                viewInfo.format = ConvertToVkFormat(desc.Format);
+                viewInfo.offset = desc.FirstElement * desc.ElementSize;
+                viewInfo.range = desc.NumElements * desc.ElementSize;
+
+                VkBufferView bufferView;
+                if (vkCreateBufferView(
+                        Device, &viewInfo, nullptr, &bufferView) !=
+                    VK_SUCCESS) {
+                    LOG_ERROR("Failed to create unordered access buffer view!");
+                    return nullptr;
+                }
+
+                // 创建VulkanUnorderedAccessView对象
+                VulkanUnorderedAccessView* vulkanUAV =
+                    new VulkanUnorderedAccessView(this, resource, desc);
+                if (vulkanUAV) {
+                    vulkanUAV->SetResource(resource);
+                    vulkanUAV->SetBufferView(bufferView);
+                }
+                return vulkanUAV;
+            }
+        }
+
+        // 创建采样器状态
+        IRHISamplerState* VulkanDevice::CreateSamplerState(
+            const SamplerDesc& desc) {
+            VkSamplerCreateInfo samplerInfo = {};
+            samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+
+            // 设置过滤模式
+            switch (desc.Filter) {
+                case ESamplerFilter::MinMagMipPoint:
+                    samplerInfo.magFilter = VK_FILTER_NEAREST;
+                    samplerInfo.minFilter = VK_FILTER_NEAREST;
+                    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_NEAREST;
+                    break;
+                case ESamplerFilter::MinMagMipLinear:
+                    samplerInfo.magFilter = VK_FILTER_LINEAR;
+                    samplerInfo.minFilter = VK_FILTER_LINEAR;
+                    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+                    break;
+                default:
+                    samplerInfo.magFilter = VK_FILTER_LINEAR;
+                    samplerInfo.minFilter = VK_FILTER_LINEAR;
+                    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+            }
+
+            // 设置寻址模式
+            auto convertAddressMode = [](ESamplerAddressMode mode) {
+                switch (mode) {
+                    case ESamplerAddressMode::Wrap:
+                        return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+                    case ESamplerAddressMode::Mirror:
+                        return VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT;
+                    case ESamplerAddressMode::Clamp:
+                        return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+                    case ESamplerAddressMode::Border:
+                        return VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+                    default:
+                        return VK_SAMPLER_ADDRESS_MODE_REPEAT;
+                }
+            };
+
+            samplerInfo.addressModeU = convertAddressMode(desc.AddressU);
+            samplerInfo.addressModeV = convertAddressMode(desc.AddressV);
+            samplerInfo.addressModeW = convertAddressMode(desc.AddressW);
+
+            // 各向异性过滤
+            samplerInfo.anisotropyEnable =
+                desc.MaxAnisotropy > 1 ? VK_TRUE : VK_FALSE;
+            samplerInfo.maxAnisotropy = static_cast<float>(desc.MaxAnisotropy);
+
+            // MipMap设置
+            samplerInfo.mipLodBias = desc.MipLODBias;
+            samplerInfo.minLod = desc.MinLOD;
+            samplerInfo.maxLod = desc.MaxLOD;
+
+            // 比较函数
+            samplerInfo.compareEnable =
+                desc.ComparisonFunc != ECompareFunction::Never ? VK_TRUE
+                                                               : VK_FALSE;
+            switch (desc.ComparisonFunc) {
+                case ECompareFunction::Less:
+                    samplerInfo.compareOp = VK_COMPARE_OP_LESS;
+                    break;
+                case ECompareFunction::LessEqual:
+                    samplerInfo.compareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+                    break;
+                case ECompareFunction::Greater:
+                    samplerInfo.compareOp = VK_COMPARE_OP_GREATER;
+                    break;
+                case ECompareFunction::GreaterEqual:
+                    samplerInfo.compareOp = VK_COMPARE_OP_GREATER_OR_EQUAL;
+                    break;
+                case ECompareFunction::Equal:
+                    samplerInfo.compareOp = VK_COMPARE_OP_EQUAL;
+                    break;
+                case ECompareFunction::NotEqual:
+                    samplerInfo.compareOp = VK_COMPARE_OP_NOT_EQUAL;
+                    break;
+                case ECompareFunction::Always:
+                    samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+                    break;
+                default:
+                    samplerInfo.compareOp = VK_COMPARE_OP_NEVER;
+            }
+
+            // 边框颜色
+            samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;
+
+            VkSampler sampler;
+            if (vkCreateSampler(Device, &samplerInfo, nullptr, &sampler) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to create sampler!");
+                return nullptr;
+            }
+
+            // 创建VulkanSamplerState对象
+            VulkanSamplerState* vulkanSampler =
+                new VulkanSamplerState(this, desc);
+            if (vulkanSampler) {
+                vulkanSampler->SetHandle(sampler);
+            }
+            return vulkanSampler;
+        }
+
+        // 创建交换链
+        IRHISwapChain* VulkanDevice::CreateSwapChain(
+            const SwapChainDesc& desc) {
+            // 创建VulkanSwapChain对象
+            VulkanSwapChain* swapChain = new VulkanSwapChain(this, desc);
+            if (!swapChain->Initialize()) {
+                delete swapChain;
+                return nullptr;
+            }
+            return swapChain;
+        }
+
+        // 创建事件
+        IRHIEvent* VulkanDevice::CreateEvent() {
+            VkEventCreateInfo eventInfo = {};
+            eventInfo.sType = VK_STRUCTURE_TYPE_EVENT_CREATE_INFO;
+
+            VkEvent event;
+            if (vkCreateEvent(Device, &eventInfo, nullptr, &event) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to create event!");
+                return nullptr;
+            }
+
+            // 创建VulkanEvent对象
+            return new VulkanEvent(this, event);
+        }
+
+        // 创建时间线信号量
+        IRHITimelineSemaphore* VulkanDevice::CreateTimelineSemaphore(
+            const TimelineSemaphoreDesc& desc) {
+            VkSemaphoreTypeCreateInfo timelineCreateInfo = {};
+            timelineCreateInfo.sType =
+                VK_STRUCTURE_TYPE_SEMAPHORE_TYPE_CREATE_INFO;
+            timelineCreateInfo.semaphoreType = VK_SEMAPHORE_TYPE_TIMELINE;
+            timelineCreateInfo.initialValue = desc.InitialValue;
+
+            VkSemaphoreCreateInfo createInfo = {};
+            createInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+            createInfo.pNext = &timelineCreateInfo;
+
+            VkSemaphore semaphore;
+            if (vkCreateSemaphore(Device, &createInfo, nullptr, &semaphore) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to create timeline semaphore!");
+                return nullptr;
+            }
+
+            // 创建VulkanTimelineSemaphore对象
+            return new VulkanTimelineSemaphore(this, desc, semaphore);
+        }
+
+        // 创建着色器反馈缓冲区
+        IRHIShaderFeedbackBuffer* VulkanDevice::CreateShaderFeedbackBuffer(
+            const ShaderFeedbackDesc& desc) {
+            VkBufferCreateInfo bufferInfo = {};
+            bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+            bufferInfo.size = desc.SizeInBytes;
+            bufferInfo.usage = VK_BUFFER_USAGE_STORAGE_BUFFER_BIT |
+                               VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+            bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+            VkBuffer buffer;
+            if (vkCreateBuffer(Device, &bufferInfo, nullptr, &buffer) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to create shader feedback buffer!");
+                return nullptr;
+            }
+
+            // 分配内存
+            VkMemoryRequirements memRequirements;
+            vkGetBufferMemoryRequirements(Device, buffer, &memRequirements);
+
+            VkMemoryAllocateInfo allocInfo = {};
+            allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+            allocInfo.allocationSize = memRequirements.size;
+            allocInfo.memoryTypeIndex = PhysicalDevice->GetMemoryTypeIndex(
+                memRequirements.memoryTypeBits,
+                VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+            VkDeviceMemory bufferMemory;
+            if (vkAllocateMemory(Device, &allocInfo, nullptr, &bufferMemory) !=
+                VK_SUCCESS) {
+                vkDestroyBuffer(Device, buffer, nullptr);
+                LOG_ERROR("Failed to allocate shader feedback buffer memory!");
+                return nullptr;
+            }
+
+            if (vkBindBufferMemory(Device, buffer, bufferMemory, 0) !=
+                VK_SUCCESS) {
+                vkDestroyBuffer(Device, buffer, nullptr);
+                vkFreeMemory(Device, bufferMemory, nullptr);
+                LOG_ERROR("Failed to bind shader feedback buffer memory!");
+                return nullptr;
+            }
+
+            // 创建VulkanShaderFeedbackBuffer对象
+            return new VulkanShaderFeedbackBuffer(
+                this, desc, buffer, bufferMemory);
+        }
+
+        // 创建谓词
+        IRHIPredicate* VulkanDevice::CreatePredicate(
+            const PredicateDesc& desc) {
+            VkQueryPoolCreateInfo queryPoolInfo = {};
+            queryPoolInfo.sType = VK_STRUCTURE_TYPE_QUERY_POOL_CREATE_INFO;
+            queryPoolInfo.queryType = VK_QUERY_TYPE_OCCLUSION;
+            queryPoolInfo.queryCount = 1;
+
+            VkQueryPool queryPool;
+            if (vkCreateQueryPool(
+                    Device, &queryPoolInfo, nullptr, &queryPool) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to create predicate query pool!");
+                return nullptr;
+            }
+
+            // 创建VulkanPredicate对象
+            return new VulkanPredicate(this, desc, queryPool);
+        }
+
+        // 提交命令列表
+        void VulkanDevice::SubmitCommandLists(
+            uint32 count, IRHICommandList* const* commandLists) {
+            std::vector<VkCommandBuffer> vulkanCommandBuffers;
+            vulkanCommandBuffers.reserve(count);
+
+            for (uint32 i = 0; i < count; ++i) {
+                auto vulkanCmdList =
+                    dynamic_cast<VulkanCommandList*>(commandLists[i]);
+                if (vulkanCmdList) {
+                    vulkanCommandBuffers.push_back(
+                        vulkanCmdList->GetCommandBuffer());
+                }
+            }
+
+            VkSubmitInfo submitInfo = {};
+            submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+            submitInfo.commandBufferCount =
+                static_cast<uint32_t>(vulkanCommandBuffers.size());
+            submitInfo.pCommandBuffers = vulkanCommandBuffers.data();
+
+            if (vkQueueSubmit(GraphicsQueue, 1, &submitInfo, VK_NULL_HANDLE) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to submit command buffers!");
+            }
+        }
+
+        // 等待GPU
+        void VulkanDevice::WaitForGPU() { vkDeviceWaitIdle(Device); }
+
+        // 发送GPU信号
+        void VulkanDevice::SignalGPU() {
+            // 创建一个栅栏来同步
+            VkFenceCreateInfo fenceInfo = {};
+            fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+
+            VkFence fence;
+            if (vkCreateFence(Device, &fenceInfo, nullptr, &fence) !=
+                VK_SUCCESS) {
+                LOG_ERROR("Failed to create fence for GPU signaling!");
+                return;
+            }
+
+            // 提交一个空的命令缓冲区来触发栅栏
+            VkSubmitInfo submitInfo = {};
+            submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+            if (vkQueueSubmit(GraphicsQueue, 1, &submitInfo, fence) !=
+                VK_SUCCESS) {
+                LOG_ERROR(
+                    "Failed to submit empty command buffer for GPU signaling!");
+                vkDestroyFence(Device, fence, nullptr);
+                return;
+            }
+
+            // 等待栅栏
+            vkWaitForFences(Device, 1, &fence, VK_TRUE, UINT64_MAX);
+            vkDestroyFence(Device, fence, nullptr);
+        }
+
+        // 获取特性级别
+        ERHIFeatureLevel VulkanDevice::GetFeatureLevel() const {
+            return PhysicalDevice->GetFeatureLevel();
+        }
+
+        // 检查是否支持光线追踪
+        bool VulkanDevice::SupportsRayTracing() const {
+            // 检查设备是否支持光线追踪扩展
+            VkPhysicalDeviceRayTracingPipelineFeaturesKHR rtFeatures = {};
+            rtFeatures.sType =
+                VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_FEATURES_KHR;
+
+            VkPhysicalDeviceFeatures2 deviceFeatures2 = {};
+            deviceFeatures2.sType =
+                VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+            deviceFeatures2.pNext = &rtFeatures;
+
+            vkGetPhysicalDeviceFeatures2(PhysicalDevice->GetHandle(),
+                                         &deviceFeatures2);
+
+            return rtFeatures.rayTracingPipeline == VK_TRUE;
+        }
+
+        // 检查是否支持可变速率着色
+        bool VulkanDevice::SupportsVariableRateShading() const {
+            // 检查设备是否支持VRS扩展
+            VkPhysicalDeviceFragmentShadingRateFeaturesKHR vrsFeatures = {};
+            vrsFeatures.sType =
+                VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR;
+
+            VkPhysicalDeviceFeatures2 deviceFeatures2 = {};
+            deviceFeatures2.sType =
+                VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+            deviceFeatures2.pNext = &vrsFeatures;
+
+            vkGetPhysicalDeviceFeatures2(PhysicalDevice->GetHandle(),
+                                         &deviceFeatures2);
+
+            return vrsFeatures.pipelineFragmentShadingRate == VK_TRUE;
+        }
+
+        // 检查是否支持网格着色器
+        bool VulkanDevice::SupportsMeshShaders() const {
+            // 检查设备是否支持网格着色器扩展
+            VkPhysicalDeviceMeshShaderFeaturesNV meshFeatures = {};
+            meshFeatures.sType =
+                VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_MESH_SHADER_FEATURES_NV;
+
+            VkPhysicalDeviceFeatures2 deviceFeatures2 = {};
+            deviceFeatures2.sType =
+                VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+            deviceFeatures2.pNext = &meshFeatures;
+
+            vkGetPhysicalDeviceFeatures2(PhysicalDevice->GetHandle(),
+                                         &deviceFeatures2);
+
+            return meshFeatures.meshShader == VK_TRUE;
+        }
+
+        // 获取总显存大小
+        uint64 VulkanDevice::GetTotalVideoMemory() const {
+            VkPhysicalDeviceMemoryProperties memProperties;
+            vkGetPhysicalDeviceMemoryProperties(PhysicalDevice->GetHandle(),
+                                                &memProperties);
+
+            uint64 totalMemory = 0;
+            for (uint32_t i = 0; i < memProperties.memoryHeapCount; i++) {
+                if (memProperties.memoryHeaps[i].flags &
+                    VK_MEMORY_HEAP_DEVICE_LOCAL_BIT) {
+                    totalMemory += memProperties.memoryHeaps[i].size;
+                }
+            }
+            return totalMemory;
+        }
+
+        // 获取可用显存大小
+        uint64 VulkanDevice::GetAvailableVideoMemory() const {
+            // 注意：Vulkan没有直接的API来获取可用内存
+            // 这里返回一个估计值，实际实现可能需要自己跟踪内存使用情况
+            return GetTotalVideoMemory() -
+                   PhysicalDevice->GetMemoryAllocator()->GetStats().CurrentUsed;
+        }
+
+        // 获取统计信息
+        void VulkanDevice::GetStats(RHIStats& stats) const {
+            // 填充统计信息
+            stats = {};  // 清零所有字段
+
+            // 获取内存统计
+            const auto& memStats =
+                PhysicalDevice->GetMemoryAllocator()->GetStats();
+            stats.TotalMemoryAllocated = memStats.TotalAllocated;
+            stats.CurrentMemoryUsed = memStats.CurrentUsed;
+
+            // 其他统计信息可以根据需要添加
+        }
+
+        // 开始帧
+        void VulkanDevice::BeginFrame() {
+            // 实现帧开始逻辑
+            // 可以在这里重置命令池、更新统计信息等
+        }
+
+        // 结束帧
+        void VulkanDevice::EndFrame() {
+            // 实现帧结束逻辑
+            // 可以在这里提交命令、展示交换链等
+        }
+
+        // 设置调试名称
+        void VulkanDevice::SetDebugName(IRHIResource* resource,
+                                        const char* name) {
+            if (!resource || !name) {
+                return;
+            }
+
+            // 获取资源的Vulkan句柄和类型
+            uint64_t handle = 0;
+            VkObjectType objectType = VK_OBJECT_TYPE_UNKNOWN;
+
+            if (auto buffer = dynamic_cast<VulkanBuffer*>(resource)) {
+                handle = (uint64_t)buffer->GetHandle();
+                objectType = VK_OBJECT_TYPE_BUFFER;
+            } else if (auto texture = dynamic_cast<VulkanTexture*>(resource)) {
+                handle = (uint64_t)texture->GetHandle();
+                objectType = VK_OBJECT_TYPE_IMAGE;
+            } else if (auto sampler =
+                           dynamic_cast<VulkanSamplerState*>(resource)) {
+                handle = (uint64_t)sampler->GetHandle();
+                objectType = VK_OBJECT_TYPE_SAMPLER;
+            }
+            // 可以添加其他资源类型的处理...
+
+            if (handle && objectType != VK_OBJECT_TYPE_UNKNOWN) {
+                SetDebugName(objectType, handle, name);
+            }
+        }
+
+        // Vulkan特定的调试名称设置
+        void VulkanDevice::SetDebugName(VkObjectType objectType,
+                                        uint64_t object,
+                                        const char* name) {
+            if (!name || object == 0) {
+                return;
+            }
+
+            VkDebugUtilsObjectNameInfoEXT nameInfo = {};
+            nameInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT;
+            nameInfo.objectType = objectType;
+            nameInfo.objectHandle = object;
+            nameInfo.pObjectName = name;
+
+            auto func = (PFN_vkSetDebugUtilsObjectNameEXT)vkGetDeviceProcAddr(
+                Device, "vkSetDebugUtilsObjectNameEXT");
+            if (func) {
+                func(Device, &nameInfo);
+            }
         }
 
     }  // namespace RHI

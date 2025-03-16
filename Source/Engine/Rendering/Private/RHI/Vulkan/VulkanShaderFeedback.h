@@ -12,10 +12,26 @@ namespace Engine {
         class VulkanShaderFeedbackBuffer : public IRHIShaderFeedbackBuffer {
           public:
             VulkanShaderFeedbackBuffer(VulkanDevice* InDevice,
-                                       const ShaderFeedbackDesc& InDesc);
+                                       const ShaderFeedbackDesc& InDesc,
+                                       VkBuffer InBuffer,
+                                       VkDeviceMemory InMemory);
             virtual ~VulkanShaderFeedbackBuffer();
 
             // IRHIShaderFeedbackBuffer接口实现
+            // IRHIResource interface
+            virtual const std::string& GetName() const override {
+                return Desc.DebugName;
+            }
+            virtual ERHIResourceDimension GetResourceDimension()
+                const override {
+                return ERHIResourceDimension::Buffer;
+            }
+            virtual uint64 GetSize() const override { return Desc.SizeInBytes; }
+            virtual ERHIResourceState GetCurrentState() const override {
+                return ERHIResourceState::Common;
+            }
+
+            // IRHIShaderFeedbackBuffer interface
             virtual const ShaderFeedbackDesc& GetDesc() const override {
                 return Desc;
             }
@@ -38,8 +54,25 @@ namespace Engine {
         class VulkanPredicate : public IRHIPredicate {
           public:
             VulkanPredicate(VulkanDevice* InDevice,
-                            const PredicateDesc& InDesc);
+                            const PredicateDesc& InDesc,
+                            VkQueryPool InQueryPool);
             virtual ~VulkanPredicate();
+
+            // IRHIPredicate接口实现
+            // IRHIResource接口实现
+            virtual const std::string& GetName() const override {
+                return Desc.DebugName;
+            }
+            virtual ERHIResourceDimension GetResourceDimension()
+                const override {
+                return ERHIResourceDimension::Buffer;
+            }
+            virtual uint64 GetSize() const override {
+                return sizeof(uint32);  // 谓词通常使用32位整数
+            }
+            virtual ERHIResourceState GetCurrentState() const override {
+                return ERHIResourceState::Common;
+            }
 
             // IRHIPredicate接口实现
             virtual const PredicateDesc& GetDesc() const override {
@@ -56,6 +89,7 @@ namespace Engine {
             PredicateDesc Desc;
             VkBuffer Buffer;
             VkDeviceMemory Memory;
+            VkQueryPool QueryPool;
         };
 
     }  // namespace RHI

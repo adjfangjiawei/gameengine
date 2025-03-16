@@ -153,7 +153,25 @@ namespace Engine {
                 VkFramebuffer CurrentFramebuffer;
                 VkPipeline CurrentPipeline;
                 VkPipelineLayout CurrentPipelineLayout;
+
+                // 描述符相关
+                VkDescriptorPool DescriptorPool;
+                VkDescriptorPool SRVDescriptorPool;
+                VkDescriptorPool UAVDescriptorPool;
+                std::vector<VkDescriptorSetLayout> DescriptorSetLayouts;
+                std::vector<VkDescriptorSetLayout> SRVDescriptorSetLayouts;
+                std::vector<VkDescriptorSetLayout> UAVDescriptorSetLayouts;
                 std::vector<VkDescriptorSet> CurrentDescriptorSets;
+                std::vector<VkDescriptorSet> CurrentSRVDescriptorSets;
+                std::vector<VkDescriptorSet> CurrentUAVDescriptorSets;
+
+                // 着色器模块
+                VkShaderModule VertexShader;
+                VkShaderModule PixelShader;
+                VkShaderModule GeometryShader;
+                VkShaderModule ComputeShader;
+                VkShaderModule HullShader;
+                VkShaderModule DomainShader;
 
                 // Pipeline states
                 VkPipelineColorBlendStateCreateInfo BlendState;

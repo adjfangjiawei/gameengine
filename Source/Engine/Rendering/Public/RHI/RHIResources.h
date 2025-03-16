@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <string>
@@ -150,6 +149,10 @@ namespace Engine {
             uint32 MipSlice = 0;
             uint32 FirstArraySlice = 0;
             uint32 ArraySize = 1;
+            // 添加缓冲区视图所需的成员
+            uint32 FirstElement = 0;  // 缓冲区视图的第一个元素索引
+            uint32 NumElements = 0;   // 缓冲区视图的元素数量
+            uint32 ElementSize = 0;   // 每个元素的大小（字节）
         };
 
         // 资源视图接口基类
