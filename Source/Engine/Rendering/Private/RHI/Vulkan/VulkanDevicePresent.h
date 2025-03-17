@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include <xcb/xcb.h>
@@ -31,8 +32,7 @@ namespace Engine {
             }
 
             static VkQueue GetPresentQueue(VulkanDevice* device) {
-                return device
-                    ->GetGraphicsQueue();  // 通常Present队列与Graphics队列相同
+                return *device->GetGraphicsQueue();  // 解引用指针获取VkQueue
             }
         };
 

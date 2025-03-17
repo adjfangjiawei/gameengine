@@ -2,7 +2,8 @@
 #include "VulkanResources.h"
 
 #include "Core/Public/Log/LogSystem.h"
-
+#include "RHI/RHIOperators.h"
+#include "VulkanTypeOperators.h"
 namespace Engine {
     namespace RHI {
 
@@ -128,7 +129,7 @@ namespace Engine {
                 return;
             }
 
-            if (vkBindBufferMemory(Device->GetHandle(), Buffer, Memory, 0) !=
+            if (vkBindBufferMemory(*Device->GetHandle(), Buffer, Memory, 0) !=
                 VK_SUCCESS) {
                 LOG_ERROR("Failed to bind buffer memory!");
                 return;
@@ -138,16 +139,16 @@ namespace Engine {
 
     RHI::VulkanBuffer::~VulkanBuffer() {
         if (MappedData) {
-            vkUnmapMemory(Device->GetHandle(), Memory);
+            vkUnmapMemory(*Device->GetHandle(), Memory);
             MappedData = nullptr;
         }
 
         if (Buffer != VK_NULL_HANDLE) {
-            vkDestroyBuffer(Device->GetHandle(), Buffer, nullptr);
+            vkDestroyBuffer(*Device->GetHandle(), Buffer, nullptr);
         }
 
         if (Memory != VK_NULL_HANDLE) {
-            vkFreeMemory(Device->GetHandle(), Memory, nullptr);
+            vkFreeMemory(*Device->GetHandle(), Memory, nullptr);
         }
     }
 
@@ -173,14 +174,14 @@ namespace Engine {
         }
 
         return vkCreateBuffer(
-                   Device->GetHandle(), &bufferInfo, nullptr, &Buffer) ==
+                   *Device->GetHandle(), &bufferInfo, nullptr, &Buffer) ==
                VK_SUCCESS;
     }
 
     bool RHI::VulkanBuffer::AllocateMemory() {
         VkMemoryRequirements memRequirements;
         vkGetBufferMemoryRequirements(
-            Device->GetHandle(), Buffer, &memRequirements);
+            *Device->GetHandle(), Buffer, &memRequirements);
 
         [[maybe_unused]] VkMemoryPropertyFlags properties = 0;
         if (static_cast<uint32>(Desc.Access) &
@@ -208,7 +209,7 @@ namespace Engine {
             return MappedData;
         }
 
-        if (vkMapMemory(Device->GetHandle(),
+        if (vkMapMemory(*Device->GetHandle(),
                         Memory,
                         0,
                         Desc.SizeInBytes,
@@ -223,7 +224,7 @@ namespace Engine {
 
     void RHI::VulkanBuffer::Unmap(uint32 subresource [[maybe_unused]]) {
         if (MappedData) {
-            vkUnmapMemory(Device->GetHandle(), Memory);
+            vkUnmapMemory(*Device->GetHandle(), Memory);
             MappedData = nullptr;
         }
     }
@@ -232,7 +233,7 @@ namespace Engine {
         VkBufferDeviceAddressInfo addressInfo = {};
         addressInfo.sType = VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO;
         addressInfo.buffer = Buffer;
-        return vkGetBufferDeviceAddress(Device->GetHandle(), &addressInfo);
+        return vkGetBufferDeviceAddress(*Device->GetHandle(), &addressInfo);
     }
 
     namespace RHI {
@@ -254,7 +255,7 @@ namespace Engine {
                 return;
             }
 
-            if (vkBindImageMemory(Device->GetHandle(), Image, Memory, 0) !=
+            if (vkBindImageMemory(*Device->GetHandle(), Image, Memory, 0) !=
                 VK_SUCCESS) {
                 LOG_ERROR("Failed to bind image memory!");
                 return;
@@ -269,15 +270,15 @@ namespace Engine {
 
     RHI::VulkanTexture::~VulkanTexture() {
         if (DefaultView != VK_NULL_HANDLE) {
-            vkDestroyImageView(Device->GetHandle(), DefaultView, nullptr);
+            vkDestroyImageView(*Device->GetHandle(), DefaultView, nullptr);
         }
 
         if (Image != VK_NULL_HANDLE) {
-            vkDestroyImage(Device->GetHandle(), Image, nullptr);
+            vkDestroyImage(*Device->GetHandle(), Image, nullptr);
         }
 
         if (Memory != VK_NULL_HANDLE) {
-            vkFreeMemory(Device->GetHandle(), Memory, nullptr);
+            vkFreeMemory(*Device->GetHandle(), Memory, nullptr);
         }
     }
 
@@ -315,14 +316,14 @@ namespace Engine {
         }
 
         return vkCreateImage(
-                   Device->GetHandle(), &imageInfo, nullptr, &Image) ==
+                   *Device->GetHandle(), &imageInfo, nullptr, &Image) ==
                VK_SUCCESS;
     }
 
     bool RHI::VulkanTexture::AllocateMemory() {
         VkMemoryRequirements memRequirements;
         vkGetImageMemoryRequirements(
-            Device->GetHandle(), Image, &memRequirements);
+            *Device->GetHandle(), Image, &memRequirements);
 
         Memory =
             Device->GetPhysicalDevice()->GetMemoryAllocator()->AllocateMemory(
@@ -348,7 +349,7 @@ namespace Engine {
         viewInfo.subresourceRange.layerCount = Desc.ArraySize;
 
         return vkCreateImageView(
-                   Device->GetHandle(), &viewInfo, nullptr, &DefaultView) ==
+                   *Device->GetHandle(), &viewInfo, nullptr, &DefaultView) ==
                VK_SUCCESS;
     }
 
@@ -373,7 +374,7 @@ namespace Engine {
 
     RHI::VulkanShader::~VulkanShader() {
         if (ShaderModule != VK_NULL_HANDLE) {
-            vkDestroyShaderModule(Device->GetHandle(), ShaderModule, nullptr);
+            vkDestroyShaderModule(*Device->GetHandle(), ShaderModule, nullptr);
         }
     }
 
@@ -385,7 +386,7 @@ namespace Engine {
         createInfo.pCode = reinterpret_cast<const uint32_t*>(shaderData);
 
         return vkCreateShaderModule(
-                   Device->GetHandle(), &createInfo, nullptr, &ShaderModule) ==
+                   *Device->GetHandle(), &createInfo, nullptr, &ShaderModule) ==
                VK_SUCCESS;
     }
 
@@ -401,7 +402,7 @@ namespace Engine {
 
     RHI::VulkanRenderTargetView::~VulkanRenderTargetView() {
         if (ImageView != VK_NULL_HANDLE) {
-            vkDestroyImageView(Device->GetHandle(), ImageView, nullptr);
+            vkDestroyImageView(*Device->GetHandle(), ImageView, nullptr);
         }
     }
 
@@ -435,7 +436,7 @@ namespace Engine {
         viewInfo.subresourceRange.layerCount = Desc.ArraySize;
 
         return vkCreateImageView(
-                   Device->GetHandle(), &viewInfo, nullptr, &ImageView) ==
+                   *Device->GetHandle(), &viewInfo, nullptr, &ImageView) ==
                VK_SUCCESS;
     }
 
@@ -451,7 +452,7 @@ namespace Engine {
 
     RHI::VulkanDepthStencilView::~VulkanDepthStencilView() {
         if (ImageView != VK_NULL_HANDLE) {
-            vkDestroyImageView(Device->GetHandle(), ImageView, nullptr);
+            vkDestroyImageView(*Device->GetHandle(), ImageView, nullptr);
         }
     }
 
@@ -492,7 +493,7 @@ namespace Engine {
             viewInfo.subresourceRange.layerCount = Desc.ArraySize;
 
             return vkCreateImageView(
-                       Device->GetHandle(), &viewInfo, nullptr, &ImageView) ==
+                       *Device->GetHandle(), &viewInfo, nullptr, &ImageView) ==
                    VK_SUCCESS;
         }
 
@@ -517,10 +518,10 @@ namespace Engine {
 
     RHI::VulkanShaderResourceView::~VulkanShaderResourceView() {
         if (ImageView != VK_NULL_HANDLE) {
-            vkDestroyImageView(Device->GetHandle(), ImageView, nullptr);
+            vkDestroyImageView(*Device->GetHandle(), ImageView, nullptr);
         }
         if (BufferView != VK_NULL_HANDLE) {
-            vkDestroyBufferView(Device->GetHandle(), BufferView, nullptr);
+            vkDestroyBufferView(*Device->GetHandle(), BufferView, nullptr);
         }
     }
 
@@ -540,7 +541,7 @@ namespace Engine {
             viewInfo.range = VK_WHOLE_SIZE;
 
             return vkCreateBufferView(
-                       Device->GetHandle(), &viewInfo, nullptr, &BufferView) ==
+                       *Device->GetHandle(), &viewInfo, nullptr, &BufferView) ==
                    VK_SUCCESS;
         } else {
             auto texture = dynamic_cast<VulkanTexture*>(
@@ -565,7 +566,7 @@ namespace Engine {
             viewInfo.subresourceRange.layerCount = Desc.ArraySize;
 
             return vkCreateImageView(
-                       Device->GetHandle(), &viewInfo, nullptr, &ImageView) ==
+                       *Device->GetHandle(), &viewInfo, nullptr, &ImageView) ==
                    VK_SUCCESS;
         }
     }
@@ -588,10 +589,10 @@ namespace Engine {
 
     RHI::VulkanUnorderedAccessView::~VulkanUnorderedAccessView() {
         if (ImageView != VK_NULL_HANDLE) {
-            vkDestroyImageView(Device->GetHandle(), ImageView, nullptr);
+            vkDestroyImageView(*Device->GetHandle(), ImageView, nullptr);
         }
         if (BufferView != VK_NULL_HANDLE) {
-            vkDestroyBufferView(Device->GetHandle(), BufferView, nullptr);
+            vkDestroyBufferView(*Device->GetHandle(), BufferView, nullptr);
         }
     }
 
@@ -611,7 +612,7 @@ namespace Engine {
             viewInfo.range = VK_WHOLE_SIZE;
 
             return vkCreateBufferView(
-                       Device->GetHandle(), &viewInfo, nullptr, &BufferView) ==
+                       *Device->GetHandle(), &viewInfo, nullptr, &BufferView) ==
                    VK_SUCCESS;
         } else {
             auto texture = dynamic_cast<VulkanTexture*>(
@@ -636,7 +637,7 @@ namespace Engine {
             viewInfo.subresourceRange.layerCount = Desc.ArraySize;
 
             return vkCreateImageView(
-                       Device->GetHandle(), &viewInfo, nullptr, &ImageView) ==
+                       *Device->GetHandle(), &viewInfo, nullptr, &ImageView) ==
                    VK_SUCCESS;
         }
     }

@@ -18,7 +18,7 @@ namespace Engine {
 
         VulkanSamplerState::~VulkanSamplerState() {
             if (Sampler != VK_NULL_HANDLE) {
-                vkDestroySampler(Device->GetHandle(), Sampler, nullptr);
+                vkDestroySampler(*Device->GetHandle(), Sampler, nullptr);
                 Sampler = VK_NULL_HANDLE;
             }
         }
@@ -109,7 +109,7 @@ namespace Engine {
             samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_TRANSPARENT_BLACK;
 
             if (vkCreateSampler(
-                    Device->GetHandle(), &samplerInfo, nullptr, &Sampler) !=
+                    *Device->GetHandle(), &samplerInfo, nullptr, &Sampler) !=
                 VK_SUCCESS) {
                 LOG_ERROR("Failed to create sampler!");
                 return false;

@@ -51,7 +51,7 @@ namespace Engine {
                 }
 
                 VkCommandPool commandPool;
-                if (vkCreateCommandPool(device->GetHandle(),
+                if (vkCreateCommandPool(*device->GetHandle(),
                                         &poolInfo,
                                         nullptr,
                                         &commandPool) != VK_SUCCESS) {
@@ -76,7 +76,7 @@ namespace Engine {
             allocInfo.level = level;
             allocInfo.commandBufferCount = 1;
 
-            if (vkAllocateCommandBuffers(Device->GetHandle(),
+            if (vkAllocateCommandBuffers(*Device->GetHandle(),
                                          &allocInfo,
                                          &CommandBuffer) != VK_SUCCESS) {
                 LOG_ERROR("Failed to allocate command buffer!");
@@ -86,7 +86,7 @@ namespace Engine {
         VulkanCommandBuffer::~VulkanCommandBuffer() {
             if (CommandBuffer != VK_NULL_HANDLE) {
                 vkFreeCommandBuffers(
-                    Device->GetHandle(), CommandPool, 1, &CommandBuffer);
+                    *Device->GetHandle(), CommandPool, 1, &CommandBuffer);
                 CommandBuffer = VK_NULL_HANDLE;
             }
         }
@@ -129,49 +129,49 @@ namespace Engine {
             // 清理描述符池
             if (State.DescriptorPool != VK_NULL_HANDLE) {
                 vkDestroyDescriptorPool(
-                    Device->GetHandle(), State.DescriptorPool, nullptr);
+                    *Device->GetHandle(), State.DescriptorPool, nullptr);
             }
             if (State.SRVDescriptorPool != VK_NULL_HANDLE) {
                 vkDestroyDescriptorPool(
-                    Device->GetHandle(), State.SRVDescriptorPool, nullptr);
+                    *Device->GetHandle(), State.SRVDescriptorPool, nullptr);
             }
             if (State.UAVDescriptorPool != VK_NULL_HANDLE) {
                 vkDestroyDescriptorPool(
-                    Device->GetHandle(), State.UAVDescriptorPool, nullptr);
+                    *Device->GetHandle(), State.UAVDescriptorPool, nullptr);
             }
 
             // 清理描述符集布局
             for (auto layout : State.DescriptorSetLayouts) {
                 vkDestroyDescriptorSetLayout(
-                    Device->GetHandle(), layout, nullptr);
+                    *Device->GetHandle(), layout, nullptr);
             }
             for (auto layout : State.SRVDescriptorSetLayouts) {
                 vkDestroyDescriptorSetLayout(
-                    Device->GetHandle(), layout, nullptr);
+                    *Device->GetHandle(), layout, nullptr);
             }
             for (auto layout : State.UAVDescriptorSetLayouts) {
                 vkDestroyDescriptorSetLayout(
-                    Device->GetHandle(), layout, nullptr);
+                    *Device->GetHandle(), layout, nullptr);
             }
 
             // 清理管线和管线布局
             if (State.CurrentPipeline != VK_NULL_HANDLE) {
                 vkDestroyPipeline(
-                    Device->GetHandle(), State.CurrentPipeline, nullptr);
+                    *Device->GetHandle(), State.CurrentPipeline, nullptr);
             }
             if (State.CurrentPipelineLayout != VK_NULL_HANDLE) {
                 vkDestroyPipelineLayout(
-                    Device->GetHandle(), State.CurrentPipelineLayout, nullptr);
+                    *Device->GetHandle(), State.CurrentPipelineLayout, nullptr);
             }
 
             // 清理渲染通道和帧缓冲
             if (State.CurrentRenderPass != VK_NULL_HANDLE) {
                 vkDestroyRenderPass(
-                    Device->GetHandle(), State.CurrentRenderPass, nullptr);
+                    *Device->GetHandle(), State.CurrentRenderPass, nullptr);
             }
             if (State.CurrentFramebuffer != VK_NULL_HANDLE) {
                 vkDestroyFramebuffer(
-                    Device->GetHandle(), State.CurrentFramebuffer, nullptr);
+                    *Device->GetHandle(), State.CurrentFramebuffer, nullptr);
             }
 
             // 注意：不需要显式清理着色器模块，因为它们由VulkanShader对象管理
@@ -230,7 +230,7 @@ namespace Engine {
             label.color[3] = 1.0f;
 
             auto func = (PFN_vkCmdBeginDebugUtilsLabelEXT)vkGetDeviceProcAddr(
-                Device->GetHandle(), "vkCmdBeginDebugUtilsLabelEXT");
+                *Device->GetHandle(), "vkCmdBeginDebugUtilsLabelEXT");
             if (func) {
                 func(GetCommandBuffer(), &label);
             }
@@ -242,7 +242,7 @@ namespace Engine {
             }
 
             auto func = (PFN_vkCmdEndDebugUtilsLabelEXT)vkGetDeviceProcAddr(
-                Device->GetHandle(), "vkCmdEndDebugUtilsLabelEXT");
+                *Device->GetHandle(), "vkCmdEndDebugUtilsLabelEXT");
             if (func) {
                 func(GetCommandBuffer());
             }
@@ -716,7 +716,7 @@ namespace Engine {
             renderPassInfo.pDependencies = &dependency;
 
             VkRenderPass renderPass;
-            if (vkCreateRenderPass(Device->GetHandle(),
+            if (vkCreateRenderPass(*Device->GetHandle(),
                                    &renderPassInfo,
                                    nullptr,
                                    &renderPass) != VK_SUCCESS) {
@@ -744,11 +744,11 @@ namespace Engine {
             framebufferInfo.layers = 1;
 
             VkFramebuffer framebuffer;
-            if (vkCreateFramebuffer(Device->GetHandle(),
+            if (vkCreateFramebuffer(*Device->GetHandle(),
                                     &framebufferInfo,
                                     nullptr,
                                     &framebuffer) != VK_SUCCESS) {
-                vkDestroyRenderPass(Device->GetHandle(), renderPass, nullptr);
+                vkDestroyRenderPass(*Device->GetHandle(), renderPass, nullptr);
                 LOG_ERROR("Failed to create framebuffer!");
                 return;
             }
@@ -832,14 +832,15 @@ namespace Engine {
 
         VulkanCommandAllocator::~VulkanCommandAllocator() {
             if (CommandPool != VK_NULL_HANDLE) {
-                vkDestroyCommandPool(Device->GetHandle(), CommandPool, nullptr);
+                vkDestroyCommandPool(
+                    *Device->GetHandle(), CommandPool, nullptr);
                 CommandPool = VK_NULL_HANDLE;
             }
         }
 
         void VulkanCommandAllocator::Reset() {
             if (CommandPool != VK_NULL_HANDLE) {
-                vkResetCommandPool(Device->GetHandle(), CommandPool, 0);
+                vkResetCommandPool(*Device->GetHandle(), CommandPool, 0);
             }
         }
         void VulkanCommandList::SetShader(EShaderType type,
@@ -888,12 +889,12 @@ namespace Engine {
                 // TODO: 设置描述符集布局和推送常量范围
 
                 if (State.CurrentPipelineLayout != VK_NULL_HANDLE) {
-                    vkDestroyPipelineLayout(Device->GetHandle(),
+                    vkDestroyPipelineLayout(*Device->GetHandle(),
                                             State.CurrentPipelineLayout,
                                             nullptr);
                 }
 
-                if (vkCreatePipelineLayout(Device->GetHandle(),
+                if (vkCreatePipelineLayout(*Device->GetHandle(),
                                            &pipelineLayoutInfo,
                                            nullptr,
                                            &State.CurrentPipelineLayout) !=
@@ -915,10 +916,10 @@ namespace Engine {
 
                 if (State.CurrentPipeline != VK_NULL_HANDLE) {
                     vkDestroyPipeline(
-                        Device->GetHandle(), State.CurrentPipeline, nullptr);
+                        *Device->GetHandle(), State.CurrentPipeline, nullptr);
                 }
 
-                if (vkCreateComputePipelines(Device->GetHandle(),
+                if (vkCreateComputePipelines(*Device->GetHandle(),
                                              VK_NULL_HANDLE,
                                              1,
                                              &pipelineInfo,
@@ -963,7 +964,7 @@ namespace Engine {
 
                 VkDescriptorSetLayout layout;
                 if (vkCreateDescriptorSetLayout(
-                        Device->GetHandle(), &layoutInfo, nullptr, &layout) !=
+                        *Device->GetHandle(), &layoutInfo, nullptr, &layout) !=
                     VK_SUCCESS) {
                     LOG_ERROR("Failed to create descriptor set layout!");
                     return;
@@ -983,7 +984,7 @@ namespace Engine {
                 poolInfo.pPoolSizes = &poolSize;
                 poolInfo.maxSets = 1000;  // 根据需要调整大小
 
-                if (vkCreateDescriptorPool(Device->GetHandle(),
+                if (vkCreateDescriptorPool(*Device->GetHandle(),
                                            &poolInfo,
                                            nullptr,
                                            &State.DescriptorPool) !=
@@ -1001,7 +1002,7 @@ namespace Engine {
             allocInfo.pSetLayouts = &State.DescriptorSetLayouts[0];
 
             VkDescriptorSet descriptorSet;
-            if (vkAllocateDescriptorSets(Device->GetHandle(),
+            if (vkAllocateDescriptorSets(*Device->GetHandle(),
                                          &allocInfo,
                                          &descriptorSet) != VK_SUCCESS) {
                 LOG_ERROR("Failed to allocate descriptor set!");
@@ -1024,7 +1025,7 @@ namespace Engine {
             descriptorWrite.pBufferInfo = &bufferInfo;
 
             vkUpdateDescriptorSets(
-                Device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+                *Device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
 
             // 绑定描述符集
             if (State.CurrentPipelineLayout != VK_NULL_HANDLE) {
@@ -1072,7 +1073,7 @@ namespace Engine {
 
                 VkDescriptorSetLayout layout;
                 if (vkCreateDescriptorSetLayout(
-                        Device->GetHandle(), &layoutInfo, nullptr, &layout) !=
+                        *Device->GetHandle(), &layoutInfo, nullptr, &layout) !=
                     VK_SUCCESS) {
                     LOG_ERROR("Failed to create SRV descriptor set layout!");
                     return;
@@ -1092,7 +1093,7 @@ namespace Engine {
                 poolInfo.pPoolSizes = &poolSize;
                 poolInfo.maxSets = 1000;  // 根据需要调整大小
 
-                if (vkCreateDescriptorPool(Device->GetHandle(),
+                if (vkCreateDescriptorPool(*Device->GetHandle(),
                                            &poolInfo,
                                            nullptr,
                                            &State.SRVDescriptorPool) !=
@@ -1110,7 +1111,7 @@ namespace Engine {
             allocInfo.pSetLayouts = &State.SRVDescriptorSetLayouts[0];
 
             VkDescriptorSet descriptorSet;
-            if (vkAllocateDescriptorSets(Device->GetHandle(),
+            if (vkAllocateDescriptorSets(*Device->GetHandle(),
                                          &allocInfo,
                                          &descriptorSet) != VK_SUCCESS) {
                 LOG_ERROR("Failed to allocate SRV descriptor set!");
@@ -1134,7 +1135,7 @@ namespace Engine {
             descriptorWrite.pImageInfo = &imageInfo;
 
             vkUpdateDescriptorSets(
-                Device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+                *Device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
 
             // 绑定描述符集
             if (State.CurrentPipelineLayout != VK_NULL_HANDLE) {
@@ -1183,7 +1184,7 @@ namespace Engine {
 
                 VkDescriptorSetLayout layout;
                 if (vkCreateDescriptorSetLayout(
-                        Device->GetHandle(), &layoutInfo, nullptr, &layout) !=
+                        *Device->GetHandle(), &layoutInfo, nullptr, &layout) !=
                     VK_SUCCESS) {
                     LOG_ERROR("Failed to create UAV descriptor set layout!");
                     return;
@@ -1205,7 +1206,7 @@ namespace Engine {
                 poolInfo.pPoolSizes = poolSizes;
                 poolInfo.maxSets = 1000;  // 根据需要调整大小
 
-                if (vkCreateDescriptorPool(Device->GetHandle(),
+                if (vkCreateDescriptorPool(*Device->GetHandle(),
                                            &poolInfo,
                                            nullptr,
                                            &State.UAVDescriptorPool) !=
@@ -1223,7 +1224,7 @@ namespace Engine {
             allocInfo.pSetLayouts = &State.UAVDescriptorSetLayouts[0];
 
             VkDescriptorSet descriptorSet;
-            if (vkAllocateDescriptorSets(Device->GetHandle(),
+            if (vkAllocateDescriptorSets(*Device->GetHandle(),
                                          &allocInfo,
                                          &descriptorSet) != VK_SUCCESS) {
                 LOG_ERROR("Failed to allocate UAV descriptor set!");
@@ -1261,7 +1262,7 @@ namespace Engine {
             }
 
             vkUpdateDescriptorSets(
-                Device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
+                *Device->GetHandle(), 1, &descriptorWrite, 0, nullptr);
 
             // 绑定描述符集
             if (State.CurrentPipelineLayout != VK_NULL_HANDLE) {

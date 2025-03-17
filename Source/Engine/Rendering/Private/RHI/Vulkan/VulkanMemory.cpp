@@ -45,8 +45,7 @@ namespace Engine {
 
             // 找到合适的内存类型
             VkPhysicalDeviceMemoryProperties physMemProperties;
-            VulkanDevice* vulkanDevice =
-                static_cast<VulkanDevice*>(VulkanRHI::Get().GetDevice());
+            VulkanDevice* vulkanDevice = VulkanRHI::Get().GetDevice();
             vkGetPhysicalDeviceMemoryProperties(
                 vulkanDevice->GetPhysicalDevice()->GetHandle(),
                 &physMemProperties);

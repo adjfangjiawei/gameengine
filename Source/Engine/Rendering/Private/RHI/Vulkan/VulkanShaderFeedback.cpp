@@ -38,22 +38,22 @@ namespace Engine {
 
             void* mappedData;
             VkResult Result = vkMapMemory(
-                Device->GetHandle(), Memory, 0, size, 0, &mappedData);
+                *Device->GetHandle(), Memory, 0, size, 0, &mappedData);
             check(Result == VK_SUCCESS);
 
             memcpy(data, mappedData, size);
-            vkUnmapMemory(Device->GetHandle(), Memory);
+            vkUnmapMemory(*Device->GetHandle(), Memory);
         }
 
         void VulkanShaderFeedbackBuffer::Reset() {
             // 将缓冲区内容清零
             void* mappedData;
             VkResult Result = vkMapMemory(
-                Device->GetHandle(), Memory, 0, BufferSize, 0, &mappedData);
+                *Device->GetHandle(), Memory, 0, BufferSize, 0, &mappedData);
             check(Result == VK_SUCCESS);
 
             memset(mappedData, 0, BufferSize);
-            vkUnmapMemory(Device->GetHandle(), Memory);
+            vkUnmapMemory(*Device->GetHandle(), Memory);
         }
 
         VulkanPredicate::VulkanPredicate(VulkanDevice* InDevice,
@@ -73,13 +73,13 @@ namespace Engine {
             bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
             VkResult Result = vkCreateBuffer(
-                Device->GetHandle(), &bufferInfo, nullptr, &Buffer);
+                *Device->GetHandle(), &bufferInfo, nullptr, &Buffer);
             check(Result == VK_SUCCESS);
 
             // 分配并绑定内存
             VkMemoryRequirements memRequirements;
             vkGetBufferMemoryRequirements(
-                Device->GetHandle(), Buffer, &memRequirements);
+                *Device->GetHandle(), Buffer, &memRequirements);
 
             VkMemoryAllocateInfo allocInfo = {};
             allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
@@ -91,10 +91,11 @@ namespace Engine {
                         VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
             Result = vkAllocateMemory(
-                Device->GetHandle(), &allocInfo, nullptr, &Memory);
+                *Device->GetHandle(), &allocInfo, nullptr, &Memory);
             check(Result == VK_SUCCESS);
 
-            Result = vkBindBufferMemory(Device->GetHandle(), Buffer, Memory, 0);
+            Result =
+                vkBindBufferMemory(*Device->GetHandle(), Buffer, Memory, 0);
             check(Result == VK_SUCCESS);
 
             // 设置初始值
@@ -110,15 +111,15 @@ namespace Engine {
 
         VulkanPredicate::~VulkanPredicate() {
             if (QueryPool != VK_NULL_HANDLE) {
-                vkDestroyQueryPool(Device->GetHandle(), QueryPool, nullptr);
+                vkDestroyQueryPool(*Device->GetHandle(), QueryPool, nullptr);
                 QueryPool = VK_NULL_HANDLE;
             }
             if (Buffer != VK_NULL_HANDLE) {
-                vkDestroyBuffer(Device->GetHandle(), Buffer, nullptr);
+                vkDestroyBuffer(*Device->GetHandle(), Buffer, nullptr);
                 Buffer = VK_NULL_HANDLE;
             }
             if (Memory != VK_NULL_HANDLE) {
-                vkFreeMemory(Device->GetHandle(), Memory, nullptr);
+                vkFreeMemory(*Device->GetHandle(), Memory, nullptr);
                 Memory = VK_NULL_HANDLE;
             }
         }
@@ -127,8 +128,12 @@ namespace Engine {
             Desc = value;
 
             void* mappedData;
-            VkResult Result = vkMapMemory(
-                Device->GetHandle(), Memory, 0, sizeof(uint64), 0, &mappedData);
+            VkResult Result = vkMapMemory(*Device->GetHandle(),
+                                          Memory,
+                                          0,
+                                          sizeof(uint64),
+                                          0,
+                                          &mappedData);
             check(Result == VK_SUCCESS);
 
             uint64 predicateValue = 0;
@@ -150,7 +155,7 @@ namespace Engine {
             }
 
             memcpy(mappedData, &predicateValue, sizeof(uint64));
-            vkUnmapMemory(Device->GetHandle(), Memory);
+            vkUnmapMemory(*Device->GetHandle(), Memory);
         }
 
     }  // namespace RHI

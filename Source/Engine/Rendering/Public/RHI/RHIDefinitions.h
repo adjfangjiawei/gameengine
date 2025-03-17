@@ -348,17 +348,5 @@ namespace Engine {
             GlobalShare = 1 << 2    // 全局共享
         };
 
-        inline ESharedHandleFlags operator|(ESharedHandleFlags a,
-                                            ESharedHandleFlags b) {
-            return static_cast<ESharedHandleFlags>(static_cast<uint32>(a) |
-                                                   static_cast<uint32>(b));
-        }
-
-        inline ESharedHandleFlags operator&(ESharedHandleFlags a,
-                                            ESharedHandleFlags b) {
-            return static_cast<ESharedHandleFlags>(static_cast<uint32>(a) &
-                                                   static_cast<uint32>(b));
-        }
-
     }  // namespace RHI
 }  // namespace Engine

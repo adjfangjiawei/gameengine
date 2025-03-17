@@ -1,11 +1,13 @@
 
 #pragma once
 
+#include <vulkan/vulkan.h>
+
 #include "RHI/RHISync.h"
-#include "VulkanRHI.h"
 
 namespace Engine {
     namespace RHI {
+        class VulkanDevice;
 
         class VulkanEvent : public IRHIEvent {
           public:

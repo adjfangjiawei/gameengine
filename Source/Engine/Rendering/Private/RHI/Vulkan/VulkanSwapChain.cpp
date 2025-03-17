@@ -86,7 +86,7 @@ namespace Engine {
             DestroyImageViews();
 
             if (SwapChain != VK_NULL_HANDLE) {
-                vkDestroySwapchainKHR(Device->GetHandle(), SwapChain, nullptr);
+                vkDestroySwapchainKHR(*Device->GetHandle(), SwapChain, nullptr);
                 SwapChain = VK_NULL_HANDLE;
             }
 
@@ -184,16 +184,16 @@ namespace Engine {
             createInfo.oldSwapchain = VK_NULL_HANDLE;
 
             if (vkCreateSwapchainKHR(
-                    Device->GetHandle(), &createInfo, nullptr, &SwapChain) !=
+                    *Device->GetHandle(), &createInfo, nullptr, &SwapChain) !=
                 VK_SUCCESS) {
                 LOG_ERROR("Failed to create swap chain!");
                 return false;
             }
 
             vkGetSwapchainImagesKHR(
-                Device->GetHandle(), SwapChain, &imageCount, nullptr);
+                *Device->GetHandle(), SwapChain, &imageCount, nullptr);
             SwapChainImages.resize(imageCount);
-            vkGetSwapchainImagesKHR(Device->GetHandle(),
+            vkGetSwapchainImagesKHR(*Device->GetHandle(),
                                     SwapChain,
                                     &imageCount,
                                     SwapChainImages.data());
@@ -225,7 +225,7 @@ namespace Engine {
                 createInfo.subresourceRange.baseArrayLayer = 0;
                 createInfo.subresourceRange.layerCount = 1;
 
-                if (vkCreateImageView(Device->GetHandle(),
+                if (vkCreateImageView(*Device->GetHandle(),
                                       &createInfo,
                                       nullptr,
                                       &SwapChainImageViews[i]) != VK_SUCCESS) {
@@ -254,7 +254,7 @@ namespace Engine {
             BackBuffers.clear();
 
             for (auto imageView : SwapChainImageViews) {
-                vkDestroyImageView(Device->GetHandle(), imageView, nullptr);
+                vkDestroyImageView(*Device->GetHandle(), imageView, nullptr);
             }
             SwapChainImageViews.clear();
         }

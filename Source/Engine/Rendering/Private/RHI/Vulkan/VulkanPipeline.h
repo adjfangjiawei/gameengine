@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 #include "VulkanRHI.h"
-
+#include "VulkanTypeOperators.h"
 namespace Engine {
     namespace RHI {
 
@@ -13,22 +13,6 @@ namespace Engine {
             std::vector<VkVertexInputBindingDescription> BindingDescs;
             std::vector<VkVertexInputAttributeDescription> AttributeDescs;
         };
-
-        // VkPushConstantRange 比较运算符
-        inline bool operator==(const VkPushConstantRange& lhs,
-                               const VkPushConstantRange& rhs) {
-            return lhs.stageFlags == rhs.stageFlags &&
-                   lhs.offset == rhs.offset && lhs.size == rhs.size;
-        }
-
-        // VkPipelineShaderStageCreateInfo 比较运算符
-        inline bool operator==(const VkPipelineShaderStageCreateInfo& lhs,
-                               const VkPipelineShaderStageCreateInfo& rhs) {
-            return lhs.stage == rhs.stage && lhs.module == rhs.module &&
-                   ((!lhs.pName && !rhs.pName) ||
-                    (lhs.pName && rhs.pName &&
-                     strcmp(lhs.pName, rhs.pName) == 0));
-        }
 
         // 管线布局缓存键
         struct PipelineLayoutKey {

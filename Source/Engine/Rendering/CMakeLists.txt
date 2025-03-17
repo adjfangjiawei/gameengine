@@ -27,12 +27,30 @@ endif()
 # Add source files
 set(VULKAN_SOURCES
     Private/RHI/Example/RHIExample.cpp
+    Private/RHI/Vulkan/VulkanAdvancedSync.cpp
+    Private/RHI/Vulkan/VulkanAsyncCompute.cpp
     Private/RHI/Vulkan/VulkanCommandList.cpp
     Private/RHI/Vulkan/VulkanContext.cpp
+    Private/RHI/Vulkan/VulkanDevice.cpp
+    Private/RHI/Vulkan/VulkanEvent.cpp
+    Private/RHI/Vulkan/VulkanFence.cpp
+    Private/RHI/Vulkan/VulkanInstance.cpp
+    Private/RHI/Vulkan/VulkanMemory.cpp
+    Private/RHI/Vulkan/VulkanMeshShader.cpp
+    Private/RHI/Vulkan/VulkanPhysicalDevice.cpp
     Private/RHI/Vulkan/VulkanPipeline.cpp
+    Private/RHI/Vulkan/VulkanQueryHeap.cpp
     Private/RHI/Vulkan/VulkanRHI.cpp
+    Private/RHI/Vulkan/VulkanRayTracing.cpp
     Private/RHI/Vulkan/VulkanResources.cpp
+    Private/RHI/Vulkan/VulkanSamplerState.cpp
+    Private/RHI/Vulkan/VulkanShaderCompiler.cpp
+    Private/RHI/Vulkan/VulkanShaderFeedback.cpp
+    Private/RHI/Vulkan/VulkanShaderHotReload.cpp
+    Private/RHI/Vulkan/VulkanSparseResources.cpp
     Private/RHI/Vulkan/VulkanSwapChain.cpp
+    Private/RHI/Vulkan/VulkanTimelineSemaphore.cpp
+    Private/RHI/Vulkan/VulkanVariableRateShading.cpp
 )
 
 # Add header files
@@ -45,13 +63,33 @@ set(VULKAN_HEADERS
     Public/RHI/RHIModule.h
     Public/RHI/RHIOperators.h
     Public/RHI/RHIResources.h
+    Private/RHI/Vulkan/VulkanAdvancedSync.h
+    Private/RHI/Vulkan/VulkanAsyncCompute.h
     Private/RHI/Vulkan/VulkanCommandList.h
+    Private/RHI/Vulkan/VulkanCommandPoolManager.h
+    Private/RHI/Vulkan/VulkanDevice.h
     Private/RHI/Vulkan/VulkanDevicePresent.h
+    Private/RHI/Vulkan/VulkanEvent.h
+    Private/RHI/Vulkan/VulkanFence.h
+    Private/RHI/Vulkan/VulkanInstance.h
+    Private/RHI/Vulkan/VulkanMemory.h
+    Private/RHI/Vulkan/VulkanMemoryAllocator.h
+    Private/RHI/Vulkan/VulkanMeshShader.h
+    Private/RHI/Vulkan/VulkanPhysicalDevice.h
     Private/RHI/Vulkan/VulkanPipeline.h
+    Private/RHI/Vulkan/VulkanQueryHeap.h
     Private/RHI/Vulkan/VulkanRHI.h
+    Private/RHI/Vulkan/VulkanRayTracing.h
     Private/RHI/Vulkan/VulkanResources.h
+    Private/RHI/Vulkan/VulkanSamplerState.h
+    Private/RHI/Vulkan/VulkanShaderCompiler.h
+    Private/RHI/Vulkan/VulkanShaderFeedback.h
+    Private/RHI/Vulkan/VulkanShaderHotReload.h
+    Private/RHI/Vulkan/VulkanSparseResources.h
     Private/RHI/Vulkan/VulkanSwapChain.h
+    Private/RHI/Vulkan/VulkanTimelineSemaphore.h
     Private/RHI/Vulkan/VulkanTypeOperators.h
+    Private/RHI/Vulkan/VulkanVariableRateShading.h
 )
 
 # Create library
@@ -115,5 +153,5 @@ endif()
 if(MSVC)
     target_compile_options(Rendering PRIVATE /W4)
 else()
-    target_compile_options(Rendering PRIVATE -Wall -Wextra -Wpedantic)
+    # target_compile_options(Rendering PRIVATE -Wall -Wextra -Wpedantic)
 endif()

@@ -22,7 +22,7 @@ namespace Engine {
             createInfo.flags = 0;
 
             VkResult Result = vkCreateSemaphore(
-                Device->GetHandle(), &createInfo, nullptr, &Semaphore);
+                *Device->GetHandle(), &createInfo, nullptr, &Semaphore);
             if (Result != VK_SUCCESS) {
                 throw std::runtime_error("Failed to create timeline semaphore");
             }
@@ -37,7 +37,7 @@ namespace Engine {
 
         VulkanTimelineSemaphore::~VulkanTimelineSemaphore() {
             if (Semaphore != VK_NULL_HANDLE) {
-                vkDestroySemaphore(Device->GetHandle(), Semaphore, nullptr);
+                vkDestroySemaphore(*Device->GetHandle(), Semaphore, nullptr);
                 Semaphore = VK_NULL_HANDLE;
             }
         }
@@ -45,7 +45,7 @@ namespace Engine {
         uint64 VulkanTimelineSemaphore::GetCurrentValue() const {
             uint64 value = 0;
             VkResult Result = vkGetSemaphoreCounterValue(
-                Device->GetHandle(), Semaphore, &value);
+                *Device->GetHandle(), Semaphore, &value);
             if (Result != VK_SUCCESS) {
                 throw std::runtime_error(
                     "Failed to get semaphore counter value");
@@ -63,7 +63,7 @@ namespace Engine {
             waitInfo.pValues = &value;
 
             VkResult Result =
-                vkWaitSemaphores(Device->GetHandle(), &waitInfo, UINT64_MAX);
+                vkWaitSemaphores(*Device->GetHandle(), &waitInfo, UINT64_MAX);
             if (Result != VK_SUCCESS) {
                 throw std::runtime_error("Failed to wait on semaphore");
             }
@@ -77,7 +77,7 @@ namespace Engine {
             signalInfo.value = value;
 
             VkResult Result =
-                vkSignalSemaphore(Device->GetHandle(), &signalInfo);
+                vkSignalSemaphore(*Device->GetHandle(), &signalInfo);
             if (Result != VK_SUCCESS) {
                 throw std::runtime_error("Failed to signal semaphore");
             }

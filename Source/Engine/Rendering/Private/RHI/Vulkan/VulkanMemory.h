@@ -71,7 +71,7 @@ namespace Engine {
                                         uint64& usedSize) const override;
 
             // Vulkan特定方法
-            bool Initialize(VkDevice device);
+            bool Initialize(const VkDevice* device);
             void Shutdown();
             VkDeviceMemory AllocateMemory(VkMemoryRequirements memRequirements,
                                           VkMemoryPropertyFlags properties);

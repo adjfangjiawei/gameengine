@@ -1,0 +1,75 @@
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Example/RHIExample.cpp:4:10: error: 'Core/Public/Log/LogSystem.h' file not found [clang-diagnostic-error]
+    4 | #include "Core/Public/Log/LogSystem.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanInstance.h:8:10: error: 'Core/Public/Log/LogSystem.h' file not found [clang-diagnostic-error]
+    8 | #include "Core/Public/Log/LogSystem.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanFence.h:5:10: error: 'RHI/RHICommands.h' file not found [clang-diagnostic-error]
+    5 | #include "RHI/RHICommands.h"
+      |          ^~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanRHI.h:4:10: error: 'RHI/RHIModule.h' file not found [clang-diagnostic-error]
+    4 | #include "RHI/RHIModule.h"
+      |          ^~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanSparseResources.h:6:10: error: 'RHI/RHISparseResources.h' file not found [clang-diagnostic-error]
+    6 | #include "RHI/RHISparseResources.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanMeshShader.h:6:10: error: 'RHI/RHIMeshShader.h' file not found [clang-diagnostic-error]
+    6 | #include "RHI/RHIMeshShader.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanTimelineSemaphore.h:4:10: error: 'RHI/RHISync.h' file not found [clang-diagnostic-error]
+    4 | #include "RHI/RHISync.h"
+      |          ^~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanEvent.h:6:10: error: 'RHI/RHISync.h' file not found [clang-diagnostic-error]
+    6 | #include "RHI/RHISync.h"
+      |          ^~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanAdvancedSync.h:6:10: error: 'RHI/RHIAdvancedSync.h' file not found [clang-diagnostic-error]
+    6 | #include "RHI/RHIAdvancedSync.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanVariableRateShading.h:6:10: error: 'RHI/RHIVariableRateShading.h' file not found [clang-diagnostic-error]
+    6 | #include "RHI/RHIVariableRateShading.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanQueryHeap.h:8:10: error: 'RHI/RHIQueryHeap.h' file not found [clang-diagnostic-error]
+    8 | #include "RHI/RHIQueryHeap.h"
+      |          ^~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanShaderFeedback.h:4:10: error: 'RHI/RHIShaderFeedback.h' file not found [clang-diagnostic-error]
+    4 | #include "RHI/RHIShaderFeedback.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanPhysicalDevice.h:8:10: error: 'RHI/RHIModule.h' file not found [clang-diagnostic-error]
+    8 | #include "RHI/RHIModule.h"
+      |          ^~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanAsyncCompute.h:6:10: error: 'RHI/RHIAsyncCompute.h' file not found [clang-diagnostic-error]
+    6 | #include "RHI/RHIAsyncCompute.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanSamplerState.h:4:10: error: 'RHI/RHIDevice.h' file not found [clang-diagnostic-error]
+    4 | #include "RHI/RHIDevice.h"
+      |          ^~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanRayTracing.h:6:10: error: 'RHI/RHIRayTracing.h' file not found [clang-diagnostic-error]
+    6 | #include "RHI/RHIRayTracing.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanContext.cpp:2:10: error: 'Core//Public/Log/LogSystem.h' file not found [clang-diagnostic-error]
+    2 | #include "Core//Public/Log/LogSystem.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanMemory.h:8:10: error: 'RHI/RHIMemory.h' file not found [clang-diagnostic-error]
+    8 | #include "RHI/RHIMemory.h"
+      |          ^~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanCommandList.h:6:10: error: 'RHI/RHICommandList.h' file not found [clang-diagnostic-error]
+    6 | #include "RHI/RHICommandList.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanDevice.h:8:10: error: 'RHI/RHIModule.h' file not found [clang-diagnostic-error]
+    8 | #include "RHI/RHIModule.h"
+      |          ^~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanRHI.h:4:10: error: 'RHI/RHIModule.h' file not found [clang-diagnostic-error]
+    4 | #include "RHI/RHIModule.h"
+      |          ^~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanRHI.h:4:10: error: 'RHI/RHIModule.h' file not found [clang-diagnostic-error]
+    4 | #include "RHI/RHIModule.h"
+      |          ^~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanRHI.h:4:10: error: 'RHI/RHIModule.h' file not found [clang-diagnostic-error]
+    4 | #include "RHI/RHIModule.h"
+      |          ^~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanShaderHotReload.h:12:10: error: 'RHI/RHIShaderHotReload.h' file not found [clang-diagnostic-error]
+   12 | #include "RHI/RHIShaderHotReload.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/game/gameenginestepbustep/Source/Engine/Rendering/Private/RHI/Vulkan/VulkanShaderCompiler.h:9:10: error: 'RHI/RHIShaderCompiler.h' file not found [clang-diagnostic-error]
+    9 | #include "RHI/RHIShaderCompiler.h"
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~

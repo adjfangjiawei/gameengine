@@ -60,9 +60,7 @@ namespace Engine {
             // 查找支持设备地址和设备本地的内存类型
             VkPhysicalDeviceMemoryProperties memProperties;
             VkPhysicalDevice physicalDevice =
-                static_cast<VulkanDevice*>(VulkanRHI::Get().GetDevice())
-                    ->GetPhysicalDevice()
-                    ->GetHandle();
+                VulkanRHI::Get().GetDevice()->GetPhysicalDevice()->GetHandle();
             vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
 
             // 需要设备本地内存以获得最佳性能

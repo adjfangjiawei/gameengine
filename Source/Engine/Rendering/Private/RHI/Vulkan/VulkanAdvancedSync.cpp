@@ -2,6 +2,7 @@
 #include "VulkanAdvancedSync.h"
 
 #include "Core/Public/Log/LogSystem.h"
+#include "RHI/RHIOperators.h"
 #include "VulkanRHI.h"
 
 namespace Engine {

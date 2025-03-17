@@ -1,6 +1,7 @@
 #include "VulkanPipeline.h"
 
 #include "Core/Public/Log/LogSystem.h"
+#include "VulkanTypeOperators.h"
 
 namespace Engine {
     namespace RHI {
@@ -77,19 +78,19 @@ namespace Engine {
             // 清理所有管线布局
             for (auto& pair : PipelineLayouts) {
                 vkDestroyPipelineLayout(
-                    Device->GetHandle(), pair.second, nullptr);
+                    *Device->GetHandle(), pair.second, nullptr);
             }
             PipelineLayouts.clear();
 
             // 清理所有图形管线
             for (auto& pair : GraphicsPipelines) {
-                vkDestroyPipeline(Device->GetHandle(), pair.second, nullptr);
+                vkDestroyPipeline(*Device->GetHandle(), pair.second, nullptr);
             }
             GraphicsPipelines.clear();
 
             // 清理所有计算管线
             for (auto& pair : ComputePipelines) {
-                vkDestroyPipeline(Device->GetHandle(), pair.second, nullptr);
+                vkDestroyPipeline(*Device->GetHandle(), pair.second, nullptr);
             }
             ComputePipelines.clear();
         }
@@ -160,7 +161,7 @@ namespace Engine {
         VkPipelineLayout VulkanPipelineManager::CreatePipelineLayout(
             const PipelineLayoutKey& key) {
             // 验证输入参数
-            if (!Device || !Device->GetHandle()) {
+            if (!Device || !*Device->GetHandle()) {
                 LOG_ERROR("Invalid device handle in CreatePipelineLayout!");
                 return VK_NULL_HANDLE;
             }
@@ -216,7 +217,7 @@ namespace Engine {
             // 创建管线布局
             VkPipelineLayout layout;
             VkResult result = vkCreatePipelineLayout(
-                Device->GetHandle(), &layoutInfo, nullptr, &layout);
+                *Device->GetHandle(), &layoutInfo, nullptr, &layout);
 
             if (result != VK_SUCCESS) {
                 LOG_ERROR("Failed to create pipeline layout! Error code: {}",
@@ -243,7 +244,7 @@ namespace Engine {
         VkPipeline VulkanPipelineManager::CreateGraphicsPipeline(
             const GraphicsPipelineKey& key) {
             // 验证输入参数
-            if (!Device || !Device->GetHandle()) {
+            if (!Device || !*Device->GetHandle()) {
                 LOG_ERROR("Invalid device handle in CreateGraphicsPipeline!");
                 return VK_NULL_HANDLE;
             }
@@ -334,7 +335,7 @@ namespace Engine {
 
             // 创建管线
             VkPipeline pipeline;
-            VkResult result = vkCreateGraphicsPipelines(Device->GetHandle(),
+            VkResult result = vkCreateGraphicsPipelines(*Device->GetHandle(),
                                                         VK_NULL_HANDLE,
                                                         1,
                                                         &pipelineInfo,
@@ -354,7 +355,7 @@ namespace Engine {
         VkPipeline VulkanPipelineManager::CreateComputePipeline(
             const ComputePipelineKey& key) {
             // 验证输入参数
-            if (!Device || !Device->GetHandle()) {
+            if (!Device || !*Device->GetHandle()) {
                 LOG_ERROR("Invalid device handle in CreateComputePipeline!");
                 return VK_NULL_HANDLE;
             }
@@ -392,7 +393,7 @@ namespace Engine {
 
             // 创建管线
             VkPipeline pipeline;
-            VkResult result = vkCreateComputePipelines(Device->GetHandle(),
+            VkResult result = vkCreateComputePipelines(*Device->GetHandle(),
                                                        VK_NULL_HANDLE,
                                                        1,
                                                        &pipelineInfo,
@@ -460,7 +461,7 @@ namespace Engine {
 
                 if (shouldCleanup) {
                     vkDestroyPipelineLayout(
-                        Device->GetHandle(), it->second, nullptr);
+                        *Device->GetHandle(), it->second, nullptr);
                     PipelineLayoutStats.erase(key);
                     it = PipelineLayouts.erase(it);
                     totalCleaned++;
@@ -491,7 +492,8 @@ namespace Engine {
                 }
 
                 if (shouldCleanup) {
-                    vkDestroyPipeline(Device->GetHandle(), it->second, nullptr);
+                    vkDestroyPipeline(
+                        *Device->GetHandle(), it->second, nullptr);
                     GraphicsPipelineStats.erase(key);
                     it = GraphicsPipelines.erase(it);
                     totalCleaned++;
@@ -522,7 +524,8 @@ namespace Engine {
                 }
 
                 if (shouldCleanup) {
-                    vkDestroyPipeline(Device->GetHandle(), it->second, nullptr);
+                    vkDestroyPipeline(
+                        *Device->GetHandle(), it->second, nullptr);
                     ComputePipelineStats.erase(key);
                     it = ComputePipelines.erase(it);
                     totalCleaned++;
@@ -558,12 +561,12 @@ namespace Engine {
         VulkanDescriptorManager::~VulkanDescriptorManager() {
             if (DescriptorPool != VK_NULL_HANDLE) {
                 vkDestroyDescriptorPool(
-                    Device->GetHandle(), DescriptorPool, nullptr);
+                    *Device->GetHandle(), DescriptorPool, nullptr);
             }
 
             for (auto& pair : DescriptorSetLayouts) {
                 vkDestroyDescriptorSetLayout(
-                    Device->GetHandle(), pair.second, nullptr);
+                    *Device->GetHandle(), pair.second, nullptr);
             }
         }
 
@@ -585,9 +588,10 @@ namespace Engine {
             poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
             poolInfo.pPoolSizes = poolSizes.data();
 
-            if (vkCreateDescriptorPool(
-                    Device->GetHandle(), &poolInfo, nullptr, &DescriptorPool) !=
-                VK_SUCCESS) {
+            if (vkCreateDescriptorPool(*Device->GetHandle(),
+                                       &poolInfo,
+                                       nullptr,
+                                       &DescriptorPool) != VK_SUCCESS) {
                 LOG_ERROR("Failed to create descriptor pool!");
             }
         }
@@ -628,7 +632,7 @@ namespace Engine {
 
             VkDescriptorSetLayout layout;
             if (vkCreateDescriptorSetLayout(
-                    Device->GetHandle(), &layoutInfo, nullptr, &layout) !=
+                    *Device->GetHandle(), &layoutInfo, nullptr, &layout) !=
                 VK_SUCCESS) {
                 LOG_ERROR("Failed to create descriptor set layout!");
                 return VK_NULL_HANDLE;
@@ -640,7 +644,7 @@ namespace Engine {
         VkDescriptorSet VulkanDescriptorManager::AllocateDescriptorSet(
             VkDescriptorSetLayout layout) {
             // 验证输入参数
-            if (!Device || !Device->GetHandle()) {
+            if (!Device || !*Device->GetHandle()) {
                 LOG_ERROR("Invalid device handle in AllocateDescriptorSet!");
                 return VK_NULL_HANDLE;
             }
@@ -671,7 +675,7 @@ namespace Engine {
 
             VkDescriptorSet descriptorSet;
             VkResult result = vkAllocateDescriptorSets(
-                Device->GetHandle(), &allocInfo, &descriptorSet);
+                *Device->GetHandle(), &allocInfo, &descriptorSet);
 
             if (result == VK_ERROR_FRAGMENTED_POOL ||
                 result == VK_ERROR_OUT_OF_POOL_MEMORY) {
@@ -680,12 +684,12 @@ namespace Engine {
                     "Descriptor pool is full or fragmented, creating new "
                     "pool...");
                 vkDestroyDescriptorPool(
-                    Device->GetHandle(), DescriptorPool, nullptr);
+                    *Device->GetHandle(), DescriptorPool, nullptr);
                 CreateDescriptorPool();
 
                 // 重试分配
                 result = vkAllocateDescriptorSets(
-                    Device->GetHandle(), &allocInfo, &descriptorSet);
+                    *Device->GetHandle(), &allocInfo, &descriptorSet);
             }
 
             if (result != VK_SUCCESS) {
@@ -709,7 +713,7 @@ namespace Engine {
             VkDescriptorSet descriptorSet,
             const std::vector<VkWriteDescriptorSet>& writes) {
             // 验证输入参数
-            if (!Device || !Device->GetHandle()) {
+            if (!Device || !*Device->GetHandle()) {
                 LOG_ERROR("Invalid device handle in UpdateDescriptorSet!");
                 return;
             }
@@ -749,7 +753,7 @@ namespace Engine {
 
             if (!validatedWrites.empty()) {
                 vkUpdateDescriptorSets(
-                    Device->GetHandle(),
+                    *Device->GetHandle(),
                     static_cast<uint32_t>(validatedWrites.size()),
                     validatedWrites.data(),
                     0,
@@ -761,7 +765,7 @@ namespace Engine {
             VkDescriptorSet descriptorSet) {
             if (descriptorSet != VK_NULL_HANDLE) {
                 vkFreeDescriptorSets(
-                    Device->GetHandle(), DescriptorPool, 1, &descriptorSet);
+                    *Device->GetHandle(), DescriptorPool, 1, &descriptorSet);
             }
         }
 
@@ -834,13 +838,13 @@ namespace Engine {
                     for (VkDescriptorSet set : stats.ActiveSets) {
                         if (set != VK_NULL_HANDLE) {
                             vkFreeDescriptorSets(
-                                Device->GetHandle(), DescriptorPool, 1, &set);
+                                *Device->GetHandle(), DescriptorPool, 1, &set);
                         }
                     }
 
                     // 销毁描述符集布局
                     vkDestroyDescriptorSetLayout(
-                        Device->GetHandle(), it->second, nullptr);
+                        *Device->GetHandle(), it->second, nullptr);
 
                     // 从统计信息中移除
                     LayoutUsageStats.erase(key);
